@@ -2,6 +2,8 @@ import com.snitch.Router
 import com.snitch.body
 import pl.auth.loginHandler
 import pl.auth.signUpHandler
+import pl.propertea.models.LoginRequest
+import pl.propertea.models.SignUpRequest
 import spark.Service
 import spark.Spark
 

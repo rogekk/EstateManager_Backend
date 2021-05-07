@@ -4,6 +4,7 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.ThreadLocalTransactionManager
 import pl.propertea.db.DatabaseModule.readWriteDatabase
 import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.exposedLogger
 import org.jetbrains.exposed.sql.transactions.DEFAULT_REPETITION_ATTEMPTS
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.sql.Connection

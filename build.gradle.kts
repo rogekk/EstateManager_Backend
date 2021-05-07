@@ -17,6 +17,7 @@ dependencies {
     implementation("org.postgresql:postgresql:42.2.2")
     implementation("org.jetbrains.exposed:exposed-core:0.31.1")
     implementation("org.jetbrains.exposed:exposed-jdbc:0.31.1")
+    implementation("org.jetbrains.exposed:exposed-jodatime:0.31.1")
     implementation("com.github.memoizr.snitch:sparkjava:68db35c0af")
     implementation("com.github.memoizr.snitch:core:68db35c0af")
     implementation("com.sparkjava:spark-core:2.9.3")

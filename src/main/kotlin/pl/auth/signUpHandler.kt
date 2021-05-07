@@ -1,11 +1,11 @@
 package pl.auth
 
-import LoginRequest
-import SignUpRequest
 import com.snitch.Handler
 import com.snitch.badRequest
 import com.snitch.forbidden
 import com.snitch.ok
+import pl.propertea.models.LoginRequest
+import pl.propertea.models.SignUpRequest
 import pl.propertea.repositories.NotVerified
 import pl.propertea.repositories.OwnerCreated
 import pl.propertea.repositories.RepositoriesModule.ownersRepository
