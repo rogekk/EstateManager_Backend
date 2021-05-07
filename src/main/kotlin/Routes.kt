@@ -2,6 +2,7 @@ import com.snitch.Router
 import com.snitch.body
 import pl.auth.loginHandler
 import pl.auth.signUpHandler
+import pl.forums.getForums
 import pl.propertea.models.LoginRequest
 import pl.propertea.models.SignUpRequest
 import spark.Service
@@ -16,6 +17,9 @@ fun routes(http: Service): Router.() -> Unit =  {
         POST("/login")
             .with(body<LoginRequest>())
             .isHandledBy(loginHandler)
+
+        GET("/forums")
+            .isHandledBy(getForums)
     }
 
     setAccessControlHeaders(http)

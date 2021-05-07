@@ -6,6 +6,7 @@ import pl.propertea.db.DatabaseModule
 
 object RepositoriesModule : ShankModule {
     val ownersRepository = single { -> OwnersRepository(DatabaseModule.readWriteDatabase()) }
+    val forumsRepository = single<ForumsRepository> { -> PostgresForumsRepository(DatabaseModule.readWriteDatabase()) }
 }
 
 

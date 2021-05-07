@@ -2,12 +2,14 @@ package pl.propertea.db
 
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.jodatime.datetime
+import pl.propertea.models.Topic
 
 val schema = arrayOf(
     Owners,
     OwnerMembership,
     Resolutions,
-    Communities
+    Communities,
+    Topics
 )
 
 typealias UsersTable = Owners
@@ -65,4 +67,14 @@ object Buildings: Table() {
 
 enum class ResolutionResult {
     APPROVED, REJECTED, OPEN_FOR_VOTING, CANCELED
+}
+
+object Topics: Table() {
+    val id = text("id")
+    val communityId = text("community_id").references(Communities.id)
+    val authorOwnerId = text("author_owner_id").references(Owners.id)
+    val createdAt = datetime("createdAt")
+    val subject = text("subject")
+
+    override val primaryKey = PrimaryKey(id)
 }
