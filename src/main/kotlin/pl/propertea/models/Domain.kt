@@ -29,5 +29,10 @@ data class Community(
 data class Owner(
     val id: OwnerId,
     val username: String,
-    val password: String
-)
+    val password: String,
+    val email: String,
+    val phoneNumber: String,
+    val address: String,
+) {
+
+}

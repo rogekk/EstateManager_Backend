@@ -29,6 +29,10 @@ class ForumsRepositoryTest: DatabaseTest() {
                 it[id] = owner.id.id
                 it[username] = owner.username
                 it[password] = owner.password
+                it[email] = owner.email
+                it[phoneNumber] = owner.phoneNumber
+                it[address] = owner.address
+
             }
         }
 

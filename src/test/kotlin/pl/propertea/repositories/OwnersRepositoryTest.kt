@@ -11,7 +11,7 @@ class OwnersRepositoryTest : DatabaseTest() {
     fun `allows sign up and login`() {
         expect that ownersRepository().checkOwnersCredentials("hey", "there") isEqualTo NotVerified
 
-        ownersRepository().createOwner("hey", "there")
+        ownersRepository().createOwner("hey", "there", "kkk@kkk.pl", "489789454","Bakers St")
 
         expect that ownersRepository().checkOwnersCredentials("hey", "there") isEqualTo Verified
     }

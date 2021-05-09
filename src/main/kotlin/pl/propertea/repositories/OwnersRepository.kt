@@ -11,7 +11,7 @@ import java.util.*
 
 class OwnersRepository(private val database: Database) {
 
-    fun createOwner(username: String, password: String) = transaction(database) {
+    fun createOwner(username: String, password: String, email: String, phoneNumber: String, address: String) = transaction(database) {
         val user = Owners
             .select { Owners.username eq username }
             .firstOrNull()
@@ -21,6 +21,9 @@ class OwnersRepository(private val database: Database) {
                 ownersTable[id] = UUID.randomUUID().toString()
                 ownersTable[Owners.username] = username
                 ownersTable[Owners.password] = hash(password)
+                ownersTable[Owners.email] = email
+                ownersTable[Owners.phoneNumber] = phoneNumber
+                ownersTable[Owners.address] = address
             }
         }
         if (user == null) OwnerCreated else UsernameTaken

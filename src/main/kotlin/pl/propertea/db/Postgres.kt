@@ -1,14 +1,10 @@
 package pl.propertea.db
 
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.transactions.ThreadLocalTransactionManager
-import pl.propertea.db.DatabaseModule.readWriteDatabase
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.exposedLogger
-import org.jetbrains.exposed.sql.transactions.DEFAULT_REPETITION_ATTEMPTS
 import org.jetbrains.exposed.sql.transactions.transaction
+import pl.propertea.db.DatabaseModule.readWriteDatabase
 import java.sql.Connection
-import java.sql.Connection.TRANSACTION_READ_COMMITTED
 
 object Postgres {
 
@@ -19,10 +15,7 @@ object Postgres {
                 user = postgresConnection.user,
                 password = postgresConnection.password,
                 driver = "org.postgresql.Driver",
-//                setupConnection = {
-//                    makeSurePostgresSearchExtensionAvailable(it)
-//                }
-//            manager = { ThreadLocalTransactionManager(it, TRANSACTION_READ_COMMITTED, DEFAULT_REPETITION_ATTEMPTS) }
+//
         )
 
         creteMissingTablesAndColumns(database)
@@ -34,9 +27,7 @@ object Postgres {
                 user = postgresConnection.user,
                 password = postgresConnection.password,
                 driver = "org.postgresql.Driver",
-//            manager = { ThreadLocalTransactionManager(it, TRANSACTION_READ_COMMITTED, DEFAULT_REPETITION_ATTEMPTS) }
         )
-
         creteMissingTablesAndColumns(readWriteDatabase())
         return database
     }
