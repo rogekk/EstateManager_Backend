@@ -1,16 +1,12 @@
-import com.snitch.Router
-import com.snitch.body
+import com.snitch.*
 import pl.auth.loginHandler
 import pl.auth.signUpHandler
-import pl.forums.crateCommunityHandler
-import pl.forums.getForums
-import pl.forums.topicsHandler
-import pl.propertea.models.CommunityRequest
-import pl.propertea.models.LoginRequest
-import pl.propertea.models.SignUpRequest
-import pl.propertea.models.TopicRequest
+import pl.forums.*
+import pl.propertea.models.*
 import spark.Service
 import spark.Spark
+
+val topicId = path("topicId", "Id of the topic", NonEmptyString)
 
 fun routes(http: Service): Router.() -> Unit =  {
     "v1" / {
@@ -24,12 +20,22 @@ fun routes(http: Service): Router.() -> Unit =  {
 
         GET("/forums")
             .isHandledBy(getForums)
+
         POST("/forums/topic")
             .with(body<TopicRequest>())
             .isHandledBy(topicsHandler)
+
+        POST("/forums" / topicId / "comments")
+            .with(body<CreateCommentRequest>())
+            .isHandledBy(createCommentHandler)
+
+        GET("/forums" / topicId / "comments")
+            .isHandledBy(getCommentsHandler)
+
         POST("/communities")
             .with(body<CommunityRequest>())
             .isHandledBy(crateCommunityHandler)
+
     }
 
     setAccessControlHeaders(http)

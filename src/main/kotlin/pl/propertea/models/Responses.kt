@@ -10,7 +10,7 @@ fun Forums.toResponse() = ForumResponse(
 )
 
 fun Topic.toResponse() = TopicResponse(
-    id.value,
+    id.id,
     subject,
     createdBy.id,
     createdAt.toDateTimeISO().toString()
@@ -21,4 +21,15 @@ data class TopicResponse(
     val subject: String,
     val createdBy: String,
     val createdAt: String
+)
+
+data class GetCommentsResponse(
+    val comments: List<CommentResponse>
+)
+
+data class CommentResponse(
+    val id: String,
+    val createdBy: String,
+    val topicId: String,
+    val content: String
 )

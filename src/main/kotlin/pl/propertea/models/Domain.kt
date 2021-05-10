@@ -2,9 +2,10 @@ package pl.propertea.models
 
 import org.joda.time.DateTime
 
-data class TopicId(val value: String)
+data class TopicId(val id: String)
 data class OwnerId(val id: String)
 data class CommunityId(val id: String)
+data class CommentId(val id: String)
 
 data class Forums(
     val topics: List<Topic>
@@ -17,6 +18,19 @@ data class Topic(
     val communityId: CommunityId,
     val description: String,
 )
+data class CommentCreation(
+    val createdBy: OwnerId,
+    val topicId: TopicId,
+    val content: String
+)
+
+data class Comment(
+    val id: CommentId,
+    val createdBy: OwnerId,
+    val topicId: TopicId,
+    val content: String
+)
+
 data class CreatedTopic(
     val subject: String,
     val createdBy: OwnerId,

@@ -9,7 +9,8 @@ val schema = arrayOf(
     OwnerMembership,
     Resolutions,
     Communities,
-    Topics
+    Topics,
+    Comments,
 )
 
 typealias UsersTable = Owners
@@ -114,6 +115,16 @@ object Topics: Table() {
     val createdAt = datetime("createdAt")
     val subject = text("subject")
     val description = text("description")
+
+    override val primaryKey = PrimaryKey(id)
+}
+
+object Comments: Table() {
+    val id = text("id")
+    val authorOwnerId = text("author_owner_id").references(Owners.id)
+    val topicId = text("topic_id").references(Topics.id)
+    val createdAt = datetime("createdAt")
+    val content = text("content")
 
     override val primaryKey = PrimaryKey(id)
 }

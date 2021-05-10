@@ -11,14 +11,14 @@ import java.util.*
 
 class OwnersRepository(private val database: Database) {
 
-    fun createOwner(username: String, password: String, email: String, phoneNumber: String, address: String) = transaction(database) {
+    fun createOwner(username: String, password: String, email: String, phoneNumber: String, address: String, id: String = UUID.randomUUID().toString()) = transaction(database) {
         val user = Owners
             .select { Owners.username eq username }
             .firstOrNull()
 
         if (user == null) {
             Owners.insert { ownersTable ->
-                ownersTable[id] = UUID.randomUUID().toString()
+                ownersTable[Owners.id] = id
                 ownersTable[Owners.username] = username
                 ownersTable[Owners.password] = hash(password)
                 ownersTable[Owners.email] = email

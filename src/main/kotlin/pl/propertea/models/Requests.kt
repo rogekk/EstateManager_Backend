@@ -6,3 +6,7 @@ data class SignUpRequest(val username: String, val password: String, val email: 
 data class LoginRequest(val username: String, val password: String)
 data class TopicRequest (val id: String, val subject: String, val createdBy: String, val communityId: String,   val description: String)
 data class CommunityRequest (val id: String)
+
+data class CreateCommentRequest(
+    val createdBy: String,
+    val content: String)
