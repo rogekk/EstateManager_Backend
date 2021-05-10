@@ -2,7 +2,6 @@ package pl.propertea.repositories
 
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import pl.propertea.db.Topics
@@ -24,7 +23,8 @@ class PostgresForumsRepository(private val database: Database) : ForumsRepositor
                     it[Topics.subject],
                     OwnerId(it[Topics.authorOwnerId]),
                     it[Topics.createdAt],
-                    CommunityId(it[Topics.communityId])
+                    CommunityId(it[Topics.communityId]),
+                    it[Topics.description]
                 )
             }
         )
@@ -38,7 +38,9 @@ class PostgresForumsRepository(private val database: Database) : ForumsRepositor
                 it[createdAt] = topic.createdAt
                 it[authorOwnerId] = topic.createdBy.id
                 it[communityId] = topic.communityId.id
+                it[description] = topic.description
             }
         }
     }
+
 }

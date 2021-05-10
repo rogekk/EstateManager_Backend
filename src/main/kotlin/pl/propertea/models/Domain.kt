@@ -15,6 +15,7 @@ data class Topic(
     val createdBy: OwnerId,
     val createdAt: DateTime,
     val communityId: CommunityId,
+    val description: String,
 )
 data class CreatedTopic(
     val subject: String,

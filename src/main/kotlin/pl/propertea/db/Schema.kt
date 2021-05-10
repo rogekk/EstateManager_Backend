@@ -113,6 +113,7 @@ object Topics: Table() {
     val authorOwnerId = text("author_owner_id").references(Owners.id)
     val createdAt = datetime("createdAt")
     val subject = text("subject")
+    val description = text("description")
 
     override val primaryKey = PrimaryKey(id)
 }
