@@ -7,7 +7,7 @@ data class OwnerId(val id: String)
 data class CommunityId(val id: String)
 data class CommentId(val id: String)
 
-data class Forums(
+data class Topics(
     val topics: List<Topic>
     )
 data class Topic(
@@ -18,6 +18,8 @@ data class Topic(
     val communityId: CommunityId,
     val description: String,
 )
+
+data class AuthToken(val token: String)
 
 data class TopicCreation(
     val subject: String,

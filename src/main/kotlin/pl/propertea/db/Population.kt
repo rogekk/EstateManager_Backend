@@ -2,9 +2,8 @@ package pl.propertea.db
 
 import org.joda.time.DateTime
 import pl.propertea.models.*
-import pl.propertea.repositories.OwnerCreated
 import pl.propertea.repositories.RepositoriesModule.communityRepository
-import pl.propertea.repositories.RepositoriesModule.forumsRepository
+import pl.propertea.repositories.RepositoriesModule.topicsRepository
 import pl.propertea.repositories.RepositoriesModule.ownersRepository
 
 fun main() {
@@ -28,7 +27,7 @@ fun main() {
     val owner2 = ownersRepository().getByUsername("JKowalski")!!.id
 
     runCatching {
-        forumsRepository().crateTopic(
+        topicsRepository().crateTopic(
             TopicCreation(
                 "I want to fire our shity Manager",
                 owner1,
@@ -37,7 +36,7 @@ fun main() {
                 "He's been a very bad boy"
             )
         )
-        forumsRepository().crateTopic(
+        topicsRepository().crateTopic(
             TopicCreation(
                 "Estate management system",
                 owner2,
@@ -50,14 +49,14 @@ fun main() {
 
     // insert comments
     runCatching {
-        forumsRepository().createComment(
+        topicsRepository().createComment(
             CommentCreation(
                 owner1,
                 TopicId("1"),
                 "oh no don't do that he is great"
             )
         )
-        forumsRepository().createComment(
+        topicsRepository().createComment(
             CommentCreation(
                 owner2,
                 TopicId("2"),

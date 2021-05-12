@@ -1,9 +1,7 @@
 package pl.auth
 
-import com.snitch.Handler
-import com.snitch.badRequest
-import com.snitch.forbidden
-import com.snitch.ok
+import com.snitch.*
+import pl.propertea.common.CommonModule.authenticator
 import pl.propertea.models.LoginRequest
 import pl.propertea.models.SignUpRequest
 import pl.propertea.repositories.NotVerified
@@ -12,6 +10,8 @@ import pl.propertea.repositories.RepositoriesModule.ownersRepository
 import pl.propertea.repositories.UsernameTaken
 import pl.propertea.repositories.Verified
 import pl.tools.json
+import setHeader
+
 
 val signUpHandler: Handler<SignUpRequest, Any> = {
     when (ownersRepository().createOwner(body.username, body.password, body.email, body.phoneNumber, body.address)) {
@@ -21,8 +21,13 @@ val signUpHandler: Handler<SignUpRequest, Any> = {
 }
 
 val loginHandler: Handler<LoginRequest, Any> = {
-    when (ownersRepository().checkOwnersCredentials(body.username, body.password)) {
-        Verified -> json { "status" _ "success" }.ok
-        NotVerified -> forbidden("invalid login credentials")
-    }
+    val httpResponse: HttpResponse<Any> =
+        when (ownersRepository().checkOwnersCredentials(body.username, body.password)) {
+            Verified -> {
+                setHeader("Token", authenticator().getToken(body.username))
+                json { "status" _ "success" }.ok
+            }
+            NotVerified -> forbidden("invalid login credentials")
+        }
+    httpResponse
 }

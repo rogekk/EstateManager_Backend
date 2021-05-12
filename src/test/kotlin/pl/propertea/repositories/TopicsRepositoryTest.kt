@@ -5,14 +5,14 @@ import org.junit.Test
 import pl.propertea.dsl.DatabaseTest
 import pl.propertea.models.*
 import pl.propertea.repositories.RepositoriesModule.communityRepository
-import pl.propertea.repositories.RepositoriesModule.forumsRepository
+import pl.propertea.repositories.RepositoriesModule.topicsRepository
 import pl.propertea.repositories.RepositoriesModule.ownersRepository
 import ro.kreator.aRandom
 
-class ForumsRepositoryTest : DatabaseTest() {
+class TopicsRepositoryTest : DatabaseTest() {
     val community by aRandom<Community>()
     val owner by aRandom<Owner>()
-    val expectedForums by aRandom<Forums> {
+    val expectedTopics by aRandom<Topics> {
         copy(topics.map {
             it.copy(
                 communityId = community.id,
@@ -34,17 +34,17 @@ class ForumsRepositoryTest : DatabaseTest() {
         ) as OwnerCreated
 
 
-        val emptyForums = forumsRepository().getForums()
+        val emptyTopics = topicsRepository().getTopics(community.id)
 
-        expect that emptyForums isEqualTo Forums(emptyList())
+        expect that emptyTopics isEqualTo Topics(emptyList())
 
-        expectedForums.topics.forEach {
-            forumsRepository().crateTopic(TopicCreation(it.subject, ownerCreated.ownerId, it.createdAt, it.communityId, it.description))
+        expectedTopics.topics.forEach {
+            topicsRepository().crateTopic(TopicCreation(it.subject, ownerCreated.ownerId, it.createdAt, it.communityId, it.description))
         }
 
-        val forums = forumsRepository().getForums()
+        val topics = topicsRepository().getTopics(community.id)
 
-        expect that forums.topics.map { it.subject } isEqualTo expectedForums.topics.map { it.subject }
+        expect that topics.topics.map { it.subject } isEqualTo expectedTopics.topics.map { it.subject }
     }
 
     @Test
@@ -59,11 +59,11 @@ class ForumsRepositoryTest : DatabaseTest() {
         ) as OwnerCreated
 
         val topic = TopicCreation("subj", creation.ownerId, now, community.id, "desc")
-        val topicId = forumsRepository().crateTopic(topic)
+        val topicId = topicsRepository().crateTopic(topic)
 
         val commentCreation = CommentCreation(creation.ownerId, topicId!!, "hello everyone")
-        forumsRepository().createComment(commentCreation)
+        topicsRepository().createComment(commentCreation)
 
-        expect that forumsRepository().getComments(topicId).map {it.content} isEqualTo listOf(commentCreation.content)
+        expect that topicsRepository().getComments(topicId).map {it.content} isEqualTo listOf(commentCreation.content)
     }
 }

@@ -13,6 +13,23 @@ import java.util.*
 
 class OwnersRepository(private val database: Database) {
 
+    fun getById(ownerId: OwnerId): Owner? {
+        return transaction(database) {
+            Owners
+                .select { Owners.id eq ownerId.id }
+                .map {
+                    Owner(
+                        OwnerId(it[Owners.id]),
+                        it[Owners.username],
+                        it[Owners.email],
+                        it[Owners.phoneNumber],
+                        it[Owners.address]
+                    )
+                }
+                .firstOrNull()
+        }
+    }
+
     fun getByUsername(username: String): Owner? {
         return transaction(database) {
             Owners

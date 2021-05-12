@@ -1,21 +1,22 @@
-package pl.forums
+package pl.topics
 
 import com.snitch.Handler
 import com.snitch.created
 import com.snitch.ok
-import org.joda.time.DateTime
+import communityId
 import pl.propertea.common.CommonModule.clock
 import pl.propertea.models.*
 import pl.propertea.repositories.RepositoriesModule.communityRepository
-import pl.propertea.repositories.RepositoriesModule.forumsRepository
+import pl.propertea.repositories.RepositoriesModule.topicsRepository
 import topicId
 
-val getForums: Handler<Nothing, ForumResponse> = {
-    val forum = forumsRepository().getForums()
-    forum.toResponse().ok
+val getTopics: Handler<Nothing, TopicsResponse> = {
+    val topics = topicsRepository().getTopics(CommunityId(request[communityId]))
+    topics.toResponse().ok
 }
+
 val createTopicsHandler: Handler<TopicRequest, String> = {
-    forumsRepository().crateTopic(
+    topicsRepository().crateTopic(
         TopicCreation(
             body.subject,
             OwnerId(body.createdBy),
@@ -33,7 +34,7 @@ val crateCommunityHandler: Handler<CommunityRequest, String> = {
 }
 
 val createCommentHandler: Handler<CreateCommentRequest, String> = {
-    forumsRepository().createComment(
+    topicsRepository().createComment(
         CommentCreation(
             OwnerId(body.createdBy),
             TopicId(request[topicId]),
@@ -45,7 +46,7 @@ val createCommentHandler: Handler<CreateCommentRequest, String> = {
 }
 
 val getCommentsHandler: Handler<Nothing, GetCommentsResponse> = {
-    val comments =forumsRepository().getComments(TopicId(request[topicId]))
+    val comments = topicsRepository().getComments(TopicId(request[topicId]))
         .map {
             CommentResponse(
                 it.id.id,

@@ -6,31 +6,30 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
-import pl.propertea.db.Comments
-import pl.propertea.db.Topics
+import pl.propertea.db.CommentsTable
+import pl.propertea.db.TopicsTable
 import pl.propertea.models.*
 import java.util.*
 
-interface ForumsRepository {
-    fun getForums(): Forums
+interface TopicsRepository {
+    fun getTopics(communityId: CommunityId): Topics
     fun crateTopic(topicCreation: TopicCreation): TopicId?
     fun createComment(commentCreation: CommentCreation)
     fun getComments(id: TopicId): List<Comment>
 }
 
-class PostgresForumsRepository(private val database: Database) : ForumsRepository {
-
-    override fun getForums(): Forums = transaction(database) {
-        Forums(Topics
-            .selectAll()
+class PostgresTopicsRepository(private val database: Database) : TopicsRepository {
+    override fun getTopics(communityId: CommunityId): Topics = transaction(database) {
+        Topics(TopicsTable
+            .select { TopicsTable.communityId eq communityId.id }
             .map {
                 Topic(
-                    TopicId(it[Topics.id]),
-                    it[Topics.subject],
-                    OwnerId(it[Topics.authorOwnerId]),
-                    it[Topics.createdAt],
-                    CommunityId(it[Topics.communityId]),
-                    it[Topics.description]
+                    TopicId(it[TopicsTable.id]),
+                    it[TopicsTable.subject],
+                    OwnerId(it[TopicsTable.authorOwnerId]),
+                    it[TopicsTable.createdAt],
+                    CommunityId(it[TopicsTable.communityId]),
+                    it[TopicsTable.description]
                 )
             }
         )
@@ -39,7 +38,7 @@ class PostgresForumsRepository(private val database: Database) : ForumsRepositor
     override fun crateTopic(topicCreation: TopicCreation): TopicId? {
         val topicId = UUID.randomUUID().toString()
         transaction(database) {
-            Topics.insert {
+            TopicsTable.insert {
                 it[id] = topicId
                 it[subject] = topicCreation.subject
                 it[createdAt] = DateTime.now()
@@ -53,7 +52,7 @@ class PostgresForumsRepository(private val database: Database) : ForumsRepositor
 
     override fun createComment(commentCreation: CommentCreation) {
         transaction(database) {
-            Comments.insert {
+            CommentsTable.insert {
                 it[id] = UUID.randomUUID().toString()
                 it[authorOwnerId] = commentCreation.createdBy.id
                 it[topicId] = commentCreation.topicId.id
@@ -65,15 +64,15 @@ class PostgresForumsRepository(private val database: Database) : ForumsRepositor
 
     override fun getComments(id: TopicId): List<Comment> {
         return transaction(database) {
-            Comments.select {
-                Comments.topicId eq id.id
+            CommentsTable.select {
+                CommentsTable.topicId eq id.id
             }
                 .map {
                     Comment(
-                        CommentId(it[Comments.id]),
-                        OwnerId(it[Comments.authorOwnerId]),
-                        TopicId(it[Comments.topicId]),
-                        it[Comments.content]
+                        CommentId(it[CommentsTable.id]),
+                        OwnerId(it[CommentsTable.authorOwnerId]),
+                        TopicId(it[CommentsTable.topicId]),
+                        it[CommentsTable.content]
                     )
                 }
         }
