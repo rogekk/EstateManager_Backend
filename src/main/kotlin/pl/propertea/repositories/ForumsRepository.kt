@@ -13,7 +13,7 @@ import java.util.*
 
 interface ForumsRepository {
     fun getForums(): Forums
-    fun crateTopic(topicCreation: Topic)
+    fun crateTopic(topicCreation: TopicCreation): TopicId?
     fun createComment(commentCreation: CommentCreation)
     fun getComments(id: TopicId): List<Comment>
 }
@@ -36,17 +36,19 @@ class PostgresForumsRepository(private val database: Database) : ForumsRepositor
         )
     }
 
-    override fun crateTopic(topicCreation: Topic) {
+    override fun crateTopic(topicCreation: TopicCreation): TopicId? {
+        val topicId = UUID.randomUUID().toString()
         transaction(database) {
             Topics.insert {
-                it[id] = UUID.randomUUID().toString()
+                it[id] = topicId
                 it[subject] = topicCreation.subject
                 it[createdAt] = DateTime.now()
                 it[authorOwnerId] = topicCreation.createdBy.id
-                it[communityId] = communityId
+                it[communityId] = topicCreation.communityId.id
                 it[description] = topicCreation.description
             }
         }
+        return TopicId(topicId)
     }
 
     override fun createComment(commentCreation: CommentCreation) {

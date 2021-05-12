@@ -8,4 +8,5 @@ import life.shank.single
 
 object CommonModule : ShankModule {
     val environment = single<EnvironmentVariables> { -> JvmEnvironmentVariables }
+    val clock = single<Clock> { -> SystemClock() }
 }

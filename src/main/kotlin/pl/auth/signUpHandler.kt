@@ -15,7 +15,7 @@ import pl.tools.json
 
 val signUpHandler: Handler<SignUpRequest, Any> = {
     when (ownersRepository().createOwner(body.username, body.password, body.email, body.phoneNumber, body.address)) {
-        OwnerCreated -> json { "status" _ "success" }.ok
+        is OwnerCreated -> json { "status" _ "success" }.ok
         UsernameTaken -> badRequest("username ${body.username} is already taken")
     }
 }

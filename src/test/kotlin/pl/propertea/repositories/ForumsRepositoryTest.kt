@@ -25,47 +25,45 @@ class ForumsRepositoryTest : DatabaseTest() {
     fun `returns a forum with topics`() {
 
         communityRepository().crateCommunity(community)
-        ownersRepository().createOwner(
+        val ownerCreated = ownersRepository().createOwner(
             owner.username,
-            owner.password,
             owner.email,
             owner.phoneNumber,
             owner.address,
             owner.id.id
-        )
+        ) as OwnerCreated
+
 
         val emptyForums = forumsRepository().getForums()
 
         expect that emptyForums isEqualTo Forums(emptyList())
 
         expectedForums.topics.forEach {
-            forumsRepository().crateTopic(it)
+            forumsRepository().crateTopic(TopicCreation(it.subject, ownerCreated.ownerId, it.createdAt, it.communityId, it.description))
         }
 
         val forums = forumsRepository().getForums()
 
-        expect that forums isEqualTo expectedForums
+        expect that forums.topics.map { it.subject } isEqualTo expectedForums.topics.map { it.subject }
     }
 
     @Test
     fun `adds a comment to a topic`() {
         communityRepository().crateCommunity(community)
-        ownersRepository().createOwner(
+        val creation = ownersRepository().createOwner(
             owner.username,
-            owner.password,
             owner.email,
             owner.phoneNumber,
             owner.address,
             owner.id.id
-        )
-        val topic = Topic(TopicId("topic"), "subj", owner.id, now, community.id, "desc")
-        forumsRepository().crateTopic(topic)
+        ) as OwnerCreated
 
-        val commentCreation = CommentCreation(owner.id, topic.id, "hello everyone")
+        val topic = TopicCreation("subj", creation.ownerId, now, community.id, "desc")
+        val topicId = forumsRepository().crateTopic(topic)
+
+        val commentCreation = CommentCreation(creation.ownerId, topicId!!, "hello everyone")
         forumsRepository().createComment(commentCreation)
 
-
-        expect that forumsRepository().getComments(topic.id).map {it.content} isEqualTo listOf(commentCreation.content)
-
+        expect that forumsRepository().getComments(topicId).map {it.content} isEqualTo listOf(commentCreation.content)
     }
 }

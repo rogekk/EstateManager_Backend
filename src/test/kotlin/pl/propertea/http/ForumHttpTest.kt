@@ -4,8 +4,8 @@ import com.memoizr.assertk.isEqualTo
 import com.snitch.extensions.parseJson
 import io.mockk.every
 import io.mockk.verify
-import org.joda.time.DateTime
 import org.junit.Test
+import pl.propertea.common.CommonModule.clock
 import pl.propertea.dsl.Mocks
 import pl.propertea.dsl.SparkTest
 import pl.propertea.dsl.relaxed
@@ -15,32 +15,34 @@ import pl.tools.json
 import ro.kreator.aRandom
 import ro.kreator.aRandomListOf
 
-class ForumHttpTest : SparkTest({ Mocks(forumsRepository.relaxed) }) {
+class ForumHttpTest : SparkTest({ Mocks(forumsRepository.relaxed, clock.relaxed) }) {
     val forum by aRandom<Forums>()
     val expectedComments by aRandomListOf<Comment>()
 
     @Test
-    fun `creates a topic` (){
-        whenPerform POST "/v1/forums/topics" withBody json{
+    fun `creates a topic`() {
+        every { clock().getDateTime() } returns now
+
+        whenPerform POST "/v1/forums/topics" withBody json {
             "createdBy" _ "id"
-            "topicId" _ "TId"
+            "communityId" _ "Id"
             "subject" _ "s1"
             "description" _ "d1"
-        }expectCode 201
+        } expectCode 201
 
         verify {
             forumsRepository().crateTopic(
-                Topic(
-                    TopicId("Id"),
+                TopicCreation(
                     "s1",
                     OwnerId("id"),
-                    DateTime(now),
+                    now,
                     CommunityId("Id"),
                     "d1"
                 )
             )
         }
     }
+
     @Test
     fun `returns a list of topics`() {
         every { forumsRepository().getForums() } returns forum
@@ -69,7 +71,6 @@ class ForumHttpTest : SparkTest({ Mocks(forumsRepository.relaxed) }) {
     @Test
     fun `gets all comments for a topic`() {
         every { forumsRepository().getComments(TopicId("atopicid")) } returns expectedComments
-
 
         whenPerform GET "/v1/forums/atopicid/comments" expectCode 200 expect {
             it.text.parseJson<GetCommentsResponse>()

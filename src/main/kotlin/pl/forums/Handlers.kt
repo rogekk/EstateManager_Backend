@@ -4,6 +4,7 @@ import com.snitch.Handler
 import com.snitch.created
 import com.snitch.ok
 import org.joda.time.DateTime
+import pl.propertea.common.CommonModule.clock
 import pl.propertea.models.*
 import pl.propertea.repositories.RepositoriesModule.communityRepository
 import pl.propertea.repositories.RepositoriesModule.forumsRepository
@@ -13,18 +14,17 @@ val getForums: Handler<Nothing, ForumResponse> = {
     val forum = forumsRepository().getForums()
     forum.toResponse().ok
 }
-val topicsHandler: Handler<TopicRequest, String> = {
+val createTopicsHandler: Handler<TopicRequest, String> = {
     forumsRepository().crateTopic(
-        Topic(
-            TopicId(body.id),
+        TopicCreation(
             body.subject,
             OwnerId(body.createdBy),
-            DateTime.now(),
+            clock().getDateTime(),
             CommunityId(body.communityId),
             body.description
         )
     )
-    "OK".ok
+    "OK".created
 }
 
 val crateCommunityHandler: Handler<CommunityRequest, String> = {

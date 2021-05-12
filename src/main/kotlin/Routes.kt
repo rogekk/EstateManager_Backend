@@ -4,7 +4,6 @@ import pl.auth.signUpHandler
 import pl.forums.*
 import pl.propertea.models.*
 import spark.Service
-import spark.Spark
 
 val topicId = path("topicId", "Id of the topic", NonEmptyString)
 
@@ -21,9 +20,9 @@ fun routes(http: Service): Router.() -> Unit =  {
         GET("/forums")
             .isHandledBy(getForums)
 
-        POST("/forums/topic")
+        POST("/forums/topics")
             .with(body<TopicRequest>())
-            .isHandledBy(topicsHandler)
+            .isHandledBy(createTopicsHandler)
 
         POST("/forums" / topicId / "comments")
             .with(body<CreateCommentRequest>())
