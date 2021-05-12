@@ -1,19 +1,16 @@
 package pl.propertea.http
 
 import com.memoizr.assertk.isEqualTo
-import com.snitch.extensions.json
 import com.snitch.extensions.parseJson
 import io.mockk.every
 import io.mockk.verify
+import org.joda.time.DateTime
 import org.junit.Test
-import pl.propertea.db.Comments
 import pl.propertea.dsl.Mocks
 import pl.propertea.dsl.SparkTest
 import pl.propertea.dsl.relaxed
 import pl.propertea.models.*
-import pl.propertea.repositories.RepositoriesModule.communityRepository
 import pl.propertea.repositories.RepositoriesModule.forumsRepository
-import pl.propertea.repositories.RepositoriesModule.ownersRepository
 import pl.tools.json
 import ro.kreator.aRandom
 import ro.kreator.aRandomListOf
@@ -22,6 +19,28 @@ class ForumHttpTest : SparkTest({ Mocks(forumsRepository.relaxed) }) {
     val forum by aRandom<Forums>()
     val expectedComments by aRandomListOf<Comment>()
 
+    @Test
+    fun `creates a topic` (){
+        whenPerform POST "/v1/forums/topics" withBody json{
+            "createdBy" _ "id"
+            "topicId" _ "TId"
+            "subject" _ "s1"
+            "description" _ "d1"
+        }expectCode 201
+
+        verify {
+            forumsRepository().crateTopic(
+                Topic(
+                    TopicId("Id"),
+                    "s1",
+                    OwnerId("id"),
+                    DateTime(now),
+                    CommunityId("Id"),
+                    "d1"
+                )
+            )
+        }
+    }
     @Test
     fun `returns a list of topics`() {
         every { forumsRepository().getForums() } returns forum

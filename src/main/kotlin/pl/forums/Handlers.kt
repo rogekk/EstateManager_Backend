@@ -1,20 +1,12 @@
 package pl.forums
 
 import com.snitch.Handler
-import com.snitch.badRequest
 import com.snitch.created
-import com.snitch.extensions.json
 import com.snitch.ok
 import org.joda.time.DateTime
-import org.slf4j.LoggerFactory
 import pl.propertea.models.*
-import pl.propertea.repositories.OwnerCreated
-import pl.propertea.repositories.RepositoriesModule
 import pl.propertea.repositories.RepositoriesModule.communityRepository
 import pl.propertea.repositories.RepositoriesModule.forumsRepository
-import pl.propertea.repositories.RepositoriesModule.ownersRepository
-import pl.propertea.repositories.UsernameTaken
-import pl.tools.json
 import topicId
 
 val getForums: Handler<Nothing, ForumResponse> = {
@@ -36,7 +28,7 @@ val topicsHandler: Handler<TopicRequest, String> = {
 }
 
 val crateCommunityHandler: Handler<CommunityRequest, String> = {
-    communityRepository().crateCommunity(Community(CommunityId(body.id)))
+    communityRepository().crateCommunity(Community(CommunityId(body.id),"Name"))
     "OK".ok
 }
 

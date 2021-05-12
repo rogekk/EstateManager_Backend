@@ -60,8 +60,6 @@ object Ownership: Table("ownership"){
     override val primaryKey = PrimaryKey(id)
 }
 
-
-
 object OwnerMembership: Table("owner_membership") {
     val id = text("id")
     val ownerId = text("owner_id").references(Owners.id)
@@ -93,6 +91,8 @@ object Resolutions: Table() {
 
 object Communities: Table() {
     val id = text("id")
+    val name = text("name")
+
 
     override val primaryKey = PrimaryKey(id)
 }

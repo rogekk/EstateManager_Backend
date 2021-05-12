@@ -41,6 +41,7 @@ class OwnersRepository(private val database: Database) {
         else
             NotVerified
     }
+
 }
 
 sealed class CreateOwnerResult {

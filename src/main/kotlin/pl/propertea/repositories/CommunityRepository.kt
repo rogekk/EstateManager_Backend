@@ -19,6 +19,7 @@ interface CommunityRepository {
             transaction (database) {
                 Communities.insert {
                     it[id] = community.id.id
+                    it[name] = community.name
                 }
             }
         }

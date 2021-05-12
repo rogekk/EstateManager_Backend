@@ -17,6 +17,7 @@ data class Topic(
     val createdAt: DateTime,
     val communityId: CommunityId,
     val description: String,
+
 )
 data class CommentCreation(
     val createdBy: OwnerId,
@@ -38,7 +39,8 @@ data class CreatedTopic(
 )
 
 data class Community(
-    val id: CommunityId
+    val id: CommunityId,
+    val name: String
 )
 
 data class Owner(
