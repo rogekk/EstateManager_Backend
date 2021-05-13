@@ -6,6 +6,7 @@ import com.snitch.extensions.parseJson
 import io.mockk.every
 import io.mockk.verify
 import org.junit.Test
+import pl.propertea.common.CommonModule.authenticator
 import pl.propertea.common.CommonModule.clock
 import pl.propertea.dsl.Mocks
 import pl.propertea.dsl.SparkTest
@@ -16,16 +17,23 @@ import pl.tools.json
 import ro.kreator.aRandom
 import ro.kreator.aRandomListOf
 
-class TopicsHttpTest : SparkTest({ Mocks(topicsRepository.relaxed, clock.relaxed) }) {
+class TopicsHttpTest : SparkTest({
+    Mocks(
+        topicsRepository.relaxed,
+        clock.relaxed,
+        authenticator.relaxed
+    )
+}) {
     val topics by aRandom<Topics>()
     val expectedComments by aRandomListOf<Comment>()
+    val owner by aRandom<Owner>()
 
     @Test
     fun `creates a topic`() {
         every { clock().getDateTime() } returns now
+        every { authenticator().authenticate(AuthToken("myToken")) } returns owner
 
-        whenPerform POST "/v1/communities/cid/topics" withHeaders hashMapOf(authTokenHeader to "334") withBody json {
-            "createdBy" _ "id"
+        whenPerform POST "/v1/communities/cid/topics" withHeaders hashMapOf(authTokenHeader to "myToken") withBody json {
             "communityId" _ "Id"
             "subject" _ "s1"
             "description" _ "d1"
@@ -35,7 +43,7 @@ class TopicsHttpTest : SparkTest({ Mocks(topicsRepository.relaxed, clock.relaxed
             topicsRepository().crateTopic(
                 TopicCreation(
                     "s1",
-                    OwnerId("id"),
+                    owner.id,
                     now,
                     CommunityId("Id"),
                     "d1"
@@ -53,15 +61,17 @@ class TopicsHttpTest : SparkTest({ Mocks(topicsRepository.relaxed, clock.relaxed
 
     @Test
     fun `creates a new comment for a topic`() {
+        every { authenticator().authenticate(AuthToken("myBullshitToken")) } returns owner
+
         whenPerform POST "/v1/communities/cid/topics/atopicid/comments" withBody json {
             "content" _ "blah"
             "createdBy" _ "id"
-        } withHeaders hashMapOf(authTokenHeader to "34") expectCode 201
+        } withHeaders hashMapOf(authTokenHeader to "myBullshitToken") expectCode 201
 
         verify {
             topicsRepository().createComment(
                 CommentCreation(
-                    OwnerId("id"),
+                    owner.id,
                     TopicId("atopicid"),
                     "blah"
                 )

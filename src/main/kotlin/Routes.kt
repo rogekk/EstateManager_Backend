@@ -4,6 +4,8 @@ import pl.auth.loginHandler
 import pl.auth.signUpHandler
 import pl.topics.*
 import pl.profile.getProfile
+import pl.propertea.common.CommonModule
+import pl.propertea.common.CommonModule.authenticator
 import pl.propertea.models.*
 import spark.Service
 
@@ -70,15 +72,23 @@ private fun setAccessControlHeaders(http: Service) {
             response.body("")
         }
     }
+
+    http.exception(AuthenticationException::class.java) { exception, _, response ->
+        response.status(401)
+        response.body("Unauthenticated")
+    }
 }
 
 fun <T : Any> Endpoint<T>.authenticated() = withHeader(authTokenHeader)
 
 fun RequestHandler<*>.authenticatedOwner(): Owner {
     val authTokenValue = request[authTokenHeader]
-    return Authenticator().authenticate(AuthToken(authTokenValue)) ?: throw IllegalAccessError()
+    return kotlin.runCatching {  authenticator().authenticate(AuthToken(authTokenValue)) }
+        .getOrNull()?: throw AuthenticationException()
 }
 
 fun RequestHandler<*>.setHeader(key: String, value: String) {
     (response as SparkResponseWrapper).response.header(key, value)
 }
+
+class AuthenticationException() : Exception()

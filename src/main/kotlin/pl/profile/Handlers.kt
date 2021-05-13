@@ -9,6 +9,6 @@ import pl.propertea.models.ProfileResponse
 val getProfile: Handler<Nothing, ProfileResponse> = {
     val user = authenticatedOwner()
 
-    ProfileResponse(user.username).ok
+    ProfileResponse(user.username, emptyList()).ok
 }
 

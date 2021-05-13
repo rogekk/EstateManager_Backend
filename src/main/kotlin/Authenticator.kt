@@ -6,21 +6,26 @@ import pl.propertea.models.AuthToken
 import pl.propertea.models.Owner
 import pl.propertea.repositories.RepositoriesModule
 
-class Authenticator {
-    val algorithm = Algorithm.HMAC256("secret")
+interface Authenticator {
+    fun authenticate(authToken: AuthToken): Owner?
+    fun getToken(username: String): String
+}
+
+class JWTAuthenticator: Authenticator {
+    private val algorithm = Algorithm.HMAC256("secret")
 
     private val verifier: JWTVerifier = JWT.require(algorithm)
         .withIssuer("auth0")
         .build() //Reusable verifier instance
 
-    fun authenticate(authToken: AuthToken): Owner? {
+    override fun authenticate(authToken: AuthToken): Owner? {
         val jwt = verifier.verify(authToken.token)
         val message = jwt.claims["username"]
         return RepositoriesModule.ownersRepository().getByUsername(message!!.asString())
     }
 
 
-    fun getToken(username: String) = JWT
+    override fun getToken(username: String) = JWT
         .create()
         .withIssuer("auth0")
         .withClaim("username", username)

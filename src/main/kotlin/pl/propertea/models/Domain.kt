@@ -7,9 +7,8 @@ data class OwnerId(val id: String)
 data class CommunityId(val id: String)
 data class CommentId(val id: String)
 
-data class Topics(
-    val topics: List<Topic>
-    )
+data class Topics(val topics: List<Topic>)
+
 data class Topic(
     val id: TopicId,
     val subject: String,
@@ -53,6 +52,4 @@ data class Owner(
     val email: String,
     val phoneNumber: String,
     val address: String,
-) {
-
-}
+)

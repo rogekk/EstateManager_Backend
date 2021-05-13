@@ -1,5 +1,6 @@
 package pl.topics
 
+import authenticatedOwner
 import com.snitch.Handler
 import com.snitch.created
 import com.snitch.ok
@@ -11,15 +12,14 @@ import pl.propertea.repositories.RepositoriesModule.topicsRepository
 import topicId
 
 val getTopics: Handler<Nothing, TopicsResponse> = {
-    val topics = topicsRepository().getTopics(CommunityId(request[communityId]))
-    topics.toResponse().ok
+    topicsRepository().getTopics(CommunityId(request[communityId])).toResponse().ok
 }
 
 val createTopicsHandler: Handler<TopicRequest, String> = {
     topicsRepository().crateTopic(
         TopicCreation(
             body.subject,
-            OwnerId(body.createdBy),
+            authenticatedOwner().id,
             clock().getDateTime(),
             CommunityId(body.communityId),
             body.description
@@ -36,7 +36,7 @@ val crateCommunityHandler: Handler<CommunityRequest, String> = {
 val createCommentHandler: Handler<CreateCommentRequest, String> = {
     topicsRepository().createComment(
         CommentCreation(
-            OwnerId(body.createdBy),
+            authenticatedOwner().id,
             TopicId(request[topicId]),
             body.content
         )

@@ -35,4 +35,9 @@ data class CommentResponse(
     val content: String
 )
 
-data class ProfileResponse(val username: String)
+data class ProfileResponse(
+    val username: String,
+    val communities: List<CommunityMembershipResponse>
+)
+
+data class CommunityMembershipResponse(val communityId: CommunityId)

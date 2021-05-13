@@ -21,13 +21,12 @@ val signUpHandler: Handler<SignUpRequest, Any> = {
 }
 
 val loginHandler: Handler<LoginRequest, Any> = {
-    val httpResponse: HttpResponse<Any> =
-        when (ownersRepository().checkOwnersCredentials(body.username, body.password)) {
-            Verified -> {
-                setHeader("Token", authenticator().getToken(body.username))
-                json { "status" _ "success" }.ok
-            }
-            NotVerified -> forbidden("invalid login credentials")
+    when (ownersRepository().checkOwnersCredentials(body.username, body.password)) {
+        Verified -> {
+            val value = authenticator().getToken(body.username)
+            setHeader("Token", value)
+            json { "token" _ value }.ok
         }
-    httpResponse
+        NotVerified -> forbidden("invalid login credentials")
+    }
 }

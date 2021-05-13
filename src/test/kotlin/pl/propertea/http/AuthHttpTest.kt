@@ -45,6 +45,7 @@ class AuthHttpTest : SparkTest({ Mocks(ownersRepository.relaxed) }) {
         whenPerform POST "/v1/login" withBody json { "username" _ owner.username; "password" _ "b" } expect {
             whenPerform GET "/v1/profile" withHeaders hashMapOf(authTokenHeader to it.headers["token"]) expectBodyJson json {
                 "username" _ owner.username
+                "communities" _ emptyList<String>()
             }
         }
     }
