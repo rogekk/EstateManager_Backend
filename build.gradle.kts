@@ -22,6 +22,8 @@ dependencies {
     implementation("com.github.memoizr.snitch:core:68db35c0af")
     implementation("com.sparkjava:spark-core:2.9.3")
     implementation("com.github.memoizr:Shank:3.0.0")
+    implementation("com.auth0:java-jwt:3.16.0")
+
 
     implementation("ch.qos.logback:logback-classic:1.2.3")
     implementation("ch.qos.logback:logback-core:1.2.3")

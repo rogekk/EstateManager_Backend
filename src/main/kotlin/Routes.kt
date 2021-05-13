@@ -1,12 +1,18 @@
 import com.snitch.*
+import com.snitch.spark.SparkResponseWrapper
 import pl.auth.loginHandler
 import pl.auth.signUpHandler
-import pl.forums.*
+import pl.topics.*
+import pl.profile.getProfile
+import pl.propertea.common.CommonModule
+import pl.propertea.common.CommonModule.authenticator
 import pl.propertea.models.*
 import spark.Service
-import spark.Spark
 
 val topicId = path("topicId", "Id of the topic", NonEmptyString)
+val communityId = path("communityId", "Id of the community", NonEmptyString)
+
+val authTokenHeader = header("X-Auth-Token", "the auth token", NonEmptyString)
 
 fun routes(http: Service): Router.() -> Unit =  {
     "v1" / {
@@ -18,24 +24,32 @@ fun routes(http: Service): Router.() -> Unit =  {
             .with(body<LoginRequest>())
             .isHandledBy(loginHandler)
 
-        GET("/forums")
-            .isHandledBy(getForums)
+        GET("/profile")
+            .authenticated()
+            .isHandledBy(getProfile)
 
-        POST("/forums/topic")
+        GET("/communities" / communityId / "topics")
+            .authenticated()
+            .isHandledBy(getTopics)
+
+        POST("/communities" / communityId / "topics")
+            .authenticated()
             .with(body<TopicRequest>())
-            .isHandledBy(topicsHandler)
+            .isHandledBy(createTopicsHandler)
 
-        POST("/forums" / topicId / "comments")
+        POST("/communities" / communityId / "topics" / topicId / "comments")
+            .authenticated()
             .with(body<CreateCommentRequest>())
             .isHandledBy(createCommentHandler)
 
-        GET("/forums" / topicId / "comments")
+        GET("/communities" / communityId / "topics" / topicId / "comments")
+            .authenticated()
             .isHandledBy(getCommentsHandler)
 
         POST("/communities")
+            .authenticated()
             .with(body<CommunityRequest>())
             .isHandledBy(crateCommunityHandler)
-
     }
 
     setAccessControlHeaders(http)
@@ -58,5 +72,23 @@ private fun setAccessControlHeaders(http: Service) {
             response.body("")
         }
     }
+
+    http.exception(AuthenticationException::class.java) { exception, _, response ->
+        response.status(401)
+        response.body("Unauthenticated")
+    }
 }
 
+fun <T : Any> Endpoint<T>.authenticated() = withHeader(authTokenHeader)
+
+fun RequestHandler<*>.authenticatedOwner(): Owner {
+    val authTokenValue = request[authTokenHeader]
+    return kotlin.runCatching {  authenticator().authenticate(AuthToken(authTokenValue)) }
+        .getOrNull()?: throw AuthenticationException()
+}
+
+fun RequestHandler<*>.setHeader(key: String, value: String) {
+    (response as SparkResponseWrapper).response.header(key, value)
+}
+
+class AuthenticationException() : Exception()
