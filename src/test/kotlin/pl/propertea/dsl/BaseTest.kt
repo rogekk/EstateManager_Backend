@@ -22,7 +22,8 @@ class Mocks(vararg val mocks: MockedProvider<*>) {
 abstract class BaseTest(val mockBlock: () -> Mocks = { Mocks() }) {
     protected val now = DateTime()
     private val customDate by customize { now }
-//    private val customDateNull by customize<DateTime?> { now }
+
+    //    private val customDateNull by customize<DateTime?> { now }
     @Suppress("USELESS_CAST")
 //    private val simplePutClip by customize<SimplePutClip>().using(::SimplePutClip) { it[any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), null as TopicId?] }
 
@@ -47,9 +48,10 @@ abstract class BaseTest(val mockBlock: () -> Mocks = { Mocks() }) {
     init {
         registerCustomizations(
             customDate,
-       )
+        )
 
-        val root = org.slf4j.LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME) as ch.qos.logback.classic.Logger
+        val root =
+            org.slf4j.LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME) as ch.qos.logback.classic.Logger
         root.level = Level.ERROR
     }
 

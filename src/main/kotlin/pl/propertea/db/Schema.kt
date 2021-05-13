@@ -24,15 +24,17 @@ object Owners : Table() {
 
     override val primaryKey = PrimaryKey(id)
 }
-object Apartment : Table(){
+
+object Apartment : Table() {
     val id = text("id")
-    val number = text ("number")
+    val number = text("number")
     val usableArea = integer("usable_area")
     val apartmentsShares = integer("apartments_shares")
     val buildingsId = text("buildings_id").references(Buildings.id)
 
     override val primaryKey = PrimaryKey(id)
 }
+
 object ParkingSpot : Table() {
     val id = text("id")
     val number = text("number")
@@ -41,7 +43,8 @@ object ParkingSpot : Table() {
 
     override val primaryKey = PrimaryKey(id)
 }
-object StorageRoom : Table(){
+
+object StorageRoom : Table() {
     val id = text("id")
     val number = text("number")
     val storageShares = integer("storage_shares")
@@ -49,7 +52,8 @@ object StorageRoom : Table(){
 
     override val primaryKey = PrimaryKey(id)
 }
-object Ownership: Table("ownership"){
+
+object Ownership : Table("ownership") {
     val id = text("id")
     val apartmentId = text("apartment_id").references(Apartment.id)
     val parkingSpotId = text("parking_spot_id").references(ParkingSpot.id)
@@ -59,7 +63,7 @@ object Ownership: Table("ownership"){
     override val primaryKey = PrimaryKey(id)
 }
 
-object OwnerMembership: Table("owner_membership") {
+object OwnerMembership : Table("owner_membership") {
     val id = text("id")
     val ownerId = text("owner_id").references(Owners.id)
     val communityId = text("community_id").references(Communities.id)
@@ -68,7 +72,7 @@ object OwnerMembership: Table("owner_membership") {
     override val primaryKey = PrimaryKey(id)
 }
 
-object Resolutions: Table() {
+object Resolutions : Table() {
     val id = text("id")
     val communityId = text("community_id").references(Communities.id)
     val number = text("number")
@@ -88,7 +92,7 @@ object Resolutions: Table() {
     override val primaryKey = PrimaryKey(id)
 }
 
-object Communities: Table() {
+object Communities : Table() {
     val id = text("id")
     val name = text("name")
 
@@ -96,7 +100,7 @@ object Communities: Table() {
     override val primaryKey = PrimaryKey(id)
 }
 
-object Buildings: Table() {
+object Buildings : Table() {
     val id = text("id")
     val communityId = text("community_id").references(Communities.id)
 
@@ -107,7 +111,7 @@ enum class ResolutionResult {
     APPROVED, REJECTED, OPEN_FOR_VOTING, CANCELED
 }
 
-object TopicsTable: Table("topics") {
+object TopicsTable : Table("topics") {
     val id = text("id")
     val communityId = text("community_id").references(Communities.id)
     val authorOwnerId = text("author_owner_id").references(Owners.id)
@@ -118,7 +122,7 @@ object TopicsTable: Table("topics") {
     override val primaryKey = PrimaryKey(id)
 }
 
-object CommentsTable: Table("comments") {
+object CommentsTable : Table("comments") {
     val id = text("id")
     val authorOwnerId = text("author_owner_id").references(Owners.id)
     val topicId = text("topic_id").references(TopicsTable.id)

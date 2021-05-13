@@ -40,7 +40,8 @@ abstract class HttpTest(mockBlock: () -> Mocks = { Mocks() }) : BaseTest(mockBlo
 
     @Rule
     @JvmField
-    val rule: TestRule = RuleChain.outerRule(GlobalDependenciesRegistrationTestRule()).around(HttpTestRule(portDifferentForEachTest))
+    val rule: TestRule =
+        RuleChain.outerRule(GlobalDependenciesRegistrationTestRule()).around(HttpTestRule(portDifferentForEachTest))
 
     val whenPerform by lazy { this }
 
@@ -49,7 +50,8 @@ abstract class HttpTest(mockBlock: () -> Mocks = { Mocks() }) : BaseTest(mockBlo
     infix fun PATCH(endpoint: String): Expectation = Expectation(portDifferentForEachTest, HttpMethod.PATCH, endpoint)
     infix fun DELETE(endpoint: String): Expectation = Expectation(portDifferentForEachTest, HttpMethod.DELETE, endpoint)
     infix fun PUT(endpoint: String): Expectation = Expectation(portDifferentForEachTest, HttpMethod.PUT, endpoint)
-    infix fun OPTIONS(endpoint: String): Expectation = Expectation(portDifferentForEachTest, HttpMethod.OPTIONS, endpoint)
+    infix fun OPTIONS(endpoint: String): Expectation =
+        Expectation(portDifferentForEachTest, HttpMethod.OPTIONS, endpoint)
 
     override fun registerMocks() {
         super.registerMocks()
@@ -83,17 +85,42 @@ abstract class HttpTest(mockBlock: () -> Mocks = { Mocks() }) : BaseTest(mockBlo
         private val response: Response by lazy { execute() }
 
         fun execute(): Response = when (method) {
-            HttpMethod.GET -> khttp.get("http://localhost:${port}$serviceName$endpoint", headers = headers, json = body?.toHashMap())
-            HttpMethod.POST -> khttp.post("http://localhost:${port}$serviceName$endpoint", headers = headers, json = body?.toHashMap())
-            HttpMethod.PUT -> khttp.put("http://localhost:${port}$serviceName$endpoint", headers = headers, json = body?.toHashMap())
-            HttpMethod.DELETE -> khttp.delete("http://localhost:${port}$serviceName$endpoint", headers = headers, json = body?.toHashMap())
-            HttpMethod.PATCH -> khttp.patch("http://localhost:${port}$serviceName$endpoint", headers = headers, json = body?.toHashMap())
-            HttpMethod.OPTIONS -> khttp.options("http://localhost:${port}$serviceName$endpoint", headers = headers, json = body?.toHashMap())
+            HttpMethod.GET -> khttp.get(
+                "http://localhost:${port}$serviceName$endpoint",
+                headers = headers,
+                json = body?.toHashMap()
+            )
+            HttpMethod.POST -> khttp.post(
+                "http://localhost:${port}$serviceName$endpoint",
+                headers = headers,
+                json = body?.toHashMap()
+            )
+            HttpMethod.PUT -> khttp.put(
+                "http://localhost:${port}$serviceName$endpoint",
+                headers = headers,
+                json = body?.toHashMap()
+            )
+            HttpMethod.DELETE -> khttp.delete(
+                "http://localhost:${port}$serviceName$endpoint",
+                headers = headers,
+                json = body?.toHashMap()
+            )
+            HttpMethod.PATCH -> khttp.patch(
+                "http://localhost:${port}$serviceName$endpoint",
+                headers = headers,
+                json = body?.toHashMap()
+            )
+            HttpMethod.OPTIONS -> khttp.options(
+                "http://localhost:${port}$serviceName$endpoint",
+                headers = headers,
+                json = body?.toHashMap()
+            )
         }
 
         infix fun withBody(body: Any) = copy(body = body)
 
-        infix fun withHeaders(headers: Map<out HeaderParameter<*>, Any?>) = copy(headers = headers.map { it.key.name to it.value.toString() }.toMap())
+        infix fun withHeaders(headers: Map<out HeaderParameter<*>, Any?>) =
+            copy(headers = headers.map { it.key.name to it.value.toString() }.toMap())
 
         infix fun expectCode(code: Int) = apply {
             try {

@@ -4,6 +4,7 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 import pl.propertea.db.Owners
 import pl.propertea.models.Owner
 import pl.propertea.models.OwnerId
@@ -11,9 +12,32 @@ import pl.tools.hash
 import pl.tools.verify
 import java.util.*
 
-class OwnersRepository(private val database: Database) {
 
-    fun getById(ownerId: OwnerId): Owner? {
+interface OwnersRepository {
+    fun getById(ownerId: OwnerId): Owner?
+    fun getByUsername(username: String): Owner?
+    fun createOwner(
+        username: String,
+        password: String,
+        email: String,
+        phoneNumber: String,
+        address: String,
+        id: String = UUID.randomUUID().toString()
+    ): CreateOwnerResult
+
+    fun checkOwnersCredentials(username: String, password: String): OwnerCredentials
+    fun updateOwnersDetails(
+        ownerId: OwnerId,
+        email: String? = null,
+        address: String? = null,
+        phoneNumber: String? = null
+    )
+
+}
+
+class PostgresOwnersRepository(private val database: Database) : OwnersRepository {
+
+    override fun getById(ownerId: OwnerId): Owner? {
         return transaction(database) {
             Owners
                 .select { Owners.id eq ownerId.id }
@@ -30,7 +54,7 @@ class OwnersRepository(private val database: Database) {
         }
     }
 
-    fun getByUsername(username: String): Owner? {
+    override fun getByUsername(username: String): Owner? {
         return transaction(database) {
             Owners
                 .select { Owners.username eq username }
@@ -47,13 +71,13 @@ class OwnersRepository(private val database: Database) {
         }
     }
 
-    fun createOwner(
+    override fun createOwner(
         username: String,
         password: String,
         email: String,
         phoneNumber: String,
         address: String,
-        id: String = UUID.randomUUID().toString()
+        id: String
     ) = transaction(database) {
         val user = Owners
             .select { Owners.username eq username }
@@ -72,7 +96,7 @@ class OwnersRepository(private val database: Database) {
         if (user == null) OwnerCreated(OwnerId(id)) else UsernameTaken
     }
 
-    fun checkOwnersCredentials(username: String, password: String) = transaction(database) {
+    override fun checkOwnersCredentials(username: String, password: String) = transaction(database) {
         val hashedPassword =
             Owners
                 .select { (Owners.username eq username) }
@@ -83,6 +107,24 @@ class OwnersRepository(private val database: Database) {
             Verified
         else
             NotVerified
+    }
+
+    override fun updateOwnersDetails(
+        ownerId: OwnerId,
+        email: String?,
+        address: String?,
+        phoneNumber: String?
+    ) {
+        transaction(database) {
+            Owners.update({ Owners.id eq ownerId.id }) {
+                if (address != null)
+                    it[Owners.address] = address
+                if (email != null)
+                    it[Owners.email] = email
+                if (phoneNumber != null)
+                    it[Owners.phoneNumber] = phoneNumber
+            }
+        }
     }
 
 }

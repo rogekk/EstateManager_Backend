@@ -29,7 +29,7 @@ val createTopicsHandler: Handler<TopicRequest, String> = {
 }
 
 val crateCommunityHandler: Handler<CommunityRequest, String> = {
-    communityRepository().crateCommunity(Community(CommunityId(body.id),"Name"))
+    communityRepository().crateCommunity(Community(CommunityId(body.id), "Name"))
     "OK".ok
 }
 

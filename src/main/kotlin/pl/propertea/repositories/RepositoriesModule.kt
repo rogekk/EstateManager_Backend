@@ -5,9 +5,10 @@ import life.shank.single
 import pl.propertea.db.DatabaseModule
 
 object RepositoriesModule : ShankModule {
-    val ownersRepository = single { -> OwnersRepository(DatabaseModule.readWriteDatabase()) }
+    val ownersRepository = single { -> PostgresOwnersRepository(DatabaseModule.readWriteDatabase()) }
     val topicsRepository = single<TopicsRepository> { -> PostgresTopicsRepository(DatabaseModule.readWriteDatabase()) }
-    val communityRepository = single<CommunityRepository> { -> PostgresCommunityRepository(DatabaseModule.readWriteDatabase())}
+    val communityRepository =
+        single<CommunityRepository> { -> PostgresCommunityRepository(DatabaseModule.readWriteDatabase()) }
 }
 
 

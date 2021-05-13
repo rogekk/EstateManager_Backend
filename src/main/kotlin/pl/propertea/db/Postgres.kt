@@ -11,10 +11,11 @@ object Postgres {
     private var initialized = false
 
     fun getReadWriteDatabase(postgresConnection: PostgresConnection): Database {
-        val database = Database.connect("jdbc:postgresql://${postgresConnection.address}/${postgresConnection.name}",
-                user = postgresConnection.user,
-                password = postgresConnection.password,
-                driver = "org.postgresql.Driver",
+        val database = Database.connect(
+            "jdbc:postgresql://${postgresConnection.address}/${postgresConnection.name}",
+            user = postgresConnection.user,
+            password = postgresConnection.password,
+            driver = "org.postgresql.Driver",
 //
         )
 
@@ -23,10 +24,11 @@ object Postgres {
     }
 
     fun getReadOnlyDatabase(postgresConnection: PostgresConnection): Database {
-        val database = Database.connect("jdbc:postgresql://${postgresConnection.address}/${postgresConnection.name}?loadBalanceHosts=true",
-                user = postgresConnection.user,
-                password = postgresConnection.password,
-                driver = "org.postgresql.Driver",
+        val database = Database.connect(
+            "jdbc:postgresql://${postgresConnection.address}/${postgresConnection.name}?loadBalanceHosts=true",
+            user = postgresConnection.user,
+            password = postgresConnection.password,
+            driver = "org.postgresql.Driver",
         )
         creteMissingTablesAndColumns(readWriteDatabase())
         return database

@@ -39,7 +39,15 @@ class TopicsRepositoryTest : DatabaseTest() {
         expect that emptyTopics isEqualTo Topics(emptyList())
 
         expectedTopics.topics.forEach {
-            topicsRepository().crateTopic(TopicCreation(it.subject, ownerCreated.ownerId, it.createdAt, it.communityId, it.description))
+            topicsRepository().crateTopic(
+                TopicCreation(
+                    it.subject,
+                    ownerCreated.ownerId,
+                    it.createdAt,
+                    it.communityId,
+                    it.description
+                )
+            )
         }
 
         val topics = topicsRepository().getTopics(community.id)
@@ -64,6 +72,6 @@ class TopicsRepositoryTest : DatabaseTest() {
         val commentCreation = CommentCreation(creation.ownerId, topicId!!, "hello everyone")
         topicsRepository().createComment(commentCreation)
 
-        expect that topicsRepository().getComments(topicId).map {it.content} isEqualTo listOf(commentCreation.content)
+        expect that topicsRepository().getComments(topicId).map { it.content } isEqualTo listOf(commentCreation.content)
     }
 }

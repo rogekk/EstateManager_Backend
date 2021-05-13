@@ -11,7 +11,7 @@ interface Authenticator {
     fun getToken(username: String): String
 }
 
-class JWTAuthenticator: Authenticator {
+class JWTAuthenticator : Authenticator {
     private val algorithm = Algorithm.HMAC256("secret")
 
     private val verifier: JWTVerifier = JWT.require(algorithm)

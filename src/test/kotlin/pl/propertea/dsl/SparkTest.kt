@@ -21,8 +21,8 @@ abstract class SparkTest(mockBlock: () -> Mocks = { Mocks() }) : BaseTest(mockBl
     @Rule
     @JvmField
     val rule: RuleChain = RuleChain.outerRule(GlobalDependenciesRegistrationTestRule())
-            .around(DatabaseTestRule())
-            .around(HttpTestRule(port))
+        .around(DatabaseTestRule())
+        .around(HttpTestRule(port))
 
     val whenPerform = this
 
@@ -64,18 +64,43 @@ abstract class SparkTest(mockBlock: () -> Mocks = { Mocks() }) : BaseTest(mockBl
 
         private val response by lazy {
             when (method) {
-                HttpMethod.GET -> khttp.get("http://localhost:${port}$endpoint", headers = headers, json = body?.toHashMap())
-                HttpMethod.POST -> khttp.post("http://localhost:${port}$endpoint", headers = headers, json = body?.toHashMap())
-                HttpMethod.PUT -> khttp.put("http://localhost:${port}$endpoint", headers = headers, json = body?.toHashMap())
-                HttpMethod.DELETE -> khttp.delete("http://localhost:${port}$endpoint", headers = headers, json = body?.toHashMap())
-                HttpMethod.PATCH -> khttp.patch("http://localhost:${port}$endpoint", headers = headers, json = body?.toHashMap())
-                HttpMethod.OPTIONS -> khttp.options("http://localhost:${port}$endpoint", headers = headers, json = body?.toHashMap())
+                HttpMethod.GET -> khttp.get(
+                    "http://localhost:${port}$endpoint",
+                    headers = headers,
+                    json = body?.toHashMap()
+                )
+                HttpMethod.POST -> khttp.post(
+                    "http://localhost:${port}$endpoint",
+                    headers = headers,
+                    json = body?.toHashMap()
+                )
+                HttpMethod.PUT -> khttp.put(
+                    "http://localhost:${port}$endpoint",
+                    headers = headers,
+                    json = body?.toHashMap()
+                )
+                HttpMethod.DELETE -> khttp.delete(
+                    "http://localhost:${port}$endpoint",
+                    headers = headers,
+                    json = body?.toHashMap()
+                )
+                HttpMethod.PATCH -> khttp.patch(
+                    "http://localhost:${port}$endpoint",
+                    headers = headers,
+                    json = body?.toHashMap()
+                )
+                HttpMethod.OPTIONS -> khttp.options(
+                    "http://localhost:${port}$endpoint",
+                    headers = headers,
+                    json = body?.toHashMap()
+                )
             }
         }
 
         infix fun withBody(body: Any) = copy(body = body)
 
-        infix fun withHeaders(headers: Map<out HeaderParameter<*>, Any?>) = copy(headers = headers.map { it.key.name to it.value.toString() }.toMap())
+        infix fun withHeaders(headers: Map<out HeaderParameter<*>, Any?>) =
+            copy(headers = headers.map { it.key.name to it.value.toString() }.toMap())
 
         infix fun expectBody(body: String) = apply {
             expect that response.text isEqualTo body

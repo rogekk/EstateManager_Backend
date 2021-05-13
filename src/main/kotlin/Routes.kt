@@ -4,6 +4,7 @@ import pl.auth.loginHandler
 import pl.auth.signUpHandler
 import pl.topics.*
 import pl.profile.getProfile
+import pl.profile.updateOwnersHandler
 import pl.propertea.common.CommonModule
 import pl.propertea.common.CommonModule.authenticator
 import pl.propertea.models.*
@@ -11,10 +12,11 @@ import spark.Service
 
 val topicId = path("topicId", "Id of the topic", NonEmptyString)
 val communityId = path("communityId", "Id of the community", NonEmptyString)
+val ownerId = path("ownerId", "Id of the owner", NonEmptyString)
 
 val authTokenHeader = header("X-Auth-Token", "the auth token", NonEmptyString)
 
-fun routes(http: Service): Router.() -> Unit =  {
+fun routes(http: Service): Router.() -> Unit = {
     "v1" / {
         POST("/signup")
             .with(body<SignUpRequest>())
@@ -50,6 +52,11 @@ fun routes(http: Service): Router.() -> Unit =  {
             .authenticated()
             .with(body<CommunityRequest>())
             .isHandledBy(crateCommunityHandler)
+
+        PATCH("/owners" / ownerId)
+            .authenticated()
+            .with(body<UpdateOwnersRequest>())
+            .isHandledBy(updateOwnersHandler)
     }
 
     setAccessControlHeaders(http)
@@ -83,8 +90,8 @@ fun <T : Any> Endpoint<T>.authenticated() = withHeader(authTokenHeader)
 
 fun RequestHandler<*>.authenticatedOwner(): Owner {
     val authTokenValue = request[authTokenHeader]
-    return kotlin.runCatching {  authenticator().authenticate(AuthToken(authTokenValue)) }
-        .getOrNull()?: throw AuthenticationException()
+    return kotlin.runCatching { authenticator().authenticate(AuthToken(authTokenValue)) }
+        .getOrNull() ?: throw AuthenticationException()
 }
 
 fun RequestHandler<*>.setHeader(key: String, value: String) {
