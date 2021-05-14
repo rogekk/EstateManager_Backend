@@ -2,10 +2,12 @@ import com.snitch.*
 import com.snitch.spark.SparkResponseWrapper
 import pl.auth.loginHandler
 import pl.auth.signUpHandler
+import pl.communities.createCommunityHandler
+import pl.communities.createMembershipHandler
+import pl.communities.getCommunitiesHandler
 import pl.topics.*
 import pl.profile.getProfile
 import pl.profile.updateOwnersHandler
-import pl.propertea.common.CommonModule
 import pl.propertea.common.CommonModule.authenticator
 import pl.propertea.models.*
 import spark.Service
@@ -51,7 +53,15 @@ fun routes(http: Service): Router.() -> Unit = {
         POST("/communities")
             .authenticated()
             .with(body<CommunityRequest>())
-            .isHandledBy(crateCommunityHandler)
+            .isHandledBy(createCommunityHandler)
+
+        GET("/communities")
+            .isHandledBy(getCommunitiesHandler)
+
+        POST("/communities" / communityId / "members")
+            .authenticated()
+            .with(body<CreateCommunityMembershipRequest>())
+            .isHandledBy(createMembershipHandler)
 
         PATCH("/owners" / ownerId)
             .authenticated()
