@@ -26,7 +26,7 @@ fun routes(http: Service): Router.() -> Unit = {
             .with(body<LoginRequest>())
             .isHandledBy(loginHandler)
 
-        GET("/profile")
+        GET("/owners" / ownerId)
             .authenticated()
             .isHandledBy(getProfile)
 

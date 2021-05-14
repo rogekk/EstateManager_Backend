@@ -38,8 +38,12 @@ data class CommentResponse(
 )
 
 data class ProfileResponse(
+    val id: String,
     val username: String,
+    val email: String,
+    val phoneNumber: String,
+    val address: String,
     val communities: List<CommunityMembershipResponse>
 )
 
-data class CommunityMembershipResponse(val communityId: CommunityId)
+data class CommunityMembershipResponse(val communityId: String, val name: String)

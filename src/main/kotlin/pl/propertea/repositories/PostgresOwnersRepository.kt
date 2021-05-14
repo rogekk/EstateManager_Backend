@@ -1,13 +1,11 @@
 package pl.propertea.repositories
 
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
+import pl.propertea.db.Communities
+import pl.propertea.db.OwnerMembership
 import pl.propertea.db.Owners
-import pl.propertea.models.Owner
-import pl.propertea.models.OwnerId
+import pl.propertea.models.*
 import pl.tools.hash
 import pl.tools.verify
 import java.util.*
@@ -32,6 +30,8 @@ interface OwnersRepository {
         address: String? = null,
         phoneNumber: String? = null
     )
+
+    fun getProfile(id: OwnerId): OwnerProfile
 
 }
 
@@ -124,6 +124,32 @@ class PostgresOwnersRepository(private val database: Database) : OwnersRepositor
                 if (phoneNumber != null)
                     it[Owners.phoneNumber] = phoneNumber
             }
+        }
+    }
+
+    override fun getProfile(id: OwnerId): OwnerProfile {
+        return transaction(database) {
+            OwnerMembership
+                .leftJoin(Communities)
+                .leftJoin(Owners)
+                .slice(Communities.columns + Owners.columns + OwnerMembership.shares)
+                .selectAll()
+                .map {
+                    Owner(
+                        OwnerId(it[Owners.id]),
+                        it[Owners.username],
+                        it[Owners.email],
+                        it[Owners.phoneNumber],
+                        it[Owners.address]
+                    ) to Community(
+                        CommunityId(it[Communities.id]),
+                        it[Communities.name]
+                    )
+                }
+                .groupBy { it.first }
+                .map {
+                    OwnerProfile(it.key, it.value.map { it.second })
+                }.first()
         }
     }
 

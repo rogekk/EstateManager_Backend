@@ -6,6 +6,7 @@ data class TopicId(val id: String)
 data class OwnerId(val id: String)
 data class CommunityId(val id: String)
 data class CommentId(val id: String)
+data class Shares(val value: Int)
 
 data class Topics(val topics: List<Topic>)
 
@@ -52,4 +53,9 @@ data class Owner(
     val email: String,
     val phoneNumber: String,
     val address: String,
+)
+
+data class OwnerProfile(
+    val owner: Owner,
+    val communities: List<Community>
 )

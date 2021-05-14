@@ -2,13 +2,14 @@ package pl.propertea.repositories
 
 import life.shank.ShankModule
 import life.shank.single
-import pl.propertea.db.DatabaseModule
+import pl.propertea.common.CommonModule.idGenerator
+import pl.propertea.db.DatabaseModule.readWriteDatabase
 
 object RepositoriesModule : ShankModule {
-    val ownersRepository = single { -> PostgresOwnersRepository(DatabaseModule.readWriteDatabase()) }
-    val topicsRepository = single<TopicsRepository> { -> PostgresTopicsRepository(DatabaseModule.readWriteDatabase()) }
+    val ownersRepository = single { -> PostgresOwnersRepository(readWriteDatabase()) }
+    val topicsRepository = single<TopicsRepository> { -> PostgresTopicsRepository(readWriteDatabase()) }
     val communityRepository =
-        single<CommunityRepository> { -> PostgresCommunityRepository(DatabaseModule.readWriteDatabase()) }
+        single<CommunityRepository> { -> PostgresCommunityRepository(readWriteDatabase(), idGenerator()) }
 }
 
 

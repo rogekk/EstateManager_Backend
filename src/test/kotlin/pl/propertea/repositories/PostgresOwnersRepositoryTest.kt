@@ -2,12 +2,16 @@ package pl.propertea.repositories
 
 import pl.propertea.repositories.RepositoriesModule.ownersRepository
 import com.memoizr.assertk.expect
+import io.ktor.utils.io.*
 import org.junit.Test
 import pl.propertea.dsl.DatabaseTest
-import pl.propertea.models.Owner
-import pl.propertea.models.OwnerId
+import pl.propertea.models.*
+import pl.propertea.repositories.RepositoriesModule.communityRepository
+import ro.kreator.aRandomListOf
+import kotlin.math.exp
 
 class PostgresOwnersRepositoryTest : DatabaseTest() {
+    val communities by aRandomListOf<Community>(10) { mapIndexed { i, it -> it.copy(id = CommunityId("id$i")) } }
 
     @Test
     fun `allows sign up and login`() {
@@ -62,6 +66,29 @@ class PostgresOwnersRepositoryTest : DatabaseTest() {
             "email",
             "222",
             "kolejowa"
+        )
+    }
+
+    @Test
+    fun `gets the users profile`() {
+        val creation = ownersRepository().createOwner("aa", "bb", "email", "111", "kolejowa") as OwnerCreated
+
+        communities.forEachIndexed { i, it ->
+            communityRepository().crateCommunity(it)
+            if (i % 2 == 0) {
+                communityRepository().setMembership(creation.ownerId, it.id, Shares(10))
+            }
+        }
+
+        expect that ownersRepository().getProfile(creation.ownerId) isEqualTo OwnerProfile(
+            Owner(
+                creation.ownerId,
+                "aa",
+                "email",
+                "111",
+                "kolejowa",
+            ),
+            communities.filterIndexed { i, _ -> i % 2 == 0 }
         )
     }
 
