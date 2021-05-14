@@ -2,6 +2,7 @@ package pl.propertea.models
 
 data class GenericResponse(val message: String)
 
+data class LoginResponse(val token: String, val id: String)
 data class TopicsResponse(val topics: List<TopicResponse>)
 
 

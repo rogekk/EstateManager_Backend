@@ -1,7 +1,7 @@
 import com.snitch.*
 import com.snitch.spark.SparkResponseWrapper
 import pl.auth.loginHandler
-import pl.auth.signUpHandler
+import pl.auth.createOwnerHandler
 import pl.communities.createCommunityHandler
 import pl.communities.createMembershipHandler
 import pl.communities.getCommunitiesHandler
@@ -20,9 +20,9 @@ val authTokenHeader = header("X-Auth-Token", "the auth token", NonEmptyString)
 
 fun routes(http: Service): Router.() -> Unit = {
     "v1" / {
-        POST("/signup")
-            .with(body<SignUpRequest>())
-            .isHandledBy(signUpHandler)
+        POST("/owners")
+            .with(body<CreateOwnerRequest>())
+            .isHandledBy(createOwnerHandler)
 
         POST("/login")
             .with(body<LoginRequest>())

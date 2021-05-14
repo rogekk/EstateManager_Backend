@@ -1,12 +1,15 @@
 package pl.propertea.models
 
-data class SignUpRequest(
+data class CreateOwnerRequest(
     val username: String,
     val password: String,
     val email: String,
     val phoneNumber: String,
-    val address: String
+    val address: String,
+    val memberships: List<CommunityMembershipRequest>
 )
+
+data class CommunityMembershipRequest(val communityId: String, val shares: Int)
 
 data class LoginRequest(val username: String, val password: String)
 data class TopicRequest(val subject: String, val communityId: String, val description: String)

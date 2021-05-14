@@ -28,6 +28,7 @@ val getProfile: Handler<Nothing, ProfileResponse> = {
             )
         }).ok
 }
+
 val updateOwnersHandler: Handler<UpdateOwnersRequest, String> = {
     ownersRepository().updateOwnersDetails(
         authenticatedOwner().id,
