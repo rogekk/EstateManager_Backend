@@ -3,15 +3,12 @@ package pl.auth
 import com.snitch.*
 import pl.propertea.common.CommonModule.authenticator
 import pl.propertea.models.*
-import pl.propertea.repositories.NotVerified
-import pl.propertea.repositories.OwnerCreated
+import pl.propertea.repositories.*
 import pl.propertea.repositories.RepositoriesModule.ownersRepository
-import pl.propertea.repositories.UsernameTaken
-import pl.propertea.repositories.Verified
 import setHeader
 
 
-val createOwnerHandler: Handler<CreateOwnerRequest, Any> = {
+val createOwnerHandler: Handler<CreateOwnerRequest, GenericResponse> = {
     when (ownersRepository().createOwner(
         body.memberships.map { CommunityId(it.communityId) to Shares(it.shares) },
         body.username,
@@ -25,7 +22,7 @@ val createOwnerHandler: Handler<CreateOwnerRequest, Any> = {
     }
 }
 
-val loginHandler: Handler<LoginRequest, Any> = {
+val loginHandler: Handler<LoginRequest, LoginResponse> = {
     val checkOwnersCredentials = ownersRepository().checkOwnersCredentials(body.username, body.password)
     when (checkOwnersCredentials) {
         is Verified -> {

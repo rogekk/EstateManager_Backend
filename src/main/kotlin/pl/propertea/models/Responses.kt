@@ -1,10 +1,16 @@
 package pl.propertea.models
 
+import com.snitch.documentation.Description
+
 data class GenericResponse(val message: String)
 
-data class LoginResponse(val token: String, val id: String)
-data class TopicsResponse(val topics: List<TopicResponse>)
+data class LoginResponse(
+    @Description("The authtoken in JWT form")
+    val token: String,
+    val id: String
+)
 
+data class TopicsResponse(val topics: List<TopicResponse>)
 
 fun Topics.toResponse() = TopicsResponse(
     topics.map { it.toResponse() }

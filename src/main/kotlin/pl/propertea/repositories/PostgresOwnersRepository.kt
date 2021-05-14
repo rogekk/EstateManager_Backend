@@ -14,7 +14,9 @@ import java.util.*
 
 interface OwnersRepository {
     fun getById(ownerId: OwnerId): Owner?
+
     fun getByUsername(username: String): Owner?
+
     fun createOwner(
         communities: List<Pair<CommunityId, Shares>>,
         username: String,
@@ -26,18 +28,21 @@ interface OwnersRepository {
     ): CreateOwnerResult
 
     fun checkOwnersCredentials(username: String, password: String): OwnerCredentials
+
     fun updateOwnersDetails(
         ownerId: OwnerId,
         email: String? = null,
         address: String? = null,
-        phoneNumber: String? = null
+        phoneNumber: String? = null,
+        profileImageUrl: String? = null,
     )
 
     fun getProfile(id: OwnerId): OwnerProfile
 
 }
 
-class PostgresOwnersRepository(private val database: Database, private val idGenerator: IdGenerator) : OwnersRepository {
+class PostgresOwnersRepository(private val database: Database, private val idGenerator: IdGenerator) :
+    OwnersRepository {
 
     override fun getById(ownerId: OwnerId): Owner? {
         return transaction(database) {
@@ -125,7 +130,8 @@ class PostgresOwnersRepository(private val database: Database, private val idGen
         ownerId: OwnerId,
         email: String?,
         address: String?,
-        phoneNumber: String?
+        phoneNumber: String?,
+        profileImageUrl: String?,
     ) {
         transaction(database) {
             Owners.update({ Owners.id eq ownerId.id }) {
@@ -135,6 +141,8 @@ class PostgresOwnersRepository(private val database: Database, private val idGen
                     it[Owners.email] = email
                 if (phoneNumber != null)
                     it[Owners.phoneNumber] = phoneNumber
+                if (profileImageUrl != null)
+                    it[Owners.profileImageUrl] = profileImageUrl
             }
         }
     }

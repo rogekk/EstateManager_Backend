@@ -17,6 +17,11 @@ data class CommunityRequest(val id: String, val name: String)
 data class CreateCommunityMembershipRequest(
     val ownerId: String,
     val shares: Int)
-data class UpdateOwnersRequest(val email: String? = null, val address: String? = null, val phoneNumber: String? = null)
+data class UpdateOwnersRequest(
+    val email: String? = null,
+    val address: String? = null,
+    val phoneNumber: String? = null,
+    val profileImageUrl: String? = null,
+)
 
 data class CreateCommentRequest(val content: String)
