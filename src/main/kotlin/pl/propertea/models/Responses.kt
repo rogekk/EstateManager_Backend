@@ -12,6 +12,7 @@ fun Topics.toResponse() = TopicsResponse(
 fun Topic.toResponse() = TopicResponse(
     id.id,
     subject,
+    description,
     createdBy.id,
     createdAt.toDateTimeISO().toString()
 )
@@ -19,6 +20,7 @@ fun Topic.toResponse() = TopicResponse(
 data class TopicResponse(
     val id: String,
     val subject: String,
+    val description: String,
     val createdBy: String,
     val createdAt: String
 )

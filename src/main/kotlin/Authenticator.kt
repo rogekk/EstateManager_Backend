@@ -25,7 +25,7 @@ class JWTAuthenticator : Authenticator {
     }
 
 
-    override fun getToken(username: String) = JWT
+    override fun getToken(username: String): String = JWT
         .create()
         .withIssuer("auth0")
         .withClaim("username", username)
