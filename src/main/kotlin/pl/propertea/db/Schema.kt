@@ -6,7 +6,7 @@ import org.jetbrains.exposed.sql.jodatime.datetime
 val schema = arrayOf(
     Owners,
     OwnerMembership,
-    Resolutions,
+    ResolutionsTable,
     Communities,
     TopicsTable,
     CommentsTable,
@@ -72,21 +72,19 @@ object OwnerMembership : Table("owner_membership") {
     override val primaryKey = PrimaryKey(id)
 }
 
-object Resolutions : Table() {
+object ResolutionsTable : Table() {
     val id = text("id")
     val communityId = text("community_id").references(Communities.id)
     val number = text("number")
     val createdAt = datetime("created_at")
-    val startedVotingAt = datetime("started_voting_at").nullable()
     val passingDate = datetime("passing_date").nullable()
     val endingDate = datetime("ending_date").nullable()
     val sharesPro = integer("shares_pro")
     val sharesAgainst = integer("shares_against")
-    val sharesWithheld = integer("shares_withheld")
     val totalSharesEntitled = integer("total_shares_entitled")
-    val attachments = text("attachments")
+    val attachments = text("attachments").nullable()
     val subject = text("subject")
-    val description = text("description")
+    val description = text("description").nullable()
     val result = enumeration("result", ResolutionResult::class)
 
     override val primaryKey = PrimaryKey(id)

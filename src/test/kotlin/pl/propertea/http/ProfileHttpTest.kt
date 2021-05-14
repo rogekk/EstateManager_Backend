@@ -5,7 +5,6 @@ import authTokenHeader
 import io.mockk.every
 import io.mockk.verify
 import org.junit.Test
-import pl.propertea.common.CommonModule
 import pl.propertea.common.CommonModule.authenticator
 import pl.propertea.dsl.Mocks
 import pl.propertea.dsl.SparkTest
