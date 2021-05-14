@@ -12,6 +12,7 @@ import pl.propertea.dsl.relaxed
 import pl.propertea.dsl.strict
 import pl.propertea.models.Owner
 import pl.propertea.models.OwnerId
+import pl.propertea.models.OwnerProfile
 import pl.propertea.repositories.NotVerified
 import pl.propertea.repositories.Verified
 import pl.propertea.tools.json
@@ -26,7 +27,7 @@ class AuthHttpTest : SparkTest({ Mocks(ownersRepository.relaxed) }) {
 
     @Test
     fun `returns success for successful login`() {
-        every { ownersRepository().checkOwnersCredentials("foo", "pass") } returns Verified
+        every { ownersRepository().checkOwnersCredentials("foo", "pass") } returns Verified(owner.id)
         whenPerform POST "/v1/login" withBody json { "username" _ "foo"; "password" _ "pass" } expectCode 200
     }
 
@@ -40,10 +41,15 @@ class AuthHttpTest : SparkTest({ Mocks(ownersRepository.relaxed) }) {
     @Test
     fun `after successful login sets a valid JWT`() {
         every { ownersRepository().getByUsername(owner.username) } returns owner
-        every { ownersRepository().checkOwnersCredentials(owner.username, "b") } returns Verified
+        every { ownersRepository().getProfile(owner.id) } returns OwnerProfile(owner, emptyList())
+        every { ownersRepository().checkOwnersCredentials(owner.username, "b") } returns Verified(owner.id)
 
         whenPerform POST "/v1/login" withBody json { "username" _ owner.username; "password" _ "b" } expect {
-            whenPerform GET "/v1/profile" withHeaders hashMapOf(authTokenHeader to it.headers["token"]) expectBodyJson json {
+            whenPerform GET "/v1/owners/ownid" withHeaders hashMapOf(authTokenHeader to it.headers["token"]) expectBodyJson json {
+                "phoneNumber" _ owner.phoneNumber
+                "address" _ owner.address
+                "id" _ owner.id.id
+                "email" _ owner.email
                 "username" _ owner.username
                 "communities" _ emptyList<String>()
             }

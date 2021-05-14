@@ -1,11 +1,13 @@
 import com.snitch.*
 import com.snitch.spark.SparkResponseWrapper
 import pl.auth.loginHandler
-import pl.auth.signUpHandler
+import pl.auth.createOwnerHandler
+import pl.communities.createCommunityHandler
+import pl.communities.createMembershipHandler
+import pl.communities.getCommunitiesHandler
 import pl.topics.*
 import pl.profile.getProfile
 import pl.profile.updateOwnersHandler
-import pl.propertea.common.CommonModule
 import pl.propertea.common.CommonModule.authenticator
 import pl.propertea.models.*
 import spark.Service
@@ -18,15 +20,15 @@ val authTokenHeader = header("X-Auth-Token", "the auth token", NonEmptyString)
 
 fun routes(http: Service): Router.() -> Unit = {
     "v1" / {
-        POST("/signup")
-            .with(body<SignUpRequest>())
-            .isHandledBy(signUpHandler)
+        POST("/owners")
+            .with(body<CreateOwnerRequest>())
+            .isHandledBy(createOwnerHandler)
 
         POST("/login")
             .with(body<LoginRequest>())
             .isHandledBy(loginHandler)
 
-        GET("/profile")
+        GET("/owners" / ownerId)
             .authenticated()
             .isHandledBy(getProfile)
 
@@ -51,7 +53,15 @@ fun routes(http: Service): Router.() -> Unit = {
         POST("/communities")
             .authenticated()
             .with(body<CommunityRequest>())
-            .isHandledBy(crateCommunityHandler)
+            .isHandledBy(createCommunityHandler)
+
+        GET("/communities")
+            .isHandledBy(getCommunitiesHandler)
+
+        POST("/communities" / communityId / "members")
+            .authenticated()
+            .with(body<CreateCommunityMembershipRequest>())
+            .isHandledBy(createMembershipHandler)
 
         PATCH("/owners" / ownerId)
             .authenticated()
