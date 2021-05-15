@@ -12,30 +12,35 @@ data class LoginResponse(
 
 data class TopicsResponse(val topics: List<TopicResponse>)
 
-fun Topics.toResponse() = TopicsResponse(
-    topics.map { it.toResponse() }
+fun List<TopicWithOwner>.toResponse() = TopicsResponse(
+    map { it.toResponse() }
 )
 
-fun Topic.toResponse() = TopicResponse(
-    id.id,
-    subject,
-    description,
-    createdBy.id,
-    createdAt.toDateTimeISO().toString()
+fun TopicWithOwner.toResponse() = TopicResponse(
+    topic.id.id,
+    topic.subject,
+    topic.description,
+    TopicCreatorResponse(owner.id.id, owner.username, owner.profileImageUrl),
+    topic.createdAt.toDateTimeISO().toString()
 )
 
 data class TopicResponse(
     val id: String,
     val subject: String,
     val description: String,
-    val createdBy: String,
+    val createdBy: TopicCreatorResponse,
     val createdAt: String
+)
+
+data class TopicCreatorResponse(
+    val id: String,
+    val username: String,
+    val profileImageUrl: String?,
 )
 
 data class GetCommentsResponse(
     val comments: List<CommentResponse>
 )
-
 
 data class CommentResponse(
     val id: String,

@@ -8,17 +8,15 @@ import pl.propertea.repositories.RepositoriesModule.communityRepository
 import pl.propertea.repositories.RepositoriesModule.topicsRepository
 import pl.propertea.repositories.RepositoriesModule.ownersRepository
 import ro.kreator.aRandom
+import ro.kreator.aRandomListOf
 
 class TopicsRepositoryTest : DatabaseTest() {
     val community by aRandom<Community>()
     val owner by aRandom<Owner>()
-    val expectedTopics by aRandom<Topics> {
-        copy(topics.map {
-            it.copy(
-                communityId = community.id,
-                createdBy = owner.id
-            )
-        })
+    val expectedTopics by aRandomListOf<Topic>(10) {
+        map {
+            it.copy(communityId = community.id, createdBy = owner.id)
+        }.sortedByDescending { it.createdAt }
     }
 
     @Test
@@ -37,9 +35,9 @@ class TopicsRepositoryTest : DatabaseTest() {
 
         val emptyTopics = topicsRepository().getTopics(community.id)
 
-        expect that emptyTopics isEqualTo Topics(emptyList())
+        expect that emptyTopics isEqualTo emptyList()
 
-        expectedTopics.topics.forEach {
+        expectedTopics.forEach {
             topicsRepository().crateTopic(
                 TopicCreation(
                     it.subject,
@@ -53,7 +51,7 @@ class TopicsRepositoryTest : DatabaseTest() {
 
         val topics = topicsRepository().getTopics(community.id)
 
-        expect that topics.topics.map { it.subject } isEqualTo expectedTopics.topics.map { it.subject }
+        expect that topics.map { it.topic.subject } containsOnly expectedTopics.map { it.subject }
     }
 
     @Test

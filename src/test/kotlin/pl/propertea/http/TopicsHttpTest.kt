@@ -24,7 +24,7 @@ class TopicsHttpTest : SparkTest({
         authenticator.relaxed
     )
 }) {
-    val topics by aRandom<Topics>()
+    val topics by aRandomListOf<TopicWithOwner>(10)
     val expectedComments by aRandomListOf<Comment>()
     val owner by aRandom<Owner>()
 

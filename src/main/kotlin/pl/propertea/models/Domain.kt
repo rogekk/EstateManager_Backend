@@ -19,6 +19,11 @@ data class Topic(
     val description: String,
 )
 
+data class TopicWithOwner(
+    val topic: Topic,
+    val owner: Owner
+)
+
 data class AuthToken(val token: String)
 
 data class TopicCreation(
@@ -53,6 +58,7 @@ data class Owner(
     val email: String,
     val phoneNumber: String,
     val address: String,
+    val profileImageUrl: String?,
 )
 
 data class OwnerProfile(

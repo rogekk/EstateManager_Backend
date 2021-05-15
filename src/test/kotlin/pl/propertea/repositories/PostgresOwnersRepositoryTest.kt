@@ -58,7 +58,8 @@ class PostgresOwnersRepositoryTest : DatabaseTest() {
             "aa",
             "email",
             "phoneNumber",
-            "address"
+            "address",
+            null
         )
 
     }
@@ -72,7 +73,7 @@ class PostgresOwnersRepositoryTest : DatabaseTest() {
             "krojek@gmail.com",
             "111",
             "kolejowa",
-            "id"
+            "id",
         )
         //update the contact details
         ownersRepository().updateOwnersDetails(OwnerId("id"), "email")
@@ -82,7 +83,8 @@ class PostgresOwnersRepositoryTest : DatabaseTest() {
             "aa",
             "email",
             "111",
-            "kolejowa"
+            "kolejowa",
+            null
         )
     }
 
@@ -95,7 +97,7 @@ class PostgresOwnersRepositoryTest : DatabaseTest() {
             "email",
             "111",
             "kolejowa",
-            "id"
+            "id",
         )
         //update the contact details
         ownersRepository().updateOwnersDetails(OwnerId("id"), phoneNumber = "222")
@@ -105,7 +107,8 @@ class PostgresOwnersRepositoryTest : DatabaseTest() {
             "aa",
             "email",
             "222",
-            "kolejowa"
+            "kolejowa",
+            null
         )
     }
 
@@ -133,6 +136,7 @@ class PostgresOwnersRepositoryTest : DatabaseTest() {
                 "email",
                 "111",
                 "kolejowa",
+                null,
             ),
             communities.take(1) + communities.filterIndexed { i, _ -> i % 2 == 0 }
         )

@@ -54,7 +54,8 @@ class PostgresOwnersRepository(private val database: Database, private val idGen
                         it[Owners.username],
                         it[Owners.email],
                         it[Owners.phoneNumber],
-                        it[Owners.address]
+                        it[Owners.address],
+                        it[Owners.profileImageUrl],
                     )
                 }
                 .firstOrNull()
@@ -71,7 +72,8 @@ class PostgresOwnersRepository(private val database: Database, private val idGen
                         it[Owners.username],
                         it[Owners.email],
                         it[Owners.phoneNumber],
-                        it[Owners.address]
+                        it[Owners.address],
+                        it[Owners.profileImageUrl]
                     )
                 }
                 .firstOrNull()
@@ -160,7 +162,8 @@ class PostgresOwnersRepository(private val database: Database, private val idGen
                         it[Owners.username],
                         it[Owners.email],
                         it[Owners.phoneNumber],
-                        it[Owners.address]
+                        it[Owners.address],
+                        it[Owners.profileImageUrl],
                     ) to Community(
                         CommunityId(it[Communities.id]),
                         it[Communities.name]
