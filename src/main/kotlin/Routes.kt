@@ -57,6 +57,9 @@ fun routes(http: Service): Router.() -> Unit = {
             .authenticated()
             .with(body<UpdateOwnersRequest>())
             .isHandledBy(updateOwnersHandler)
+        GET("/communities" / communityId / "resolutions")
+            .authenticated()
+
     }
 
     setAccessControlHeaders(http)

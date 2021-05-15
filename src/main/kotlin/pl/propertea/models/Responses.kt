@@ -2,12 +2,34 @@ package pl.propertea.models
 
 data class GenericResponse(val message: String)
 
-data class TopicsResponse(val topics: List<TopicResponse>)
+data class ResolutionsResponse(val resolutions: List<ResolutionResponse>)
 
+fun List<Resolution>.toResponse() = ResolutionsResponse(
+    map { it.toResponse() }
+)
+
+fun Resolution.toResponse() = ResolutionResponse(
+    id.id,
+    number,
+    subject,
+    createdAt.toDateTimeISO().toString(),
+    totalShares.shares,
+    description
+)
+data class ResolutionResponse(
+    val id: String,
+    val number: String,
+    val subject: String,
+    val createdAt: String,
+    val totalShares: Int,
+    val description: String?
+)
+data class TopicsResponse(val topics: List<TopicResponse>)
 
 fun Topics.toResponse() = TopicsResponse(
     topics.map { it.toResponse() }
 )
+
 
 fun Topic.toResponse() = TopicResponse(
     id.id,

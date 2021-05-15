@@ -18,8 +18,8 @@ fun main() {
     // insertCommunities
 
     runCatching {
-        communityRepository().crateCommunity(Community(CommunityId("id1"), "Bankowa"))
-        communityRepository().crateCommunity(Community(CommunityId("id2"), "Kolejowa"))
+        communityRepository().crateCommunity(Community(CommunityId("id1"), "Bankowa", TotalShares(100)))
+        communityRepository().crateCommunity(Community(CommunityId("id2"), "Kolejowa",TotalShares(100)))
     }
 
     // insertTopic

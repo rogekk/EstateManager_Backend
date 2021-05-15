@@ -9,10 +9,12 @@ data class OwnerId(val id: String)
 data class CommunityId(val id: String)
 data class CommentId(val id: String)
 data class ResolutionId(val id: String)
+data class TotalShares(val shares: Int)
 
 data class Topics(val topics: List<Topic>)
 
 data class Resolutions(val resolutions: List<Resolution>)
+
 
 data class Topic(
     val id: TopicId,
@@ -33,11 +35,9 @@ data class Resolution(
     val createdAt: DateTime,
     val passingDate: DateTime?,
     val endingDate: DateTime?,
-    val sharesPro: Int,
-    val sharesAgainst: Int,
-    val totalShares: Int,
+    val sharesPro: String?,
+    val sharesAgainst: String?,
     val description: String?,
-    val s: String?,
 
     )
 
@@ -46,11 +46,6 @@ data class ResolutionCreation(
     val number: String,
     val subject: String,
     val createdAt: DateTime,
-    val passingDate: DateTime?,
-    val endingDate: DateTime?,
-    val sharesPro: Int,
-    val sharesAgainst: Int,
-    val totalShares: Int,
     val description: String?,
 
 )
@@ -78,7 +73,8 @@ data class Comment(
 
 data class Community(
     val id: CommunityId,
-    val name: String
+    val name: String,
+    val totalShares: TotalShares
 )
 
 data class Owner(

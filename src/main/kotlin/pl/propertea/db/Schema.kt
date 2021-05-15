@@ -81,7 +81,6 @@ object ResolutionsTable : Table() {
     val endingDate = datetime("ending_date").nullable()
     val sharesPro = integer("shares_pro")
     val sharesAgainst = integer("shares_against")
-    val totalSharesEntitled = integer("total_shares_entitled")
     val attachments = text("attachments").nullable()
     val subject = text("subject")
     val description = text("description").nullable()
@@ -93,7 +92,7 @@ object ResolutionsTable : Table() {
 object Communities : Table() {
     val id = text("id")
     val name = text("name")
-
+    val totalShares = integer("total_shares")
 
     override val primaryKey = PrimaryKey(id)
 }
