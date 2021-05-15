@@ -16,7 +16,7 @@ interface TopicsRepository {
     fun getTopics(communityId: CommunityId): List<TopicWithOwner>
     fun crateTopic(topicCreation: TopicCreation): TopicId?
     fun createComment(commentCreation: CommentCreation)
-    fun getComments(id: TopicId): List<Comment>
+    fun getComments(id: TopicId): List<CommentWithOwner>
 }
 
 class PostgresTopicsRepository(private val database: Database) : TopicsRepository {
@@ -75,17 +75,30 @@ class PostgresTopicsRepository(private val database: Database) : TopicsRepositor
         }
     }
 
-    override fun getComments(id: TopicId): List<Comment> {
+    override fun getComments(id: TopicId): List<CommentWithOwner> {
         return transaction(database) {
-            CommentsTable.select {
-                CommentsTable.topicId eq id.id
-            }
+            CommentsTable
+                .leftJoin(Owners)
+                .slice(Owners.columns + CommentsTable.columns)
+                .select {
+                    CommentsTable.topicId eq id.id
+                }
                 .map {
-                    Comment(
-                        CommentId(it[CommentsTable.id]),
-                        OwnerId(it[CommentsTable.authorOwnerId]),
-                        TopicId(it[CommentsTable.topicId]),
-                        it[CommentsTable.content]
+                    CommentWithOwner(
+                        Comment(
+                            CommentId(it[CommentsTable.id]),
+                            OwnerId(it[CommentsTable.authorOwnerId]),
+                            TopicId(it[CommentsTable.topicId]),
+                            it[CommentsTable.content]
+                        ),
+                        Owner(
+                            OwnerId(it[Owners.id]),
+                            it[Owners.username],
+                            it[Owners.email],
+                            it[Owners.phoneNumber],
+                            it[Owners.address],
+                            it[Owners.profileImageUrl],
+                        )
                     )
                 }
         }

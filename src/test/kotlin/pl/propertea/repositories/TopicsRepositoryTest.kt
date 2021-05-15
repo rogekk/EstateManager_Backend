@@ -72,6 +72,6 @@ class TopicsRepositoryTest : DatabaseTest() {
         val commentCreation = CommentCreation(creation.ownerId, topicId!!, "hello everyone")
         topicsRepository().createComment(commentCreation)
 
-        expect that topicsRepository().getComments(topicId).map { it.content } isEqualTo listOf(commentCreation.content)
+        expect that topicsRepository().getComments(topicId).map { it.comment.content } isEqualTo listOf(commentCreation.content)
     }
 }

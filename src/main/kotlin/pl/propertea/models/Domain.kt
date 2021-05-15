@@ -47,6 +47,11 @@ data class Comment(
     val content: String
 )
 
+data class CommentWithOwner(
+    val comment: Comment,
+    val owner: Owner
+)
+
 data class Community(
     val id: CommunityId,
     val name: String

@@ -44,10 +44,14 @@ val getCommentsHandler: Handler<Nothing, GetCommentsResponse> = {
     val comments = topicsRepository().getComments(TopicId(request[topicId]))
         .map {
             CommentResponse(
-                it.id.id,
-                it.createdBy.id,
-                it.topicId.id,
-                it.content
+                it.comment.id.id,
+                CommentCreatorResponse(
+                    it.owner.id.id,
+                    it.owner.username,
+                    it.owner.profileImageUrl
+                ),
+                it.comment.topicId.id,
+                it.comment.content
             )
         }
 

@@ -44,9 +44,15 @@ data class GetCommentsResponse(
 
 data class CommentResponse(
     val id: String,
-    val createdBy: String,
+    val createdBy: CommentCreatorResponse,
     val topicId: String,
     val content: String
+)
+
+data class CommentCreatorResponse(
+    val id: String,
+    val username: String,
+    val profileImageUrl: String? = null,
 )
 
 data class ProfileResponse(
