@@ -26,6 +26,7 @@ class TopicsRepositoryTest : DatabaseTest() {
 
         communityRepository().crateCommunity(community)
         val ownerCreated = ownersRepository().createOwner(
+            listOf(community.id to Shares(10)),
             owner.username,
             owner.email,
             owner.phoneNumber,
@@ -59,6 +60,7 @@ class TopicsRepositoryTest : DatabaseTest() {
     fun `adds a comment to a topic`() {
         communityRepository().crateCommunity(community)
         val creation = ownersRepository().createOwner(
+            listOf(community.id to Shares(10)),
             owner.username,
             owner.email,
             owner.phoneNumber,

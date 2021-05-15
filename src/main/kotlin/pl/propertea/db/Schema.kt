@@ -20,6 +20,7 @@ object Owners : Table() {
     val password = text("password")
     val email = text("email")
     val phoneNumber = text("phone_number")
+    val profileImageUrl = text("profile_image_url").nullable()
     val address = text("address")
 
     override val primaryKey = PrimaryKey(id)

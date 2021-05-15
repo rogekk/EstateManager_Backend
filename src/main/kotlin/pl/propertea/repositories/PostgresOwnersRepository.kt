@@ -1,13 +1,12 @@
 package pl.propertea.repositories
 
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
+import pl.propertea.common.IdGenerator
+import pl.propertea.db.Communities
+import pl.propertea.db.OwnerMembership
 import pl.propertea.db.Owners
-import pl.propertea.models.Owner
-import pl.propertea.models.OwnerId
+import pl.propertea.models.*
 import pl.tools.hash
 import pl.tools.verify
 import java.util.*
@@ -15,27 +14,35 @@ import java.util.*
 
 interface OwnersRepository {
     fun getById(ownerId: OwnerId): Owner?
+
     fun getByUsername(username: String): Owner?
+
     fun createOwner(
+        communities: List<Pair<CommunityId, Shares>>,
         username: String,
         password: String,
         email: String,
         phoneNumber: String,
         address: String,
-        id: String = UUID.randomUUID().toString()
+        id: String = UUID.randomUUID().toString(),
     ): CreateOwnerResult
 
     fun checkOwnersCredentials(username: String, password: String): OwnerCredentials
+
     fun updateOwnersDetails(
         ownerId: OwnerId,
         email: String? = null,
         address: String? = null,
-        phoneNumber: String? = null
+        phoneNumber: String? = null,
+        profileImageUrl: String? = null,
     )
+
+    fun getProfile(id: OwnerId): OwnerProfile
 
 }
 
-class PostgresOwnersRepository(private val database: Database) : OwnersRepository {
+class PostgresOwnersRepository(private val database: Database, private val idGenerator: IdGenerator) :
+    OwnersRepository {
 
     override fun getById(ownerId: OwnerId): Owner? {
         return transaction(database) {
@@ -72,12 +79,13 @@ class PostgresOwnersRepository(private val database: Database) : OwnersRepositor
     }
 
     override fun createOwner(
+        communities: List<Pair<CommunityId, Shares>>,
         username: String,
         password: String,
         email: String,
         phoneNumber: String,
         address: String,
-        id: String
+        id: String,
     ) = transaction(database) {
         val user = Owners
             .select { Owners.username eq username }
@@ -92,6 +100,15 @@ class PostgresOwnersRepository(private val database: Database) : OwnersRepositor
                 ownersTable[Owners.phoneNumber] = phoneNumber
                 ownersTable[Owners.address] = address
             }
+
+            communities.forEach { community ->
+                OwnerMembership.insert {
+                    it[OwnerMembership.id] = idGenerator.newId()
+                    it[OwnerMembership.ownerId] = id
+                    it[OwnerMembership.communityId] = community.first.id
+                    it[OwnerMembership.shares] = community.second.value
+                }
+            }
         }
         if (user == null) OwnerCreated(OwnerId(id)) else UsernameTaken
     }
@@ -100,11 +117,11 @@ class PostgresOwnersRepository(private val database: Database) : OwnersRepositor
         val hashedPassword =
             Owners
                 .select { (Owners.username eq username) }
-                .map { it[Owners.password] }
+                .map { it[Owners.id] to it[Owners.password] }
                 .firstOrNull()
 
-        if (hashedPassword != null && verify(password, hashedPassword))
-            Verified
+        if (hashedPassword != null && verify(password, hashedPassword.second))
+            Verified(OwnerId(hashedPassword.first))
         else
             NotVerified
     }
@@ -113,7 +130,8 @@ class PostgresOwnersRepository(private val database: Database) : OwnersRepositor
         ownerId: OwnerId,
         email: String?,
         address: String?,
-        phoneNumber: String?
+        phoneNumber: String?,
+        profileImageUrl: String?,
     ) {
         transaction(database) {
             Owners.update({ Owners.id eq ownerId.id }) {
@@ -123,7 +141,35 @@ class PostgresOwnersRepository(private val database: Database) : OwnersRepositor
                     it[Owners.email] = email
                 if (phoneNumber != null)
                     it[Owners.phoneNumber] = phoneNumber
+                if (profileImageUrl != null)
+                    it[Owners.profileImageUrl] = profileImageUrl
             }
+        }
+    }
+
+    override fun getProfile(id: OwnerId): OwnerProfile {
+        return transaction(database) {
+            OwnerMembership
+                .leftJoin(Communities)
+                .leftJoin(Owners)
+                .slice(Communities.columns + Owners.columns + OwnerMembership.shares)
+                .selectAll()
+                .map {
+                    Owner(
+                        OwnerId(it[Owners.id]),
+                        it[Owners.username],
+                        it[Owners.email],
+                        it[Owners.phoneNumber],
+                        it[Owners.address]
+                    ) to Community(
+                        CommunityId(it[Communities.id]),
+                        it[Communities.name]
+                    )
+                }
+                .groupBy { it.first }
+                .map {
+                    OwnerProfile(it.key, it.value.map { it.second })
+                }.first()
         }
     }
 
@@ -138,5 +184,5 @@ object UsernameTaken : CreateOwnerResult()
 sealed class OwnerCredentials {
 }
 
-object Verified : OwnerCredentials()
+data class Verified(val id: OwnerId) : OwnerCredentials()
 object NotVerified : OwnerCredentials()
