@@ -19,6 +19,13 @@ data class ResolutionRequest(
     val subject: String,
     val description: String
 )
+data class ResolutionVoteRequest(
+    val vote: VoteRequest,
+)
+
+enum class VoteRequest{
+    pro, against, abstain
+}
 data class UpdateOwnersRequest(val email: String? = null,
                                val address: String? = null,
                                val phoneNumber: String? = null,

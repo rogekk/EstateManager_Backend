@@ -1,5 +1,6 @@
 package pl.resolutions
 
+import authenticatedOwner
 import com.snitch.Handler
 import com.snitch.created
 import com.snitch.notFound
@@ -28,6 +29,19 @@ val createResolutionsHandler: Handler<ResolutionRequest, String> = {
             body.subject,
             body.description
         )
+    )
+    "OK".created
+}
+val createResolutionVoteHandler: Handler<ResolutionVoteRequest, String> = {
+    resolutionsRepository().vote(
+        CommunityId(request[communityId]),
+        ResolutionId(request[resolutionId]),
+        authenticatedOwner().id,
+        when (body.vote) {
+            VoteRequest.pro -> Vote.PRO
+            VoteRequest.against -> Vote.AGAINST
+            VoteRequest.abstain -> Vote.ABSTAIN
+        }
     )
     "OK".created
 }

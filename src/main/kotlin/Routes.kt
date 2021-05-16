@@ -11,10 +11,12 @@ import pl.profile.getProfile
 import pl.profile.updateOwnersHandler
 import pl.propertea.common.CommonModule.authenticator
 import pl.propertea.models.*
+import pl.resolutions.createResolutionVoteHandler
 import pl.resolutions.createResolutionsHandler
 import pl.resolutions.getResolution
 import pl.resolutions.getResolutions
 import spark.Service
+import java.lang.IllegalArgumentException
 
 val topicId = path("topicId", "Id of the topic", NonEmptyString)
 val communityId = path("communityId", "Id of the community", NonEmptyString)
@@ -84,6 +86,11 @@ fun routes(http: Service): Router.() -> Unit = {
         GET("/communities" / communityId / "resolutions" / resolutionId)
             .authenticated()
             .isHandledBy(getResolution)
+
+        POST("/communities" / communityId / "resolutions" / resolutionId / "votes" )
+            .authenticated()
+            .with(body<ResolutionVoteRequest>())
+            .isHandledBy(createResolutionVoteHandler)
     }
 
     setAccessControlHeaders(http)
@@ -115,6 +122,11 @@ private fun setAccessControlHeaders(http: Service) {
     http.exception(JWTDecodeException::class.java) { exception, _, response ->
         response.status(401)
         response.body("Unauthenticated")
+    }
+
+    http.exception(IllegalArgumentException::class.java) { exception, _, response ->
+        response.status(400)
+        response.body("Cannot parse body of request")
     }
 }
 

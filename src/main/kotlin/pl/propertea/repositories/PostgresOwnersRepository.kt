@@ -105,7 +105,7 @@ class PostgresOwnersRepository(private val database: Database, private val idGen
 
             communities.forEach { community ->
                 OwnerMembership.insert {
-                    it[OwnerMembership.id] = idGenerator.newId()
+                    it[OwnerMembership.id] = UUID.randomUUID().toString()//idGenerator.newId()
                     it[OwnerMembership.ownerId] = id
                     it[OwnerMembership.communityId] = community.first.id
                     it[OwnerMembership.shares] = community.second.value

@@ -61,6 +61,10 @@ enum class ResolutionResult {
     APPROVED, REJECTED, OPEN_FOR_VOTING, CANCELED
 }
 
+enum class Vote {
+    PRO, AGAINST, ABSTAIN
+}
+
 data class TopicCreation(
     val subject: String,
     val createdBy: OwnerId,
