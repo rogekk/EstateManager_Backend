@@ -11,6 +11,8 @@ import pl.profile.getProfile
 import pl.profile.updateOwnersHandler
 import pl.propertea.common.CommonModule.authenticator
 import pl.propertea.models.*
+import pl.resolutions.createResolutionsHandler
+import pl.resolutions.getResolutions
 import spark.Service
 
 val topicId = path("topicId", "Id of the topic", NonEmptyString)
@@ -67,6 +69,16 @@ fun routes(http: Service): Router.() -> Unit = {
             .authenticated()
             .with(body<UpdateOwnersRequest>())
             .isHandledBy(updateOwnersHandler)
+
+        POST("/communities" / communityId / "resolutions")
+            .authenticated()
+            .with(body<ResolutionRequest>())
+            .isHandledBy(createResolutionsHandler)
+
+        GET("/communities" / communityId / "resolutions")
+            .authenticated()
+            .isHandledBy(getResolutions)
+
     }
 
     setAccessControlHeaders(http)

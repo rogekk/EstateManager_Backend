@@ -6,7 +6,10 @@ import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import pl.propertea.common.IdGenerator
 import pl.propertea.db.Communities
+import pl.propertea.db.Communities.totalShares
 import pl.propertea.db.OwnerMembership
+import pl.propertea.db.OwnerMembership.communityId
+import pl.propertea.db.OwnerMembership.shares
 import pl.propertea.models.*
 
 interface CommunityRepository {
@@ -22,6 +25,7 @@ class PostgresCommunityRepository(private val database: Database, private val id
             Communities.insert {
                 it[id] = community.id.id
                 it[name] = community.name
+                it[totalShares] = community.totalShares
             }
             community.id
         }
@@ -39,6 +43,6 @@ class PostgresCommunityRepository(private val database: Database, private val id
     }
 
     override fun getCommunities(): List<Community> = transaction(database) {
-        Communities.selectAll().map { Community(CommunityId(it[Communities.id]), it[Communities.name]) }
+        Communities.selectAll().map { Community(CommunityId(it[Communities.id]), it[Communities.name],it[Communities.totalShares]) }
     }
 }

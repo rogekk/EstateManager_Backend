@@ -8,6 +8,7 @@ import communityId
 import onlyAuthenticated
 import pl.propertea.common.CommonModule.clock
 import pl.propertea.models.*
+import pl.propertea.repositories.RepositoriesModule.communityRepository
 import pl.propertea.repositories.RepositoriesModule.topicsRepository
 import topicId
 
@@ -27,6 +28,11 @@ val createTopicsHandler: Handler<TopicRequest, String> = {
         )
     )
     "OK".created
+}
+
+val crateCommunityHandler: Handler<CommunityRequest, String> = {
+    communityRepository().crateCommunity(Community(CommunityId(body.id), "Name", body.totalShares))
+    "OK".ok
 }
 
 val createCommentHandler: Handler<CreateCommentRequest, String> = {
@@ -59,3 +65,4 @@ val getCommentsHandler: Handler<Nothing, GetCommentsResponse> = {
 
     GetCommentsResponse(comments).ok
 }
+

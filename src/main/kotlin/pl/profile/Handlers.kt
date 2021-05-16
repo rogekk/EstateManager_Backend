@@ -34,7 +34,7 @@ val updateOwnersHandler: Handler<UpdateOwnersRequest, String> = {
         email = body.email,
         address = body.address,
         phoneNumber = body.phoneNumber,
-        profileImageUrl = body.profileImageUrl,
+        //profileImageUrl = body.profileImageUrl
     )
     "ok".ok
 }

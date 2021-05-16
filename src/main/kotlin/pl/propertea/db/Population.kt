@@ -1,18 +1,20 @@
 package pl.propertea.db
 
+import com.snitch.created
 import org.joda.time.DateTime
 import pl.propertea.models.*
 import pl.propertea.repositories.RepositoriesModule.communityRepository
 import pl.propertea.repositories.RepositoriesModule.topicsRepository
 import pl.propertea.repositories.RepositoriesModule.ownersRepository
+import pl.propertea.repositories.RepositoriesModule.resolutionsRepository
 
 fun main() {
 
     // insertCommunities
 
     runCatching {
-        communityRepository().crateCommunity(Community(CommunityId("id1"), "Bankowa"))
-        communityRepository().crateCommunity(Community(CommunityId("id2"), "Kolejowa"))
+        communityRepository().crateCommunity(Community(CommunityId("id1"), "Bankowa", (100)))
+        communityRepository().crateCommunity(Community(CommunityId("id2"), "Kolejowa",(100)))
     }
 
     // create Owners
@@ -62,6 +64,17 @@ fun main() {
                 owner2,
                 TopicId("2"),
                 "yeep no doubt that the people behind the system are brilliant"
+            )
+        )
+    }
+    runCatching {
+        resolutionsRepository().crateResolution(
+            ResolutionCreation(
+                CommunityId("id1"),
+                "1/2021",
+                "That what she said",
+                DateTime.now(),
+                "I don't know"
             )
         )
     }

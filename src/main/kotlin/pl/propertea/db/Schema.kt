@@ -2,11 +2,12 @@ package pl.propertea.db
 
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.jodatime.datetime
+import pl.propertea.models.TotalShares
 
 val schema = arrayOf(
     Owners,
     OwnerMembership,
-    Resolutions,
+    ResolutionsTable,
     Communities,
     TopicsTable,
     CommentsTable,
@@ -73,21 +74,18 @@ object OwnerMembership : Table("owner_membership") {
     override val primaryKey = PrimaryKey(id)
 }
 
-object Resolutions : Table() {
+object ResolutionsTable : Table() {
     val id = text("id")
-    val communityId = text("community_id").references(Communities.id)
     val number = text("number")
-    val createdAt = datetime("created_at")
-    val startedVotingAt = datetime("started_voting_at").nullable()
-    val passingDate = datetime("passing_date").nullable()
-    val endingDate = datetime("ending_date").nullable()
+    val subject = text("subject")
+    val description = text("description").nullable()
+    val communityId = text("community_id").references(Communities.id)
     val sharesPro = integer("shares_pro")
     val sharesAgainst = integer("shares_against")
-    val sharesWithheld = integer("shares_withheld")
-    val totalSharesEntitled = integer("total_shares_entitled")
-    val attachments = text("attachments")
-    val subject = text("subject")
-    val description = text("description")
+    val createdAt = datetime("created_at")
+    val passingDate = datetime("passing_date").nullable()
+    val endingDate = datetime("ending_date").nullable()
+    val attachments = text("attachments").nullable()
     val result = enumeration("result", ResolutionResult::class)
 
     override val primaryKey = PrimaryKey(id)
@@ -96,7 +94,7 @@ object Resolutions : Table() {
 object Communities : Table() {
     val id = text("id")
     val name = text("name")
-
+    val totalShares = integer("total_shares")
 
     override val primaryKey = PrimaryKey(id)
 }

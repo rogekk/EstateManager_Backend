@@ -4,11 +4,34 @@ import com.snitch.documentation.Description
 
 data class GenericResponse(val message: String)
 
+
+data class ResolutionsResponse(val resolutions: List<ResolutionResponse>)
+
+fun List<Resolution>.toResponse() = ResolutionsResponse(
+    map { it.toResponse() }
+)
+
+fun Resolution.toResponse() = ResolutionResponse(
+    id.id,
+    number,
+    subject,
+    createdAt.toDateTimeISO().toString(),
+    description
+)
+data class ResolutionResponse(
+    val id: String,
+    val number: String,
+    val subject: String,
+    val createdAt: String,
+    val description: String?
+)
+
 data class LoginResponse(
     @Description("The authtoken in JWT form")
     val token: String,
     val id: String
 )
+
 
 data class TopicsResponse(val topics: List<TopicResponse>)
 
