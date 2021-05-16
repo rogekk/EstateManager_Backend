@@ -21,7 +21,8 @@ fun TopicWithOwner.toResponse() = TopicResponse(
     topic.subject,
     topic.description,
     TopicCreatorResponse(owner.id.id, owner.username, owner.profileImageUrl),
-    topic.createdAt.toDateTimeISO().toString()
+    topic.createdAt.toDateTimeISO().toString(),
+    topic.commentCount
 )
 
 data class TopicResponse(
@@ -29,7 +30,8 @@ data class TopicResponse(
     val subject: String,
     val description: String,
     val createdBy: TopicCreatorResponse,
-    val createdAt: String
+    val createdAt: String,
+    val commentCount: Int
 )
 
 data class TopicCreatorResponse(

@@ -18,6 +18,10 @@ class TopicsRepositoryTest : DatabaseTest() {
             it.copy(communityId = community.id, createdBy = owner.id)
         }.sortedByDescending { it.createdAt }
     }
+    val comments by aRandomListOf<Comment>(5) {map {it.copy(
+        topicId = expectedTopics[0].id,
+        createdBy = owner.id,
+    )}}
 
     @Test
     fun `returns a forum with topics`() {
@@ -73,5 +77,28 @@ class TopicsRepositoryTest : DatabaseTest() {
         topicsRepository().createComment(commentCreation)
 
         expect that topicsRepository().getComments(topicId).map { it.comment.content } isEqualTo listOf(commentCreation.content)
+    }
+
+    @Test
+    fun `returns the comment count with the result`() {
+        communityRepository().crateCommunity(community)
+        val creation = ownersRepository().createOwner(
+            listOf(community.id to Shares(10)),
+            owner.username,
+            "",
+            owner.email,
+            owner.phoneNumber,
+            owner.address,
+            owner.id.id,
+        ) as OwnerCreated
+        val topic = TopicCreation("subj", creation.ownerId, now, community.id, "desc")
+        val topicId = topicsRepository().crateTopic(topic)
+
+        comments.forEach {
+            topicsRepository().createComment(CommentCreation(it.createdBy,topicId!!, it.content))
+        }
+
+
+        expect that topicsRepository().getTopics(community.id).first().topic.commentCount isEqualTo 5
     }
 }

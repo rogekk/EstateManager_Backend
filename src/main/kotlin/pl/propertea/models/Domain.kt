@@ -17,6 +17,7 @@ data class Topic(
     val createdAt: DateTime,
     val communityId: CommunityId,
     val description: String,
+    val commentCount: Int,
 )
 
 data class TopicWithOwner(

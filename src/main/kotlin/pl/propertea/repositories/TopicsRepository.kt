@@ -1,9 +1,6 @@
 package pl.propertea.repositories
 
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SortOrder
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 import pl.propertea.db.CommentsTable
@@ -23,8 +20,10 @@ class PostgresTopicsRepository(private val database: Database) : TopicsRepositor
     override fun getTopics(communityId: CommunityId): List<TopicWithOwner> = transaction(database) {
         TopicsTable
             .leftJoin(Owners)
-            .slice(TopicsTable.columns + Owners.columns)
+            .leftJoin(CommentsTable)
+            .slice(TopicsTable.columns + Owners.columns + CommentsTable.topicId.count())
             .select { TopicsTable.communityId eq communityId.id }
+            .groupBy(TopicsTable.id, Owners.id)
             .orderBy(TopicsTable.createdAt, SortOrder.DESC)
             .map {
                 TopicWithOwner(
@@ -34,7 +33,8 @@ class PostgresTopicsRepository(private val database: Database) : TopicsRepositor
                         OwnerId(it[TopicsTable.authorOwnerId]),
                         it[TopicsTable.createdAt],
                         CommunityId(it[TopicsTable.communityId]),
-                        it[TopicsTable.description]
+                        it[TopicsTable.description],
+                        it[CommentsTable.topicId.count()].toInt(),
                     ),
                     Owner(
                         OwnerId(it[Owners.id]),
