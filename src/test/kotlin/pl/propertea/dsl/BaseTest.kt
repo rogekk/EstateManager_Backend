@@ -3,6 +3,7 @@ package pl.propertea.dsl
 import ch.qos.logback.classic.Level
 import pl.propertea.common.CommonModule.environment
 import io.mockk.mockk
+import life.shank.NewProvider0
 import life.shank.SingleProvider0
 import life.shank.resetShank
 import org.joda.time.DateTime

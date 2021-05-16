@@ -73,7 +73,6 @@ fun main() {
                 CommunityId("id1"),
                 "1/2021",
                 "That what she said",
-                DateTime.now(),
                 "I don't know"
             )
         )

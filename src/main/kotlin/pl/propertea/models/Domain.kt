@@ -45,20 +45,21 @@ data class Resolution(
     val createdAt: DateTime,
     val passingDate: DateTime?,
     val endingDate: DateTime?,
-    val sharesPro: String?,
-    val sharesAgainst: String?,
-    val description: String?,
-
-    )
+    val sharesPro: Int,
+    val sharesAgainst: Int,
+    val description: String,
+)
 
 data class ResolutionCreation(
     val communityId: CommunityId,
     val number: String,
     val subject: String,
-    val createdAt: DateTime,
-    val description: String?,
+    val description: String,
+    )
 
-)
+enum class ResolutionResult {
+    APPROVED, REJECTED, OPEN_FOR_VOTING, CANCELED
+}
 
 data class TopicCreation(
     val subject: String,

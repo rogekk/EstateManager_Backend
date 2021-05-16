@@ -12,11 +12,13 @@ import pl.profile.updateOwnersHandler
 import pl.propertea.common.CommonModule.authenticator
 import pl.propertea.models.*
 import pl.resolutions.createResolutionsHandler
+import pl.resolutions.getResolution
 import pl.resolutions.getResolutions
 import spark.Service
 
 val topicId = path("topicId", "Id of the topic", NonEmptyString)
 val communityId = path("communityId", "Id of the community", NonEmptyString)
+val resolutionId = path("resolutionId", "Id of the resolution", NonEmptyString)
 val ownerId = path("ownerId", "Id of the owner", NonEmptyString)
 val authTokenHeader = header("X-Auth-Token", "the auth token", NonEmptyString)
 
@@ -79,6 +81,9 @@ fun routes(http: Service): Router.() -> Unit = {
             .authenticated()
             .isHandledBy(getResolutions)
 
+        GET("/communities" / communityId / "resolutions" / resolutionId)
+            .authenticated()
+            .isHandledBy(getResolution)
     }
 
     setAccessControlHeaders(http)
