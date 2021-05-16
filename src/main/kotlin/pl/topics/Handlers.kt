@@ -28,14 +28,11 @@ val createTopicsHandler: Handler<TopicRequest, String> = {
     "OK".created
 }
 
-<<<<<<< HEAD
 val crateCommunityHandler: Handler<CommunityRequest, String> = {
-    communityRepository().crateCommunity(Community(CommunityId(body.id), "Name", TotalShares(body.totalShares)))
+    communityRepository().crateCommunity(Community(CommunityId(body.id), "Name", body.totalShares))
     "OK".ok
 }
 
-=======
->>>>>>> b40ec18e5225c0a1af2855eb6e53c44afb61b4ce
 val createCommentHandler: Handler<CreateCommentRequest, String> = {
     topicsRepository().createComment(
         CommentCreation(

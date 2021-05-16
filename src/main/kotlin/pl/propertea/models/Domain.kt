@@ -8,12 +8,12 @@ data class TopicId(val id: String)
 data class OwnerId(val id: String)
 data class CommunityId(val id: String)
 data class CommentId(val id: String)
-<<<<<<< HEAD
+
 data class ResolutionId(val id: String)
 data class TotalShares(val shares: Int)
-=======
+
 data class Shares(val value: Int)
->>>>>>> b40ec18e5225c0a1af2855eb6e53c44afb61b4ce
+
 
 data class Topics(val topics: List<Topic>)
 
@@ -78,7 +78,7 @@ data class Comment(
 data class Community(
     val id: CommunityId,
     val name: String,
-    val totalShares: TotalShares
+    val totalShares: Int
 )
 
 data class Owner(

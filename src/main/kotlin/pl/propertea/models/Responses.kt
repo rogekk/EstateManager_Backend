@@ -4,7 +4,7 @@ import com.snitch.documentation.Description
 
 data class GenericResponse(val message: String)
 
-<<<<<<< HEAD
+
 data class ResolutionsResponse(val resolutions: List<ResolutionResponse>)
 
 fun List<Resolution>.toResponse() = ResolutionsResponse(
@@ -16,7 +16,6 @@ fun Resolution.toResponse() = ResolutionResponse(
     number,
     subject,
     createdAt.toDateTimeISO().toString(),
-    totalShares.shares,
     description
 )
 data class ResolutionResponse(
@@ -24,17 +23,16 @@ data class ResolutionResponse(
     val number: String,
     val subject: String,
     val createdAt: String,
-    val totalShares: Int,
     val description: String?
 )
-=======
+
 data class LoginResponse(
     @Description("The authtoken in JWT form")
     val token: String,
     val id: String
 )
 
->>>>>>> b40ec18e5225c0a1af2855eb6e53c44afb61b4ce
+
 data class TopicsResponse(val topics: List<TopicResponse>)
 
 fun Topics.toResponse() = TopicsResponse(

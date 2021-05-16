@@ -2,6 +2,7 @@ package pl.propertea.db
 
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.jodatime.datetime
+import pl.propertea.models.TotalShares
 
 val schema = arrayOf(
     Owners,

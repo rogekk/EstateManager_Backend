@@ -9,7 +9,7 @@ import pl.propertea.repositories.RepositoriesModule.communityRepository
 
 
 val createCommunityHandler: Handler<CommunityRequest, String> = {
-    communityRepository().crateCommunity(Community(CommunityId(body.id), body.name))
+    communityRepository().crateCommunity(Community(CommunityId(body.id), body.name,body.totalShares))
     "OK".created
 }
 

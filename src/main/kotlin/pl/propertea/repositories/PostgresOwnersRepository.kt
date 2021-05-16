@@ -163,7 +163,8 @@ class PostgresOwnersRepository(private val database: Database, private val idGen
                         it[Owners.address]
                     ) to Community(
                         CommunityId(it[Communities.id]),
-                        it[Communities.name]
+                        it[Communities.name],
+                        it[Communities.totalShares]
                     )
                 }
                 .groupBy { it.first }
