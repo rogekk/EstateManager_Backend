@@ -88,6 +88,7 @@ class PostgresTopicsRepository(private val database: Database) : TopicsRepositor
                         Comment(
                             CommentId(it[CommentsTable.id]),
                             OwnerId(it[CommentsTable.authorOwnerId]),
+                            it[CommentsTable.createdAt],
                             TopicId(it[CommentsTable.topicId]),
                             it[CommentsTable.content]
                         ),

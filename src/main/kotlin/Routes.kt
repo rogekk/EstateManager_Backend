@@ -1,3 +1,4 @@
+import com.auth0.jwt.exceptions.JWTDecodeException
 import com.snitch.*
 import com.snitch.spark.SparkResponseWrapper
 import pl.auth.loginHandler
@@ -15,7 +16,6 @@ import spark.Service
 val topicId = path("topicId", "Id of the topic", NonEmptyString)
 val communityId = path("communityId", "Id of the community", NonEmptyString)
 val ownerId = path("ownerId", "Id of the owner", NonEmptyString)
-
 val authTokenHeader = header("X-Auth-Token", "the auth token", NonEmptyString)
 
 fun routes(http: Service): Router.() -> Unit = {
@@ -94,6 +94,11 @@ private fun setAccessControlHeaders(http: Service) {
         response.status(401)
         response.body("Unauthenticated")
     }
+
+    http.exception(JWTDecodeException::class.java) { exception, _, response ->
+        response.status(401)
+        response.body("Unauthenticated")
+    }
 }
 
 fun <T : Any> Endpoint<T>.authenticated() = withHeader(authTokenHeader)
@@ -106,6 +111,10 @@ fun RequestHandler<*>.authenticatedOwner(): Owner {
 
 fun RequestHandler<*>.setHeader(key: String, value: String) {
     (response as SparkResponseWrapper).response.header(key, value)
+}
+
+fun RequestHandler<*>.onlyAuthenticated() {
+    authenticator().authenticate(AuthToken(request[authTokenHeader]))
 }
 
 class AuthenticationException() : Exception()

@@ -44,6 +44,7 @@ data class CommentCreation(
 data class Comment(
     val id: CommentId,
     val createdBy: OwnerId,
+    val createdAt: DateTime,
     val topicId: TopicId,
     val content: String
 )

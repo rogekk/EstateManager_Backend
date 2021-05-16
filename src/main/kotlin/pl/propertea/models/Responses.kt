@@ -47,6 +47,7 @@ data class GetCommentsResponse(
 data class CommentResponse(
     val id: String,
     val createdBy: CommentCreatorResponse,
+    val createdAt: String,
     val topicId: String,
     val content: String
 )

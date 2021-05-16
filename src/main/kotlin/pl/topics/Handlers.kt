@@ -5,13 +5,14 @@ import com.snitch.Handler
 import com.snitch.created
 import com.snitch.ok
 import communityId
+import onlyAuthenticated
 import pl.propertea.common.CommonModule.clock
 import pl.propertea.models.*
-import pl.propertea.repositories.RepositoriesModule.communityRepository
 import pl.propertea.repositories.RepositoriesModule.topicsRepository
 import topicId
 
 val getTopics: Handler<Nothing, TopicsResponse> = {
+    onlyAuthenticated()
     topicsRepository().getTopics(CommunityId(request[communityId])).toResponse().ok
 }
 
@@ -44,14 +45,15 @@ val getCommentsHandler: Handler<Nothing, GetCommentsResponse> = {
     val comments = topicsRepository().getComments(TopicId(request[topicId]))
         .map {
             CommentResponse(
-                it.comment.id.id,
-                CommentCreatorResponse(
+                id = it.comment.id.id,
+                createdBy = CommentCreatorResponse(
                     it.owner.id.id,
                     it.owner.username,
                     it.owner.profileImageUrl
                 ),
-                it.comment.topicId.id,
-                it.comment.content
+                createdAt = it.comment.createdAt.toDateTimeISO().toString(),
+                topicId = it.comment.topicId.id,
+                content = it.comment.content
             )
         }
 
