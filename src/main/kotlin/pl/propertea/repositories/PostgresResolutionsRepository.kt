@@ -49,7 +49,6 @@ class PostgresResolutionsRepository(
 
     override fun crateResolution(resolutionCreation: ResolutionCreation): ResolutionId? {
         val resolutionId = idGenerator.newId()
-        println(clock.getDateTime())
         transaction(database) {
             ResolutionsTable.insert {
                 it[id] = resolutionId
@@ -88,7 +87,6 @@ class PostgresResolutionsRepository(
                     }.map {
                         it[ResolutionVotes.vote] to it[ResolutionVotes.shares]
                     }
-                    println(totalVotes)
                     it?.copy(
                         sharesPro = totalVotes.filter { it.first == PGVote.PRO }.sumBy { it.second },
                         sharesAgainst = totalVotes.filter { it.first == PGVote.AGAINST }.sumBy { it.second }

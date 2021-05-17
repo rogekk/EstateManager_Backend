@@ -1,5 +1,6 @@
 package pl.propertea.repositories
 
+import com.snitch.extensions.print
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import pl.propertea.common.IdGenerator
@@ -24,7 +25,7 @@ interface OwnersRepository {
         email: String,
         phoneNumber: String,
         address: String,
-        id: String = UUID.randomUUID().toString(),
+        profileImageUrl: String? = null,
     ): CreateOwnerResult
 
     fun checkOwnersCredentials(username: String, password: String): OwnerCredentials
@@ -87,32 +88,35 @@ class PostgresOwnersRepository(private val database: Database, private val idGen
         email: String,
         phoneNumber: String,
         address: String,
-        id: String,
+        profileImageUrl: String?
     ) = transaction(database) {
         val user = Owners
             .select { Owners.username eq username }
             .firstOrNull()
 
+        val userId = idGenerator.newId()
+
         if (user == null) {
             Owners.insert { ownersTable ->
-                ownersTable[Owners.id] = id
+                ownersTable[Owners.id] = userId
                 ownersTable[Owners.username] = username
                 ownersTable[Owners.password] = hash(password)
                 ownersTable[Owners.email] = email
                 ownersTable[Owners.phoneNumber] = phoneNumber
                 ownersTable[Owners.address] = address
+                ownersTable[Owners.profileImageUrl] = profileImageUrl
             }
 
             communities.forEach { community ->
                 OwnerMembership.insert {
-                    it[OwnerMembership.id] = UUID.randomUUID().toString()//idGenerator.newId()
-                    it[OwnerMembership.ownerId] = id
+                    it[OwnerMembership.id] = idGenerator.newId()
+                    it[OwnerMembership.ownerId] = userId
                     it[OwnerMembership.communityId] = community.first.id
                     it[OwnerMembership.shares] = community.second.value
                 }
             }
         }
-        if (user == null) OwnerCreated(OwnerId(id)) else UsernameTaken
+        if (user == null) OwnerCreated(OwnerId(userId)) else UsernameTaken
     }
 
     override fun checkOwnersCredentials(username: String, password: String) = transaction(database) {
@@ -190,3 +194,5 @@ sealed class OwnerCredentials {
 
 data class Verified(val id: OwnerId) : OwnerCredentials()
 object NotVerified : OwnerCredentials()
+
+data class OwnerInsertion(val owner: Owner, val password: String, val communities: List<Pair<CommunityId, Shares>>)

@@ -18,24 +18,19 @@ class TopicsRepositoryTest : DatabaseTest() {
             it.copy(communityId = community.id, createdBy = owner.id)
         }.sortedByDescending { it.createdAt }
     }
-    val comments by aRandomListOf<Comment>(5) {map {it.copy(
-        topicId = expectedTopics[0].id,
-        createdBy = owner.id,
-    )}}
+    val comments by aRandomListOf<Comment>(5) {
+        map {
+            it.copy(
+                topicId = expectedTopics[0].id,
+            )
+        }
+    }
 
     @Test
     fun `returns a forum with topics`() {
 
         communityRepository().crateCommunity(community)
-        val ownerCreated = ownersRepository().createOwner(
-            listOf(community.id to Shares(10)),
-            owner.username,
-            owner.email,
-            owner.phoneNumber,
-            owner.address,
-            owner.id.id
-        ) as OwnerCreated
-
+        val ownerId = owner inThis community putIn ownersRepository()
 
         val emptyTopics = topicsRepository().getTopics(community.id)
 
@@ -45,7 +40,7 @@ class TopicsRepositoryTest : DatabaseTest() {
             topicsRepository().crateTopic(
                 TopicCreation(
                     it.subject,
-                    ownerCreated.ownerId,
+                    ownerId,
                     it.createdAt,
                     it.communityId,
                     it.description
@@ -61,41 +56,28 @@ class TopicsRepositoryTest : DatabaseTest() {
     @Test
     fun `adds a comment to a topic`() {
         communityRepository().crateCommunity(community)
-        val creation = ownersRepository().createOwner(
-            listOf(community.id to Shares(10)),
-            owner.username,
-            owner.email,
-            owner.phoneNumber,
-            owner.address,
-            owner.id.id
-        ) as OwnerCreated
+        val ownerId = owner inThis community putIn ownersRepository()
 
-        val topic = TopicCreation("subj", creation.ownerId, now, community.id, "desc")
+        val topic = TopicCreation("subj", ownerId, now, community.id, "desc")
         val topicId = topicsRepository().crateTopic(topic)
 
-        val commentCreation = CommentCreation(creation.ownerId, topicId!!, "hello everyone")
+        val commentCreation = CommentCreation(ownerId, topicId!!, "hello everyone")
         topicsRepository().createComment(commentCreation)
 
-        expect that topicsRepository().getComments(topicId).map { it.comment.content } isEqualTo listOf(commentCreation.content)
+        expect that topicsRepository().getComments(topicId)
+            .map { it.comment.content } isEqualTo listOf(commentCreation.content)
     }
 
     @Test
     fun `returns the comment count with the result`() {
         communityRepository().crateCommunity(community)
-        val creation = ownersRepository().createOwner(
-            listOf(community.id to Shares(10)),
-            owner.username,
-            "",
-            owner.email,
-            owner.phoneNumber,
-            owner.address,
-            owner.id.id,
-        ) as OwnerCreated
-        val topic = TopicCreation("subj", creation.ownerId, now, community.id, "desc")
+
+        val ownerId = owner inThis community putIn ownersRepository()
+        val topic = TopicCreation("subj", ownerId, now, community.id, "desc")
         val topicId = topicsRepository().crateTopic(topic)
 
         comments.forEach {
-            topicsRepository().createComment(CommentCreation(it.createdBy,topicId!!, it.content))
+            topicsRepository().createComment(CommentCreation(ownerId, topicId!!, it.content))
         }
 
 

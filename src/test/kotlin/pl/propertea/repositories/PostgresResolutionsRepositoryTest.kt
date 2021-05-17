@@ -2,8 +2,8 @@ package pl.propertea.repositories
 
 import com.memoizr.assertk.expect
 import io.mockk.every
+import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 import pl.propertea.common.CommonModule.clock
 import pl.propertea.common.CommonModule.idGenerator
@@ -24,14 +24,24 @@ class PostgresResolutionsRepositoryTest : DatabaseTest({
         clock.strict
     )
 }) {
-    val owner by aRandom<Owner>()
+    val owner1 by aRandom<Owner>()
+    val owner2 by aRandom<Owner>()
+    val owner3 by aRandom<Owner>()
+
     val community by aRandom<Community>()
-    val resolution by aRandom<Resolution> { copy(communityId = community.id)}
+    val resolution by aRandom<Resolution> {
+        copy(
+            communityId = community.id,
+            passingDate = null,
+            endingDate = null,
+            sharesPro = 0,
+            sharesAgainst = 0
+        )
+    }
     val expectedResolutions by aRandomListOf<Resolution> {
         map {
             it.copy(
                 communityId = community.id,
-                createdAt = now,
                 passingDate = null,
                 endingDate = null,
                 sharesPro = 0,
@@ -46,6 +56,12 @@ class PostgresResolutionsRepositoryTest : DatabaseTest({
         every { idGenerator().newId() } returnsMany expectedResolutions.map { it.id.id }
     }
 
+    @After
+    fun after() {
+        ownersRepository.override(null)
+        resolutionsRepository.override(null)
+    }
+
     @Test
     fun `when there are no resolutions returns an empty list`() {
         communityRepository().crateCommunity(community)
@@ -53,7 +69,6 @@ class PostgresResolutionsRepositoryTest : DatabaseTest({
         expect that emptyResolutions isEqualTo emptyList()
     }
 
-    @Ignore
     @Test
     fun `after creating some resolutions returns the resolutions`() {
         communityRepository().crateCommunity(community)
@@ -65,10 +80,7 @@ class PostgresResolutionsRepositoryTest : DatabaseTest({
 
         val resolutions: List<Resolution> = resolutionsRepository().getResolutions(community.id)
 
-        // TODO make it work
-        // expect that resolutions isEqualTo expectedResolutions
-
-        expect that resolutions.map { it.id } isEqualTo expectedResolutions.map { it.id }
+        expect that resolutions isEqualTo expectedResolutions
     }
 
     @Test
@@ -77,51 +89,30 @@ class PostgresResolutionsRepositoryTest : DatabaseTest({
         val id = resolutionsRepository().crateResolution(
             ResolutionCreation(resolution.communityId, resolution.number, resolution.subject, resolution.description)
         )
-        //TODO more strict checks
-        expect that resolutionsRepository().getResolution(id!!)?.id isEqualTo id
+        expect that resolutionsRepository().getResolution(id!!) isEqualTo resolution.copy(
+            id = id,
+        )
     }
 
     @Test
     fun `adds votes to resolution`() {
+        idGenerator.override(null)
         communityRepository().crateCommunity(community)
         val id = resolutionsRepository().crateResolution(
             ResolutionCreation(resolution.communityId, resolution.number, resolution.subject, resolution.description)
         )
 
-        val owner1 = ownersRepository().createOwner(
-            listOf(community.let { it.id to Shares(10) }),
-            "hey",
-            "there",
-            "kkk@kkk.pl",
-            "489789454",
-            "Bakers St"
-        ) as OwnerCreated
-
-        val owner2 = ownersRepository().createOwner(
-            listOf(community.let { it.id to Shares(30) }),
-            "fooo",
-            "there",
-            "kkk@kkk.pl",
-            "489789454",
-            "Bakers St"
-        ) as OwnerCreated
-
-        val owner3 = ownersRepository().createOwner(
-            listOf(community.let { it.id to Shares(100) }),
-            "3",
-            "there",
-            "kkk@kkk.pl",
-            "489789454",
-            "Bakers St"
-        ) as OwnerCreated
+        val owner1Id = owner1 with 10.shares inThis community putIn ownersRepository()
+        val owner2Id = owner2 with 30.shares inThis community putIn ownersRepository()
+        val owner3Id = owner3 with 100.shares inThis community putIn ownersRepository()
 
         expect that resolutionsRepository().getResolution(id!!)?.sharesPro isEqualTo 0
 
-        resolutionsRepository().vote(community.id, id!!, owner1.ownerId, Vote.PRO)
-        resolutionsRepository().vote(community.id, id!!, owner2.ownerId, Vote.PRO)
-        resolutionsRepository().vote(community.id, id!!, owner3.ownerId, Vote.AGAINST)
+        resolutionsRepository().vote(community.id, id, owner1Id, Vote.PRO)
+        resolutionsRepository().vote(community.id, id, owner2Id, Vote.PRO)
+        resolutionsRepository().vote(community.id, id, owner3Id, Vote.AGAINST)
 
-        expect that resolutionsRepository().getResolution(id!!)?.sharesPro isEqualTo 40
-        expect that resolutionsRepository().getResolution(id!!)?.sharesAgainst isEqualTo 100
+        expect that resolutionsRepository().getResolution(id)?.sharesPro isEqualTo 40
+        expect that resolutionsRepository().getResolution(id)?.sharesAgainst isEqualTo 100
     }
 }

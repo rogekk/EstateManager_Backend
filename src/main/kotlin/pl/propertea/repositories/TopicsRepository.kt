@@ -35,7 +35,7 @@ class PostgresTopicsRepository(private val database: Database) : TopicsRepositor
                         it[TopicsTable.createdAt],
                         CommunityId(it[TopicsTable.communityId]),
                         it[TopicsTable.description],
-                        it[CommentsTable.topicId.count()].toInt().print(),
+                        it[CommentsTable.topicId.count()].toInt(),
                     ),
                     Owner(
                         OwnerId(it[Owners.id]),

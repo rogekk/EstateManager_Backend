@@ -65,7 +65,9 @@ class ResolutionsHttpTest : SparkTest({
                     it.number,
                     it.subject,
                     it.createdAt.toDateTimeISO().toString(),
-                    it.description
+                    it.description,
+                    it.sharesPro,
+                    it.sharesAgainst
                 )
             }
         )
@@ -84,7 +86,10 @@ class ResolutionsHttpTest : SparkTest({
                 it.number,
                 it.subject,
                 it.createdAt.toDateTimeISO().toString(),
-                it.description
+                it.description,
+                it.sharesPro,
+                it.sharesAgainst
+
             )
         }
     }

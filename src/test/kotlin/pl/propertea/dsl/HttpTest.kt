@@ -126,7 +126,6 @@ abstract class HttpTest(mockBlock: () -> Mocks = { Mocks() }) : BaseTest(mockBlo
             try {
                 com.memoizr.assertk.expect that response.statusCode isEqualTo code
             } catch (e: Throwable) {
-                println(response.text)
                 throw e
             }
         }
@@ -183,7 +182,6 @@ abstract class HttpTest(mockBlock: () -> Mocks = { Mocks() }) : BaseTest(mockBlo
             try {
                 com.memoizr.assertk.expect that execute().statusCode isEqualTo i
             } catch (e: Throwable) {
-                println(response.text)
                 throw e
             }
         }
