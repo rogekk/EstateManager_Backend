@@ -1,6 +1,5 @@
 package pl.propertea.repositories
 
-import com.snitch.extensions.print
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
@@ -26,28 +25,9 @@ class PostgresTopicsRepository(private val database: Database) : TopicsRepositor
             .select { TopicsTable.communityId eq communityId.id }
             .groupBy(TopicsTable.id, Owners.id)
             .orderBy(TopicsTable.createdAt, SortOrder.DESC)
-            .map {
-                TopicWithOwner(
-                    Topic(
-                        TopicId(it[TopicsTable.id]),
-                        it[TopicsTable.subject],
-                        OwnerId(it[TopicsTable.authorOwnerId]),
-                        it[TopicsTable.createdAt],
-                        CommunityId(it[TopicsTable.communityId]),
-                        it[TopicsTable.description],
-                        it[CommentsTable.topicId.count()].toInt(),
-                    ),
-                    Owner(
-                        OwnerId(it[Owners.id]),
-                        it[Owners.username],
-                        it[Owners.email],
-                        it[Owners.phoneNumber],
-                        it[Owners.address],
-                        it[Owners.profileImageUrl],
-                    )
-                )
-            }
+            .map { TopicWithOwner(it.readTopic(), it.readOwner()) }
     }
+
 
     override fun crateTopic(topicCreation: TopicCreation): TopicId? {
         val topicId = UUID.randomUUID().toString()
@@ -84,26 +64,7 @@ class PostgresTopicsRepository(private val database: Database) : TopicsRepositor
                 .select {
                     CommentsTable.topicId eq id.id
                 }
-                .map {
-                    CommentWithOwner(
-                        Comment(
-                            CommentId(it[CommentsTable.id]),
-                            OwnerId(it[CommentsTable.authorOwnerId]),
-                            it[CommentsTable.createdAt],
-                            TopicId(it[CommentsTable.topicId]),
-                            it[CommentsTable.content]
-                        ),
-                        Owner(
-                            OwnerId(it[Owners.id]),
-                            it[Owners.username],
-                            it[Owners.email],
-                            it[Owners.phoneNumber],
-                            it[Owners.address],
-                            it[Owners.profileImageUrl],
-                        )
-                    )
-                }
+                .map { CommentWithOwner(it.readComment(), it.readOwner()) }
         }
     }
-
 }

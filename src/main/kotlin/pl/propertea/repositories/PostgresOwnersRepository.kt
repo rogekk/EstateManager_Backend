@@ -45,40 +45,18 @@ interface OwnersRepository {
 class PostgresOwnersRepository(private val database: Database, private val idGenerator: IdGenerator) :
     OwnersRepository {
 
-    override fun getById(ownerId: OwnerId): Owner? {
-        return transaction(database) {
-            Owners
-                .select { Owners.id eq ownerId.id }
-                .map {
-                    Owner(
-                        OwnerId(it[Owners.id]),
-                        it[Owners.username],
-                        it[Owners.email],
-                        it[Owners.phoneNumber],
-                        it[Owners.address],
-                        it[Owners.profileImageUrl],
-                    )
-                }
-                .firstOrNull()
-        }
+    override fun getById(ownerId: OwnerId): Owner? = transaction(database) {
+        Owners
+            .select { Owners.id eq ownerId.id }
+            .map { it.readOwner() }
+            .firstOrNull()
     }
 
-    override fun getByUsername(username: String): Owner? {
-        return transaction(database) {
-            Owners
-                .select { Owners.username eq username }
-                .map {
-                    Owner(
-                        OwnerId(it[Owners.id]),
-                        it[Owners.username],
-                        it[Owners.email],
-                        it[Owners.phoneNumber],
-                        it[Owners.address],
-                        it[Owners.profileImageUrl]
-                    )
-                }
-                .firstOrNull()
-        }
+    override fun getByUsername(username: String): Owner? = transaction(database) {
+        Owners
+            .select { Owners.username eq username }
+            .map { it.readOwner() }
+            .firstOrNull()
     }
 
     override fun createOwner(
@@ -98,7 +76,7 @@ class PostgresOwnersRepository(private val database: Database, private val idGen
 
         if (user == null) {
             Owners.insert { ownersTable ->
-                ownersTable[Owners.id] = userId
+                ownersTable[id] = userId
                 ownersTable[Owners.username] = username
                 ownersTable[Owners.password] = hash(password)
                 ownersTable[Owners.email] = email
@@ -109,10 +87,10 @@ class PostgresOwnersRepository(private val database: Database, private val idGen
 
             communities.forEach { community ->
                 OwnerMembership.insert {
-                    it[OwnerMembership.id] = idGenerator.newId()
-                    it[OwnerMembership.ownerId] = userId
-                    it[OwnerMembership.communityId] = community.first.id
-                    it[OwnerMembership.shares] = community.second.value
+                    it[id] = idGenerator.newId()
+                    it[ownerId] = userId
+                    it[communityId] = community.first.id
+                    it[shares] = community.second.value
                 }
             }
         }
@@ -153,37 +131,28 @@ class PostgresOwnersRepository(private val database: Database, private val idGen
         }
     }
 
-    override fun getProfile(id: OwnerId): OwnerProfile {
-        return transaction(database) {
-            OwnerMembership
-                .leftJoin(Communities)
-                .leftJoin(Owners)
-                .slice(Communities.columns + Owners.columns + OwnerMembership.shares)
-                .selectAll()
-                .map {
-                    Owner(
-                        OwnerId(it[Owners.id]),
-                        it[Owners.username],
-                        it[Owners.email],
-                        it[Owners.phoneNumber],
-                        it[Owners.address],
-                        it[Owners.profileImageUrl],
-                    ) to Community(
-                        CommunityId(it[Communities.id]),
-                        it[Communities.name],
-                        it[Communities.totalShares]
-                    )
-                }
-                .groupBy { it.first }
-                .map {
-                    OwnerProfile(it.key, it.value.map { it.second })
-                }.first()
-        }
+    override fun getProfile(id: OwnerId): OwnerProfile = transaction(database) {
+        OwnerMembership
+            .leftJoin(Communities)
+            .leftJoin(Owners)
+            .slice(Communities.columns + Owners.columns + OwnerMembership.shares)
+            .selectAll()
+            .map {
+                it.readOwner() to Community(
+                    CommunityId(it[Communities.id]),
+                    it[Communities.name],
+                    it[Communities.totalShares]
+                )
+            }
+            .groupBy { it.first }
+            .map {
+                OwnerProfile(it.key, it.value.map { it.second })
+            }.first()
     }
 }
 
-sealed class CreateOwnerResult {
-}
+sealed class CreateOwnerResult
+
 
 data class OwnerCreated(val ownerId: OwnerId) : CreateOwnerResult()
 object UsernameTaken : CreateOwnerResult()
