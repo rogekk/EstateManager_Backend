@@ -12,6 +12,7 @@ val schema = arrayOf(
     Communities,
     TopicsTable,
     CommentsTable,
+    BulletinTable
 )
 
 typealias UsersTable = Owners
@@ -112,7 +113,7 @@ enum class PGResolutionResult {
 
 object ResolutionVotes : Table() {
     val id = text("id")
-    val ownerId = text("owner_id").references(Owners.id)
+    val ownerId= text("owner_id").references(Owners.id)
     val resolutionId = text("resolution_id").references(ResolutionsTable.id)
     val vote = enumeration("vote", PGVote::class)
     val shares = integer("shares")
@@ -141,6 +142,20 @@ object Buildings : Table() {
     val communityId = text("community_id").references(Communities.id)
 
     override val primaryKey = PrimaryKey(id)
+}
+
+enum class PGResolutionResult {
+    APPROVED, REJECTED, OPEN_FOR_VOTING, CANCELED
+}
+
+object BulletinTable : Table("bulletins"){
+    val id = text ("id")
+    val communityId = text("community_id").references(Communities.id)
+    val subject = text("subject")
+    val createdAt = datetime("createdAt")
+    val content = text("content")
+
+    override val primaryKey = PrimaryKey(ResolutionsTable.id)
 }
 
 object TopicsTable : Table("topics") {
