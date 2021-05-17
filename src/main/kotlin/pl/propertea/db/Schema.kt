@@ -144,10 +144,6 @@ object Buildings : Table() {
     override val primaryKey = PrimaryKey(id)
 }
 
-enum class PGResolutionResult {
-    APPROVED, REJECTED, OPEN_FOR_VOTING, CANCELED
-}
-
 object BulletinTable : Table("bulletins"){
     val id = text ("id")
     val communityId = text("community_id").references(Communities.id)

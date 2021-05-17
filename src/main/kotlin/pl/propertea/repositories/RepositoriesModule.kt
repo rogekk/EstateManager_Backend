@@ -5,6 +5,7 @@ import life.shank.single
 import pl.propertea.common.CommonModule.clock
 import pl.propertea.common.CommonModule.idGenerator
 import pl.propertea.db.DatabaseModule
+import pl.propertea.db.DatabaseModule.readWriteDatabase
 
 object RepositoriesModule : ShankModule {
 
@@ -15,15 +16,7 @@ object RepositoriesModule : ShankModule {
         single<CommunityRepository> { -> PostgresCommunityRepository(readWriteDatabase(), idGenerator()) }
     val resolutionsRepository =
         single<ResolutionsRepository> { -> PostgresResolutionsRepository(readWriteDatabase(), idGenerator(), clock()) }
-
-    val ownersRepository = single { -> PostgresOwnersRepository(DatabaseModule.readWriteDatabase(),idGenerator()) }
-    val topicsRepository = single<TopicsRepository> { -> PostgresTopicsRepository(DatabaseModule.readWriteDatabase()) }
-    val communityRepository = single<CommunityRepository> { -> PostgresCommunityRepository(DatabaseModule.readWriteDatabase(), idGenerator()) }
-    val resolutionsRepository = single<ResolutionsRepository> { -> pl.propertea.repositories.PostgresResolutionsRepository(DatabaseModule.readWriteDatabase(),
-        idGenerator(),
-        clock()) }
-    val bulletinRepository = single<BulletinsRepository> { -> PostgresBulletinsRepository(DatabaseModule.readWriteDatabase(),idGenerator(),clock())}
-
+    val bulletinRepository = single<BulletinsRepository> { -> PostgresBulletinsRepository(readWriteDatabase(),idGenerator(),clock())}
 }
 
 
