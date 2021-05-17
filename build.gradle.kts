@@ -18,10 +18,19 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-core:0.31.1")
     implementation("org.jetbrains.exposed:exposed-jdbc:0.31.1")
     implementation("org.jetbrains.exposed:exposed-jodatime:0.31.1")
-    implementation("com.github.memoizr.snitch:sparkjava:68db35c0af")
-    implementation("com.github.memoizr.snitch:core:68db35c0af")
-    implementation("com.sparkjava:spark-core:2.9.3")
-    implementation("com.github.memoizr:Shank:3.0.0")
+    implementation("com.github.memoizr.snitch:sparkjava:68db35c0af") {
+        exclude(group = "org.jetbrains.kotlin")
+    }
+    implementation("com.github.memoizr.snitch:core:68db35c0af") {
+
+        exclude(group = "org.jetbrains.kotlin")
+    }
+    implementation("com.sparkjava:spark-core:2.9.3") {
+        exclude(group = "org.jetbrains.kotlin")
+    }
+    implementation("com.github.memoizr:Shank:3.0.0") {
+        exclude(group = "org.jetbrains.kotlin")
+    }
     implementation("com.auth0:java-jwt:3.16.0")
     implementation("com.github.f4b6a3:ulid-creator:3.1.0")
 
@@ -40,13 +49,9 @@ dependencies {
     testImplementation("com.github.memoizr:assertk:1.1.0")
     testImplementation("com.github.random-object-kreator:random-object-kreator:2.0.0")
     testImplementation("io.mockk:mockk:1.10.6")
-    testImplementation(kotlin("test-junit"))
-//    implementation(kotlin("stdlib-jdk8"))
+    testImplementation("junit:junit:4.13")
 }
 
-tasks.getByName<Test>("test") {
-    useJUnitPlatform()
-}
 tasks.create<Exec>("startPostgres") {
     commandLine("docker",
         "run",
