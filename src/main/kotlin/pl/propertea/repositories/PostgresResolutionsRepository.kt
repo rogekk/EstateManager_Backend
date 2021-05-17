@@ -1,11 +1,7 @@
 package pl.propertea.repositories
 
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.joda.time.DateTime
 import pl.propertea.common.Clock
 import pl.propertea.common.IdGenerator
 import pl.propertea.db.*
@@ -16,7 +12,8 @@ interface ResolutionsRepository {
     fun getResolutions(communityId: CommunityId): List<Resolution>
     fun crateResolution(resolutionCreation: ResolutionCreation): ResolutionId?
     fun getResolution(id: ResolutionId): Resolution?
-    fun vote(communityId: CommunityId, resolutionId: ResolutionId, ownerId: OwnerId, vote: Vote)
+    fun vote(communityId: CommunityId, resolutionId: ResolutionId, ownerId: OwnerId, vote: Vote): UpdateResult<Boolean>
+    fun updateResolutionResult(id: ResolutionId, result: ResolutionResult)
 }
 
 class PostgresResolutionsRepository(
@@ -41,7 +38,8 @@ class PostgresResolutionsRepository(
                         it[ResolutionsTable.endingDate],
                         0,
                         0,
-                        it[ResolutionsTable.description]
+                        it[ResolutionsTable.description],
+                        it[ResolutionsTable.result].toResult(),
                     )
                 }
         }
@@ -78,7 +76,8 @@ class PostgresResolutionsRepository(
                         it[ResolutionsTable.endingDate],
                         0,
                         0,
-                        it[ResolutionsTable.description]
+                        it[ResolutionsTable.description],
+                        it[ResolutionsTable.result].toResult(),
                     )
                 }.firstOrNull()
                 .let {
@@ -100,8 +99,8 @@ class PostgresResolutionsRepository(
         resolutionId: ResolutionId,
         ownerId: OwnerId,
         vote: Vote
-    ) {
-        transaction(database) {
+    ): UpdateResult<Boolean> {
+        return transaction(database) {
             // TODO check logic makes sense make it configurable
             val sharesInCommunity = OwnerMembership.select {
                 (OwnerMembership.communityId eq communityId.id) and (OwnerMembership.ownerId eq ownerId.id)
@@ -109,18 +108,31 @@ class PostgresResolutionsRepository(
                 it[OwnerMembership.shares]
             }
 
-            ResolutionVotes
-                .insert {
-                    it[id] = UUID.randomUUID().toString()//idGenerator.newId()
-                    it[ResolutionVotes.ownerId] = ownerId.id
-                    it[ResolutionVotes.resolutionId] = resolutionId.id
-                    it[ResolutionVotes.vote] = when (vote) {
-                        Vote.PRO -> PGVote.PRO
-                        Vote.AGAINST -> PGVote.AGAINST
-                        Vote.ABSTAIN -> PGVote.ABSTAIN
+
+            runCatching {
+                ResolutionVotes
+                    .insert {
+                        it[id] = UUID.randomUUID().toString()//idGenerator.newId()
+                        it[ResolutionVotes.ownerId] = ownerId.id
+                        it[ResolutionVotes.resolutionId] = resolutionId.id
+                        it[ResolutionVotes.vote] = when (vote) {
+                            Vote.PRO -> PGVote.PRO
+                            Vote.AGAINST -> PGVote.AGAINST
+                            Vote.ABSTAIN -> PGVote.ABSTAIN
+                        }
+                        it[ResolutionVotes.shares] = sharesInCommunity
                     }
-                    it[ResolutionVotes.shares] = sharesInCommunity
-                }
+            }
+                .map { Success(true) }
+                .getOrElse { Failed() }
+        }
+    }
+
+    override fun updateResolutionResult(id: ResolutionId, result: ResolutionResult) {
+        transaction(database) {
+            ResolutionsTable.update({ ResolutionsTable.id eq id.id }) {
+                it[this.result] = PGResolutionResult.fromResult(result)
+            }
         }
     }
 }

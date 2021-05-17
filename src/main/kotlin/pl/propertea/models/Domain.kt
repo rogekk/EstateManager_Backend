@@ -48,6 +48,7 @@ data class Resolution(
     val sharesPro: Int,
     val sharesAgainst: Int,
     val description: String,
+    val result: ResolutionResult,
 )
 
 data class ResolutionCreation(
