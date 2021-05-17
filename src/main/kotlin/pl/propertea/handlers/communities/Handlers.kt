@@ -1,25 +1,25 @@
-package pl.communities
+package pl.propertea.handlers.communities
 
 import com.snitch.Handler
-import com.snitch.created
 import com.snitch.ok
 import communityId
+import createdSuccessfully
 import pl.propertea.models.*
 import pl.propertea.repositories.RepositoriesModule.communityRepository
 
 
-val createCommunityHandler: Handler<CommunityRequest, String> = {
+val createCommunityHandler: Handler<CommunityRequest, GenericResponse> = {
     communityRepository().crateCommunity(Community(CommunityId(body.id), body.name,body.totalShares))
-    "OK".created
+    createdSuccessfully
 }
 
-val createMembershipHandler: Handler<CreateCommunityMembershipRequest, String> = {
+val createMembershipHandler: Handler<CreateCommunityMembershipRequest, GenericResponse> = {
     communityRepository().setMembership(
         OwnerId(body.ownerId),
         CommunityId(request[communityId]),
         Shares(body.shares)
     )
-    "OK".created
+    createdSuccessfully
 }
 
 val getCommunitiesHandler: Handler<Nothing, CommunitiesResponse> = {

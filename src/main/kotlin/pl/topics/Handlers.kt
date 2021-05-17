@@ -5,19 +5,20 @@ import com.snitch.Handler
 import com.snitch.created
 import com.snitch.ok
 import communityId
+import createdSuccessfully
 import onlyAuthenticated
 import pl.propertea.common.CommonModule.clock
 import pl.propertea.models.*
 import pl.propertea.repositories.RepositoriesModule.communityRepository
 import pl.propertea.repositories.RepositoriesModule.topicsRepository
+import success
 import topicId
 
 val getTopics: Handler<Nothing, TopicsResponse> = {
-    onlyAuthenticated()
     topicsRepository().getTopics(CommunityId(request[communityId])).toResponse().ok
 }
 
-val createTopicsHandler: Handler<TopicRequest, String> = {
+val createTopicsHandler: Handler<TopicRequest, GenericResponse> = {
     topicsRepository().crateTopic(
         TopicCreation(
             body.subject,
@@ -27,15 +28,17 @@ val createTopicsHandler: Handler<TopicRequest, String> = {
             body.description
         )
     )
-    "OK".created
+
+    createdSuccessfully
 }
 
-val crateCommunityHandler: Handler<CommunityRequest, String> = {
+val crateCommunityHandler: Handler<CommunityRequest, GenericResponse> = {
     communityRepository().crateCommunity(Community(CommunityId(body.id), "Name", body.totalShares))
-    "OK".ok
+
+    success
 }
 
-val createCommentHandler: Handler<CreateCommentRequest, String> = {
+val createCommentHandler: Handler<CreateCommentRequest, GenericResponse> = {
     topicsRepository().createComment(
         CommentCreation(
             authenticatedOwner().id,
@@ -44,7 +47,7 @@ val createCommentHandler: Handler<CreateCommentRequest, String> = {
         )
     )
 
-    "OK".created
+    createdSuccessfully
 }
 
 val getCommentsHandler: Handler<Nothing, GetCommentsResponse> = {
