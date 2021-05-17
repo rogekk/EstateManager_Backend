@@ -180,7 +180,6 @@ class PostgresOwnersRepository(private val database: Database, private val idGen
                 }.first()
         }
     }
-
 }
 
 sealed class CreateOwnerResult {
