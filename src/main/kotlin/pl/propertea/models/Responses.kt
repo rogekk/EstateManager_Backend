@@ -16,14 +16,18 @@ fun Resolution.toResponse() = ResolutionResponse(
     number,
     subject,
     createdAt.toDateTimeISO().toString(),
-    description
+    description,
+    sharesPro,
+    sharesAgainst
 )
 data class ResolutionResponse(
     val id: String,
     val number: String,
     val subject: String,
     val createdAt: String,
-    val description: String?
+    val description: String?,
+    val sharesPro: Int,
+    val sharesAgainst: Int,
 )
 
 data class LoginResponse(
@@ -35,37 +39,50 @@ data class LoginResponse(
 
 data class TopicsResponse(val topics: List<TopicResponse>)
 
-fun Topics.toResponse() = TopicsResponse(
-    topics.map { it.toResponse() }
+fun List<TopicWithOwner>.toResponse() = TopicsResponse(
+    map { it.toResponse() }
 )
 
-
-fun Topic.toResponse() = TopicResponse(
-    id.id,
-    subject,
-    description,
-    createdBy.id,
-    createdAt.toDateTimeISO().toString()
+fun TopicWithOwner.toResponse() = TopicResponse(
+    topic.id.id,
+    topic.subject,
+    topic.description,
+    TopicCreatorResponse(owner.id.id, owner.username, owner.profileImageUrl),
+    topic.createdAt.toDateTimeISO().toString(),
+    topic.commentCount
 )
 
 data class TopicResponse(
     val id: String,
     val subject: String,
     val description: String,
-    val createdBy: String,
-    val createdAt: String
+    val createdBy: TopicCreatorResponse,
+    val createdAt: String,
+    val commentCount: Int
+)
+
+data class TopicCreatorResponse(
+    val id: String,
+    val username: String,
+    val profileImageUrl: String?,
 )
 
 data class GetCommentsResponse(
     val comments: List<CommentResponse>
 )
 
-
 data class CommentResponse(
     val id: String,
-    val createdBy: String,
+    val createdBy: CommentCreatorResponse,
+    val createdAt: String,
     val topicId: String,
     val content: String
+)
+
+data class CommentCreatorResponse(
+    val id: String,
+    val username: String,
+    val profileImageUrl: String? = null,
 )
 
 data class ProfileResponse(

@@ -24,9 +24,9 @@ class TopicsHttpTest : SparkTest({
         authenticator.relaxed
     )
 }) {
-    val topics by aRandom<Topics>()
-    val expectedComments by aRandomListOf<Comment>()
+    val topics by aRandomListOf<TopicWithOwner>(10)
     val owner by aRandom<Owner>()
+    val expectedComments by aRandomListOf<CommentWithOwner> { map{ it.copy(owner = owner)} }
 
     @Test
     fun `creates a topic`() {
@@ -86,7 +86,7 @@ class TopicsHttpTest : SparkTest({
         whenPerform GET "/v1/communities/cid/topics/atopicid/comments" withHeaders hashMapOf(authTokenHeader to "90334") expectCode 200 expect {
             it.text.parseJson<GetCommentsResponse>()
                 .comments
-                .map { it.content } isEqualTo expectedComments.map { it.content }
+                .map { it.content } isEqualTo expectedComments.map { it.comment.content }
         }
     }
 }

@@ -27,6 +27,12 @@ data class Topic(
     val createdAt: DateTime,
     val communityId: CommunityId,
     val description: String,
+    val commentCount: Int,
+)
+
+data class TopicWithOwner(
+    val topic: Topic,
+    val owner: Owner
 )
 
 data class AuthToken(val token: String)
@@ -39,20 +45,25 @@ data class Resolution(
     val createdAt: DateTime,
     val passingDate: DateTime?,
     val endingDate: DateTime?,
-    val sharesPro: String?,
-    val sharesAgainst: String?,
-    val description: String?,
-
-    )
+    val sharesPro: Int,
+    val sharesAgainst: Int,
+    val description: String,
+)
 
 data class ResolutionCreation(
     val communityId: CommunityId,
     val number: String,
     val subject: String,
-    val createdAt: DateTime,
-    val description: String?,
+    val description: String,
+    )
 
-)
+enum class ResolutionResult {
+    APPROVED, REJECTED, OPEN_FOR_VOTING, CANCELED
+}
+
+enum class Vote {
+    PRO, AGAINST, ABSTAIN
+}
 
 data class TopicCreation(
     val subject: String,
@@ -71,8 +82,14 @@ data class CommentCreation(
 data class Comment(
     val id: CommentId,
     val createdBy: OwnerId,
+    val createdAt: DateTime,
     val topicId: TopicId,
     val content: String
+)
+
+data class CommentWithOwner(
+    val comment: Comment,
+    val owner: Owner
 )
 
 data class Community(
@@ -87,6 +104,7 @@ data class Owner(
     val email: String,
     val phoneNumber: String,
     val address: String,
+    val profileImageUrl: String?,
 )
 
 data class OwnerProfile(

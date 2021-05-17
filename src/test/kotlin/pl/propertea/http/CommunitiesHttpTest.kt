@@ -25,9 +25,10 @@ class CommunitiesHttpTest : SparkTest({ Mocks(communityRepository.relaxed) }) {
         whenPerform POST "/v1/communities" withHeaders mapOf(authTokenHeader to "profileToken") withBody json {
             "id" _ "id"
             "name" _ "name"
+            "totalShares" _ 50
         } expectCode 201
 
-        verify { communityRepository().crateCommunity(Community(CommunityId("id"), "name")) }
+        verify { communityRepository().crateCommunity(Community(CommunityId("id"), "name", 50)) }
     }
 
     @Test

@@ -7,6 +7,7 @@ import pl.propertea.models.Owner
 import pl.propertea.repositories.RepositoriesModule
 
 interface Authenticator {
+    fun verify(authToken: AuthToken)
     fun authenticate(authToken: AuthToken): Owner?
     fun getToken(username: String): String
 }
@@ -17,6 +18,10 @@ class JWTAuthenticator : Authenticator {
     private val verifier: JWTVerifier = JWT.require(algorithm)
         .withIssuer("auth0")
         .build() //Reusable verifier instance
+
+    override fun verify(authToken: AuthToken) {
+        verifier.verify(authToken.token)
+    }
 
     override fun authenticate(authToken: AuthToken): Owner? {
         val jwt = verifier.verify(authToken.token)

@@ -1,3 +1,4 @@
+import com.auth0.jwt.exceptions.JWTDecodeException
 import com.snitch.*
 import com.snitch.spark.SparkResponseWrapper
 import pl.auth.loginHandler
@@ -10,14 +11,17 @@ import pl.profile.getProfile
 import pl.profile.updateOwnersHandler
 import pl.propertea.common.CommonModule.authenticator
 import pl.propertea.models.*
+import pl.resolutions.createResolutionVoteHandler
 import pl.resolutions.createResolutionsHandler
+import pl.resolutions.getResolution
 import pl.resolutions.getResolutions
 import spark.Service
+import java.lang.IllegalArgumentException
 
 val topicId = path("topicId", "Id of the topic", NonEmptyString)
 val communityId = path("communityId", "Id of the community", NonEmptyString)
+val resolutionId = path("resolutionId", "Id of the resolution", NonEmptyString)
 val ownerId = path("ownerId", "Id of the owner", NonEmptyString)
-
 val authTokenHeader = header("X-Auth-Token", "the auth token", NonEmptyString)
 
 fun routes(http: Service): Router.() -> Unit = {
@@ -79,6 +83,14 @@ fun routes(http: Service): Router.() -> Unit = {
             .authenticated()
             .isHandledBy(getResolutions)
 
+        GET("/communities" / communityId / "resolutions" / resolutionId)
+            .authenticated()
+            .isHandledBy(getResolution)
+
+        POST("/communities" / communityId / "resolutions" / resolutionId / "votes" )
+            .authenticated()
+            .with(body<ResolutionVoteRequest>())
+            .isHandledBy(createResolutionVoteHandler)
     }
 
     setAccessControlHeaders(http)
@@ -106,6 +118,16 @@ private fun setAccessControlHeaders(http: Service) {
         response.status(401)
         response.body("Unauthenticated")
     }
+
+    http.exception(JWTDecodeException::class.java) { exception, _, response ->
+        response.status(401)
+        response.body("Unauthenticated")
+    }
+
+    http.exception(IllegalArgumentException::class.java) { exception, _, response ->
+        response.status(400)
+        response.body("Cannot parse body of request")
+    }
 }
 
 fun <T : Any> Endpoint<T>.authenticated() = withHeader(authTokenHeader)
@@ -118,6 +140,10 @@ fun RequestHandler<*>.authenticatedOwner(): Owner {
 
 fun RequestHandler<*>.setHeader(key: String, value: String) {
     (response as SparkResponseWrapper).response.header(key, value)
+}
+
+fun RequestHandler<*>.onlyAuthenticated() {
+    authenticator().authenticate(AuthToken(request[authTokenHeader]))
 }
 
 class AuthenticationException() : Exception()

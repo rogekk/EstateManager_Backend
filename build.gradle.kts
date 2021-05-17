@@ -23,6 +23,7 @@ dependencies {
     implementation("com.sparkjava:spark-core:2.9.3")
     implementation("com.github.memoizr:Shank:3.0.0")
     implementation("com.auth0:java-jwt:3.16.0")
+    implementation("com.github.f4b6a3:ulid-creator:3.1.0")
 
 
     implementation("ch.qos.logback:logback-classic:1.2.3")

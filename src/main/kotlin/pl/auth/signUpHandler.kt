@@ -28,7 +28,7 @@ val loginHandler: Handler<LoginRequest, LoginResponse> = {
         is Verified -> {
             val token = authenticator().getToken(body.username)
             setHeader("Token", token)
-            LoginResponse(checkOwnersCredentials.id.id, token).ok
+            LoginResponse(id = checkOwnersCredentials.id.id, token = token).ok
         }
         NotVerified -> forbidden("invalid login credentials")
     }
