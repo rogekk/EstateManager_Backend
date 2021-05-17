@@ -1,7 +1,5 @@
 package pl.propertea.tools
 
-import com.snitch.extensions.json
-
 fun <T> l(vararg a: T) = a.asList()
 
 fun json(obj: JsonBuilder.() -> Unit): Map<String, Any> {

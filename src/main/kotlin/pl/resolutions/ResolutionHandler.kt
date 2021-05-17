@@ -18,7 +18,8 @@ val getResolutions: Handler<Nothing, ResolutionsResponse> = {
 
 val getResolution: Handler<Nothing, ResolutionResponse> = {
     val resolution = resolutionsRepository().getResolution(ResolutionId(request[resolutionId]))
-    resolution?.toResponse()?.ok ?: notFound()
+    val hasVoted = resolutionsRepository().hasVoted(authenticatedOwner().id, ResolutionId(request[resolutionId]))
+    resolution?.toResponse()?.let { it.copy(votedByOwner = hasVoted) }?.ok ?: notFound()
 }
 
 val createResolutionsHandler: Handler<ResolutionRequest, String> = {
@@ -32,6 +33,7 @@ val createResolutionsHandler: Handler<ResolutionRequest, String> = {
     )
     "OK".created
 }
+
 val createResolutionVoteHandler: Handler<ResolutionVoteRequest, String> = {
     resolutionsRepository().vote(
         CommunityId(request[communityId]),

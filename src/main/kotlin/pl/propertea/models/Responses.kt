@@ -8,7 +8,7 @@ data class GenericResponse(val message: String)
 data class ResolutionsResponse(val resolutions: List<ResolutionResponse>)
 
 fun List<Resolution>.toResponse() = ResolutionsResponse(
-    map { it.toResponse() }
+    map { it.toResponse().copy(sharesAgainst = null, sharesPro = null) }
 )
 
 fun Resolution.toResponse() = ResolutionResponse(
@@ -20,6 +20,7 @@ fun Resolution.toResponse() = ResolutionResponse(
     sharesPro,
     sharesAgainst,
     ResolutionResultResponse.fromResult(result),
+    null
 )
 
 enum class ResolutionResultResponse {
@@ -41,9 +42,10 @@ data class ResolutionResponse(
     val subject: String,
     val createdAt: String,
     val description: String,
-    val sharesPro: Int,
-    val sharesAgainst: Int,
+    val sharesPro: Int?,
+    val sharesAgainst: Int?,
     val result: ResolutionResultResponse,
+    val votedByOwner: Boolean?
 )
 
 data class LoginResponse(

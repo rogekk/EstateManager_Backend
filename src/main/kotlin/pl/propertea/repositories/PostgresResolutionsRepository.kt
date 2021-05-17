@@ -14,6 +14,7 @@ interface ResolutionsRepository {
     fun getResolution(id: ResolutionId): Resolution?
     fun vote(communityId: CommunityId, resolutionId: ResolutionId, ownerId: OwnerId, vote: Vote): UpdateResult<Boolean>
     fun updateResolutionResult(id: ResolutionId, result: ResolutionResult)
+    fun hasVoted(owner: OwnerId, id: ResolutionId): Boolean
 }
 
 class PostgresResolutionsRepository(
@@ -113,16 +114,17 @@ class PostgresResolutionsRepository(
                 ResolutionVotes
                     .insert {
                         it[id] = UUID.randomUUID().toString()//idGenerator.newId()
-                        it[ResolutionVotes.ownerId] = ownerId.id
-                        it[ResolutionVotes.resolutionId] = resolutionId.id
-                        it[ResolutionVotes.vote] = when (vote) {
+                        it[this.ownerId] = ownerId.id
+                        it[this.resolutionId] = resolutionId.id
+                        it[this.vote] = when (vote) {
                             Vote.PRO -> PGVote.PRO
                             Vote.AGAINST -> PGVote.AGAINST
                             Vote.ABSTAIN -> PGVote.ABSTAIN
                         }
-                        it[ResolutionVotes.shares] = sharesInCommunity
+                        it[this.shares] = sharesInCommunity
                     }
             }
+                .onFailure { println(it) }
                 .map { Success(true) }
                 .getOrElse { Failed() }
         }
@@ -133,6 +135,20 @@ class PostgresResolutionsRepository(
             ResolutionsTable.update({ ResolutionsTable.id eq id.id }) {
                 it[this.result] = PGResolutionResult.fromResult(result)
             }
+        }
+    }
+
+    override fun hasVoted(owner: OwnerId, id: ResolutionId): Boolean {
+        return transaction(database) {
+            ResolutionVotes.select {
+                (ResolutionVotes.resolutionId eq id.id) and (ResolutionVotes.ownerId eq owner.id)
+            }
+                .map {
+                    println("${it[ResolutionVotes.ownerId]} ${it[ResolutionVotes.resolutionId]}")
+                    it
+                }
+                .map { true }
+                .firstOrNull() ?: false
         }
     }
 }

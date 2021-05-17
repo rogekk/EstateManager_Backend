@@ -1,8 +1,8 @@
 package pl.propertea.dsl
 
-import pl.propertea.env.TestEnvironmentVariables
-import pl.propertea.common.CommonModule.environment
 import org.junit.rules.ExternalResource
+import pl.propertea.common.CommonModule.environment
+import pl.propertea.env.TestEnvironmentVariables
 
 open class GlobalDependenciesRegistrationTestRule : ExternalResource() {
 

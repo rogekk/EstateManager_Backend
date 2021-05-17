@@ -1,16 +1,24 @@
 package pl.propertea.dsl
 
+import authTokenHeader
 import com.memoizr.assertk.AssertionHook
 import com.memoizr.assertk.expect
 import com.snitch.HeaderParameter
 import com.snitch.extensions.json
 import com.snitch.extensions.toHashMap
+import io.mockk.every
 import khttp.responses.Response
 import org.json.JSONObject
 import org.junit.Rule
 import org.junit.rules.RuleChain
+import pl.propertea.common.CommonModule.authenticator
+import pl.propertea.models.AuthToken
+import pl.propertea.models.Owner
+import ro.kreator.aRandom
 
-abstract class SparkTest(mockBlock: () -> Mocks = { Mocks() }) : BaseTest(mockBlock) {
+abstract class SparkTest(mockBlock: () -> Mocks = { Mocks() }) : BaseTest({Mocks(*mockBlock.invoke().mocks.toList().plus(authenticator.strict).toTypedArray())}) {
+
+    val owner by aRandom<Owner>()
 
     val port = HttpTest.nextPort()
 
@@ -25,6 +33,11 @@ abstract class SparkTest(mockBlock: () -> Mocks = { Mocks() }) : BaseTest(mockBl
         .around(HttpTestRule(port))
 
     val whenPerform = this
+
+    fun Expectation.authenticated() = withHeaders(hashMapOf(authTokenHeader to "myToken")).also {
+        every { authenticator().verify(AuthToken("myToken")) } returns Unit
+        every { authenticator().authenticate(AuthToken("myToken")) } returns owner
+    }
 
     infix fun GET(endpoint: String): Expectation {
         return Expectation(port, HttpMethod.GET, endpoint)

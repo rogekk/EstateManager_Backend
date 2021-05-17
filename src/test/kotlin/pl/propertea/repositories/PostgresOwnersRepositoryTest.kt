@@ -1,15 +1,17 @@
 package pl.propertea.repositories
 
-import pl.propertea.repositories.RepositoriesModule.ownersRepository
 import com.memoizr.assertk.expect
 import org.junit.Before
 import org.junit.Test
 import pl.propertea.dsl.DatabaseTest
-import pl.propertea.models.*
+import pl.propertea.models.Community
+import pl.propertea.models.CommunityId
+import pl.propertea.models.Owner
+import pl.propertea.models.OwnerProfile
 import pl.propertea.repositories.RepositoriesModule.communityRepository
+import pl.propertea.repositories.RepositoriesModule.ownersRepository
 import ro.kreator.aRandom
 import ro.kreator.aRandomListOf
-
 
 
 class PostgresOwnersRepositoryTest : DatabaseTest() {
