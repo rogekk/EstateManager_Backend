@@ -1,23 +1,31 @@
 package pl.propertea.models
 
-import org.jetbrains.exposed.sql.Query
 import org.joda.time.DateTime
-import org.w3c.dom.Text
+
 
 data class TopicId(val id: String)
 data class OwnerId(val id: String)
 data class CommunityId(val id: String)
 data class CommentId(val id: String)
-
 data class ResolutionId(val id: String)
-data class TotalShares(val shares: Int)
+data class BulletinId(val id: String)
 
 data class Shares(val value: Int)
 
 
-data class Topics(val topics: List<Topic>)
-
-data class Resolutions(val resolutions: List<Resolution>)
+data class Bulletin(
+    val id: BulletinId,
+    val subject: String,
+    val content: String,
+    val createdAt: DateTime,
+    val communityId: CommunityId
+)
+data class BulletinCreation(
+    val subject: String,
+    val content: String,
+    val createdAt: DateTime,
+    val communityId: CommunityId
+)
 
 
 data class Topic(
