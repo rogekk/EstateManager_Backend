@@ -18,16 +18,32 @@ fun Resolution.toResponse() = ResolutionResponse(
     createdAt.toDateTimeISO().toString(),
     description,
     sharesPro,
-    sharesAgainst
+    sharesAgainst,
+    ResolutionResultResponse.fromResult(result),
 )
+
+enum class ResolutionResultResponse {
+    approved, rejected, open_for_voting, canceled;
+
+    companion object {
+        fun fromResult(result: ResolutionResult): ResolutionResultResponse = when (result) {
+            ResolutionResult.APPROVED -> approved
+            ResolutionResult.REJECTED -> rejected
+            ResolutionResult.OPEN_FOR_VOTING -> open_for_voting
+            ResolutionResult.CANCELED -> canceled
+        }
+    }
+}
+
 data class ResolutionResponse(
     val id: String,
     val number: String,
     val subject: String,
     val createdAt: String,
-    val description: String?,
+    val description: String,
     val sharesPro: Int,
     val sharesAgainst: Int,
+    val result: ResolutionResultResponse,
 )
 
 data class LoginResponse(
@@ -35,7 +51,6 @@ data class LoginResponse(
     val token: String,
     val id: String
 )
-
 
 data class TopicsResponse(val topics: List<TopicResponse>)
 

@@ -1,12 +1,15 @@
 package pl.propertea.repositories
 
 import com.memoizr.assertk.expect
+import com.memoizr.assertk.of
 import io.mockk.every
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import pl.propertea.common.CommonModule.clock
 import pl.propertea.common.CommonModule.idGenerator
+import pl.propertea.db.Failed
+import pl.propertea.db.Success
 import pl.propertea.dsl.DatabaseTest
 import pl.propertea.dsl.Mocks
 import pl.propertea.dsl.strict
@@ -35,7 +38,8 @@ class PostgresResolutionsRepositoryTest : DatabaseTest({
             passingDate = null,
             endingDate = null,
             sharesPro = 0,
-            sharesAgainst = 0
+            sharesAgainst = 0,
+            result = ResolutionResult.OPEN_FOR_VOTING,
         )
     }
     val expectedResolutions by aRandomListOf<Resolution> {
@@ -46,6 +50,7 @@ class PostgresResolutionsRepositoryTest : DatabaseTest({
                 endingDate = null,
                 sharesPro = 0,
                 sharesAgainst = 0,
+                result = ResolutionResult.OPEN_FOR_VOTING,
             )
         }
     }
@@ -114,5 +119,57 @@ class PostgresResolutionsRepositoryTest : DatabaseTest({
 
         expect that resolutionsRepository().getResolution(id)?.sharesPro isEqualTo 40
         expect that resolutionsRepository().getResolution(id)?.sharesAgainst isEqualTo 100
+    }
+    
+    @Test
+    fun `it does not allow double voting`() {
+        idGenerator.override(null)
+        communityRepository().crateCommunity(community)
+        val id = resolutionsRepository().crateResolution(
+            ResolutionCreation(resolution.communityId, resolution.number, resolution.subject, resolution.description)
+        )
+
+        val owner1Id = owner1 with 10.shares inThis community putIn ownersRepository()
+
+        expect that resolutionsRepository().getResolution(id!!)?.sharesPro isEqualTo 0
+
+        val success = resolutionsRepository().vote(community.id, id, owner1Id, Vote.PRO)
+        val failed = resolutionsRepository().vote(community.id, id, owner1Id, Vote.PRO)
+
+        expect that success isInstance of<Success<*>>()
+        expect that failed isInstance of<Failed<*>>()
+    }
+
+    @Test
+    fun `sets the result of a resolution`() {
+        idGenerator.override(null)
+        communityRepository().crateCommunity(community)
+
+        val id = resolutionsRepository().crateResolution(
+            ResolutionCreation(resolution.communityId, resolution.number, resolution.subject, resolution.description)
+        )
+
+        expect that resolutionsRepository().getResolution(id!!) isEqualTo resolution.copy(
+            id = id,
+            result = ResolutionResult.OPEN_FOR_VOTING)
+
+        // canceled
+        resolutionsRepository().updateResolutionResult(id, ResolutionResult.CANCELED)
+
+        expect that resolutionsRepository().getResolution(id) isEqualTo resolution.copy(
+            id = id,
+            result = ResolutionResult.CANCELED)
+
+        // rejected
+        resolutionsRepository().updateResolutionResult(id, ResolutionResult.REJECTED)
+        expect that resolutionsRepository().getResolution(id) isEqualTo resolution.copy(
+            id = id,
+            result = ResolutionResult.REJECTED)
+
+        // approved
+        resolutionsRepository().updateResolutionResult(id, ResolutionResult.APPROVED)
+        expect that resolutionsRepository().getResolution(id) isEqualTo resolution.copy(
+            id = id,
+            result = ResolutionResult.APPROVED)
     }
 }
