@@ -8,6 +8,14 @@ import pl.propertea.db.DatabaseModule
 
 object RepositoriesModule : ShankModule {
 
+
+    val ownersRepository = single { -> PostgresOwnersRepository(readWriteDatabase(), idGenerator()) }
+    val topicsRepository = single<TopicsRepository> { -> PostgresTopicsRepository(readWriteDatabase()) }
+    val communityRepository =
+        single<CommunityRepository> { -> PostgresCommunityRepository(readWriteDatabase(), idGenerator()) }
+    val resolutionsRepository =
+        single<ResolutionsRepository> { -> PostgresResolutionsRepository(readWriteDatabase(), idGenerator(), clock()) }
+
     val ownersRepository = single { -> PostgresOwnersRepository(DatabaseModule.readWriteDatabase(),idGenerator()) }
     val topicsRepository = single<TopicsRepository> { -> PostgresTopicsRepository(DatabaseModule.readWriteDatabase()) }
     val communityRepository = single<CommunityRepository> { -> PostgresCommunityRepository(DatabaseModule.readWriteDatabase(), idGenerator()) }

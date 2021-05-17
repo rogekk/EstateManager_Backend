@@ -1,41 +1,38 @@
 package pl.propertea.http
 
-import authTokenHeader
-import com.snitch.extensions.json
-import pl.propertea.repositories.RepositoriesModule.ownersRepository
+import com.memoizr.assertk.expect
 import io.mockk.every
-import org.junit.Before
 import org.junit.Test
+import pl.propertea.common.CommonModule.authenticator
 import pl.propertea.dsl.Mocks
 import pl.propertea.dsl.SparkTest
 import pl.propertea.dsl.relaxed
-import pl.propertea.dsl.strict
-import pl.propertea.models.Owner
-import pl.propertea.models.OwnerId
 import pl.propertea.models.OwnerProfile
 import pl.propertea.repositories.NotVerified
+import pl.propertea.repositories.RepositoriesModule.ownersRepository
 import pl.propertea.repositories.Verified
 import pl.propertea.tools.json
-import ro.kreator.aRandom
 
 class AuthHttpTest : SparkTest({ Mocks(ownersRepository.relaxed) }) {
-    val owner by aRandom<Owner>()
-
-    @Before
-    fun before() {
-    }
 
     @Test
     fun `returns success for successful login`() {
         every { ownersRepository().checkOwnersCredentials("foo", "pass") } returns Verified(owner.id)
-        whenPerform POST "/v1/login" withBody json { "username" _ "foo"; "password" _ "pass" } expectCode 200
+        every { authenticator().getToken("foo") } returns "thetoken"
+
+        POST("/v1/login")
+            .withBody(json { "username" _ "foo"; "password" _ "pass" })
+            .expectCode(200)
+            .expect {
+                expect that it.headers["token"] isEqualTo "thetoken"
+            }
     }
 
     @Test
     fun `returns failure for unsuccessful login`() {
         every { ownersRepository().checkOwnersCredentials("a", "b") } returns NotVerified
 
-        whenPerform POST "/v1/login" withBody json { "username" _ "a"; "password" _ "b" } expectCode 403
+        POST("/v1/login").withBody(json { "username" _ "a"; "password" _ "b" }).expectCode(403)
     }
 
     @Test
@@ -43,16 +40,24 @@ class AuthHttpTest : SparkTest({ Mocks(ownersRepository.relaxed) }) {
         every { ownersRepository().getByUsername(owner.username) } returns owner
         every { ownersRepository().getProfile(owner.id) } returns OwnerProfile(owner, emptyList())
         every { ownersRepository().checkOwnersCredentials(owner.username, "b") } returns Verified(owner.id)
+        every { authenticator().getToken(owner.username) } returns "thetoken"
 
-        whenPerform POST "/v1/login" withBody json { "username" _ owner.username; "password" _ "b" } expect {
-            whenPerform GET "/v1/owners/ownid" withHeaders hashMapOf(authTokenHeader to it.headers["token"]) expectBodyJson json {
-                "phoneNumber" _ owner.phoneNumber
-                "address" _ owner.address
-                "id" _ owner.id.id
-                "email" _ owner.email
-                "username" _ owner.username
-                "communities" _ emptyList<String>()
+        POST("/v1/login")
+            .withBody(json { "username" _ owner.username; "password" _ "b" })
+            .expect {
+                whenPerform.GET("/v1/owners/ownid")
+                    .authenticated()
+                    .expectBodyJson(json {
+                        "phoneNumber" _ owner.phoneNumber
+                        "address" _ owner.address
+                        "id" _ owner.id.id
+                        "email" _ owner.email
+                        "username" _ owner.username
+                        "communities" _ emptyList<String>()
+                    })
             }
-        }
+            .expect {
+                expect that it.headers["token"] isEqualTo "thetoken"
+            }
     }
 }

@@ -1,4 +1,4 @@
-package pl.auth
+package pl.propertea.handlers.auth
 
 import com.snitch.*
 import pl.propertea.common.CommonModule.authenticator

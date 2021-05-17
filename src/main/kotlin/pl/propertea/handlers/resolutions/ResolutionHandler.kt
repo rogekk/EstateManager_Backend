@@ -1,4 +1,4 @@
-package pl.resolutions
+package pl.propertea.handlers.resolutions
 
 import authenticatedOwner
 import com.snitch.Handler
@@ -6,10 +6,11 @@ import com.snitch.created
 import com.snitch.notFound
 import com.snitch.ok
 import communityId
-import pl.propertea.common.CommonModule.clock
+import createdSuccessfully
 import pl.propertea.models.*
 import pl.propertea.repositories.RepositoriesModule.resolutionsRepository
 import resolutionId
+import success
 
 
 val getResolutions: Handler<Nothing, ResolutionsResponse> = {
@@ -18,10 +19,11 @@ val getResolutions: Handler<Nothing, ResolutionsResponse> = {
 
 val getResolution: Handler<Nothing, ResolutionResponse> = {
     val resolution = resolutionsRepository().getResolution(ResolutionId(request[resolutionId]))
-    resolution?.toResponse()?.ok ?: notFound()
+    val hasVoted = resolutionsRepository().hasVoted(authenticatedOwner().id, ResolutionId(request[resolutionId]))
+    resolution?.toResponse()?.copy(votedByOwner = hasVoted)?.ok ?: notFound()
 }
 
-val createResolutionsHandler: Handler<ResolutionRequest, String> = {
+val createResolutionsHandler: Handler<ResolutionRequest, GenericResponse> = {
     resolutionsRepository().crateResolution(
         ResolutionCreation(
             CommunityId(request[communityId]),
@@ -30,9 +32,11 @@ val createResolutionsHandler: Handler<ResolutionRequest, String> = {
             body.description
         )
     )
-    "OK".created
+
+    createdSuccessfully
 }
-val createResolutionVoteHandler: Handler<ResolutionVoteRequest, String> = {
+
+val createResolutionVoteHandler: Handler<ResolutionVoteRequest, GenericResponse> = {
     resolutionsRepository().vote(
         CommunityId(request[communityId]),
         ResolutionId(request[resolutionId]),
@@ -43,5 +47,6 @@ val createResolutionVoteHandler: Handler<ResolutionVoteRequest, String> = {
             VoteRequest.abstain -> Vote.ABSTAIN
         }
     )
-    "OK".created
+
+    createdSuccessfully
 }

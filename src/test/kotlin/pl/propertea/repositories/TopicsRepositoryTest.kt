@@ -5,8 +5,8 @@ import org.junit.Test
 import pl.propertea.dsl.DatabaseTest
 import pl.propertea.models.*
 import pl.propertea.repositories.RepositoriesModule.communityRepository
-import pl.propertea.repositories.RepositoriesModule.topicsRepository
 import pl.propertea.repositories.RepositoriesModule.ownersRepository
+import pl.propertea.repositories.RepositoriesModule.topicsRepository
 import ro.kreator.aRandom
 import ro.kreator.aRandomListOf
 
@@ -28,7 +28,6 @@ class TopicsRepositoryTest : DatabaseTest() {
 
     @Test
     fun `returns a forum with topics`() {
-
         communityRepository().crateCommunity(community)
         val ownerId = owner inThis community putIn ownersRepository()
 
@@ -79,7 +78,6 @@ class TopicsRepositoryTest : DatabaseTest() {
         comments.forEach {
             topicsRepository().createComment(CommentCreation(ownerId, topicId!!, it.content))
         }
-
 
         expect that topicsRepository().getTopics(community.id).first().topic.commentCount isEqualTo 5
     }

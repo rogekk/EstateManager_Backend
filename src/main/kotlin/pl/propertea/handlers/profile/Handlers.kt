@@ -1,12 +1,14 @@
-package pl.profile
+package pl.propertea.handlers.profile
 
 import authenticatedOwner
 import com.snitch.Handler
 import com.snitch.ok
 import pl.propertea.models.CommunityMembershipResponse
+import pl.propertea.models.GenericResponse
 import pl.propertea.models.ProfileResponse
 import pl.propertea.models.UpdateOwnersRequest
 import pl.propertea.repositories.RepositoriesModule.ownersRepository
+import success
 
 
 val getProfile: Handler<Nothing, ProfileResponse> = {
@@ -28,7 +30,7 @@ val getProfile: Handler<Nothing, ProfileResponse> = {
         }).ok
 }
 
-val updateOwnersHandler: Handler<UpdateOwnersRequest, String> = {
+val updateOwnersHandler: Handler<UpdateOwnersRequest, GenericResponse> = {
     ownersRepository().updateOwnersDetails(
         authenticatedOwner().id,
         email = body.email,
@@ -36,6 +38,6 @@ val updateOwnersHandler: Handler<UpdateOwnersRequest, String> = {
         phoneNumber = body.phoneNumber,
         profileImageUrl = body.profileImageUrl
     )
-    "ok".ok
+    success
 }
 

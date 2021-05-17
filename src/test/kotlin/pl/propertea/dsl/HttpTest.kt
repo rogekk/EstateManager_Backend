@@ -12,7 +12,7 @@ import org.junit.Rule
 import org.junit.rules.RuleChain
 import org.junit.rules.TestRule
 import pl.propertea.env.serviceName
-import java.util.UUID
+import java.util.*
 
 //val validAuthToken = AuthToken("token")
 //val otherValidAuthToken = AuthToken("otherValidToken")

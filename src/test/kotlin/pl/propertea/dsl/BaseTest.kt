@@ -1,15 +1,14 @@
 package pl.propertea.dsl
 
+//import org.joda.time.DateTime
 import ch.qos.logback.classic.Level
-import pl.propertea.common.CommonModule.environment
 import io.mockk.mockk
-import life.shank.NewProvider0
 import life.shank.SingleProvider0
 import life.shank.resetShank
 import org.joda.time.DateTime
-//import org.joda.time.DateTime
 import org.junit.After
 import org.junit.Before
+import pl.propertea.common.CommonModule.environment
 import pl.propertea.env.TestEnvironmentVariables
 import ro.kreator.customize
 import ro.kreator.registerCustomizations

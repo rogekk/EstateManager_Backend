@@ -77,11 +77,8 @@ class PostgresResolutionsRepositoryTest : DatabaseTest({
     @Test
     fun `after creating some resolutions returns the resolutions`() {
         communityRepository().crateCommunity(community)
-        expectedResolutions.forEach {
-            resolutionsRepository().crateResolution(
-                ResolutionCreation(it.communityId, it.number, it.subject, it.description)
-            )
-        }
+
+        expectedResolutions putIn resolutionsRepository()
 
         val resolutions: List<Resolution> = resolutionsRepository().getResolutions(community.id)
 
@@ -91,9 +88,7 @@ class PostgresResolutionsRepositoryTest : DatabaseTest({
     @Test
     fun `gets a single existing resolution`() {
         communityRepository().crateCommunity(community)
-        val id = resolutionsRepository().crateResolution(
-            ResolutionCreation(resolution.communityId, resolution.number, resolution.subject, resolution.description)
-        )
+        val id = resolution putIn resolutionsRepository()
         expect that resolutionsRepository().getResolution(id!!) isEqualTo resolution.copy(
             id = id,
         )
@@ -103,9 +98,7 @@ class PostgresResolutionsRepositoryTest : DatabaseTest({
     fun `adds votes to resolution`() {
         idGenerator.override(null)
         communityRepository().crateCommunity(community)
-        val id = resolutionsRepository().crateResolution(
-            ResolutionCreation(resolution.communityId, resolution.number, resolution.subject, resolution.description)
-        )
+        val id = resolution putIn resolutionsRepository()
 
         val owner1Id = owner1 with 10.shares inThis community putIn ownersRepository()
         val owner2Id = owner2 with 30.shares inThis community putIn ownersRepository()
@@ -120,14 +113,12 @@ class PostgresResolutionsRepositoryTest : DatabaseTest({
         expect that resolutionsRepository().getResolution(id)?.sharesPro isEqualTo 40
         expect that resolutionsRepository().getResolution(id)?.sharesAgainst isEqualTo 100
     }
-    
+
     @Test
     fun `it does not allow double voting`() {
         idGenerator.override(null)
         communityRepository().crateCommunity(community)
-        val id = resolutionsRepository().crateResolution(
-            ResolutionCreation(resolution.communityId, resolution.number, resolution.subject, resolution.description)
-        )
+        val id = resolution putIn resolutionsRepository()
 
         val owner1Id = owner1 with 10.shares inThis community putIn ownersRepository()
 
@@ -145,31 +136,64 @@ class PostgresResolutionsRepositoryTest : DatabaseTest({
         idGenerator.override(null)
         communityRepository().crateCommunity(community)
 
-        val id = resolutionsRepository().crateResolution(
-            ResolutionCreation(resolution.communityId, resolution.number, resolution.subject, resolution.description)
-        )
+        val id = resolution putIn resolutionsRepository()
 
-        expect that resolutionsRepository().getResolution(id!!) isEqualTo resolution.copy(
+        expect that resolutionsRepository().getResolution(id) isEqualTo resolution.copy(
             id = id,
-            result = ResolutionResult.OPEN_FOR_VOTING)
+            result = ResolutionResult.OPEN_FOR_VOTING
+        )
 
         // canceled
         resolutionsRepository().updateResolutionResult(id, ResolutionResult.CANCELED)
 
         expect that resolutionsRepository().getResolution(id) isEqualTo resolution.copy(
             id = id,
-            result = ResolutionResult.CANCELED)
+            result = ResolutionResult.CANCELED
+        )
 
         // rejected
         resolutionsRepository().updateResolutionResult(id, ResolutionResult.REJECTED)
         expect that resolutionsRepository().getResolution(id) isEqualTo resolution.copy(
             id = id,
-            result = ResolutionResult.REJECTED)
+            result = ResolutionResult.REJECTED
+        )
 
         // approved
         resolutionsRepository().updateResolutionResult(id, ResolutionResult.APPROVED)
         expect that resolutionsRepository().getResolution(id) isEqualTo resolution.copy(
             id = id,
-            result = ResolutionResult.APPROVED)
+            result = ResolutionResult.APPROVED
+        )
+    }
+
+    @Test
+    fun `can tell if an owner has already voted in a resolution`() {
+        idGenerator.override(null)
+        communityRepository().crateCommunity(community)
+
+        val ownerId = owner1 inThis community putIn ownersRepository()
+        val id = resolution putIn resolutionsRepository()
+
+        expect that resolutionsRepository().hasVoted(ownerId, id) _is false
+
+        resolutionsRepository().vote(community.id, id, ownerId, Vote.AGAINST)
+
+        expect that resolutionsRepository().hasVoted(ownerId, id) _is true
+
     }
 }
+
+infix fun Resolution.putIn(resolutionsRepository: ResolutionsRepository) =
+    resolutionsRepository().crateResolution(ResolutionCreation(communityId, number, subject, description))!!
+
+infix fun List<Resolution>.putIn(resolutionsRepository: ResolutionsRepository) =
+    forEach {
+        resolutionsRepository().crateResolution(
+            ResolutionCreation(
+                it.communityId,
+                it.number,
+                it.subject,
+                it.description
+            )
+        )!!
+    }

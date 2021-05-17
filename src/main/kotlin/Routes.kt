@@ -1,20 +1,20 @@
 import com.auth0.jwt.exceptions.JWTDecodeException
 import com.snitch.*
 import com.snitch.spark.SparkResponseWrapper
-import pl.auth.loginHandler
-import pl.auth.createOwnerHandler
-import pl.communities.createCommunityHandler
-import pl.communities.createMembershipHandler
-import pl.communities.getCommunitiesHandler
+import pl.propertea.handlers.auth.loginHandler
+import pl.propertea.handlers.auth.createOwnerHandler
+import pl.propertea.handlers.communities.createCommunityHandler
+import pl.propertea.handlers.communities.createMembershipHandler
+import pl.propertea.handlers.communities.getCommunitiesHandler
 import pl.topics.*
-import pl.profile.getProfile
-import pl.profile.updateOwnersHandler
+import pl.propertea.handlers.profile.getProfile
+import pl.propertea.handlers.profile.updateOwnersHandler
 import pl.propertea.common.CommonModule.authenticator
 import pl.propertea.models.*
-import pl.resolutions.createResolutionVoteHandler
-import pl.resolutions.createResolutionsHandler
-import pl.resolutions.getResolution
-import pl.resolutions.getResolutions
+import pl.propertea.handlers.resolutions.createResolutionVoteHandler
+import pl.propertea.handlers.resolutions.createResolutionsHandler
+import pl.propertea.handlers.resolutions.getResolution
+import pl.propertea.handlers.resolutions.getResolutions
 import spark.Service
 import java.lang.IllegalArgumentException
 
@@ -147,3 +147,6 @@ fun RequestHandler<*>.onlyAuthenticated() {
 }
 
 class AuthenticationException() : Exception()
+
+val success = GenericResponse("success").ok
+val createdSuccessfully = GenericResponse("successful creation").created

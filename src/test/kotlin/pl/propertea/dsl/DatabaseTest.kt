@@ -1,6 +1,5 @@
 package pl.propertea.dsl
 
-import life.shank.SingleProvider0
 import org.junit.Rule
 import org.junit.rules.RuleChain
 import org.junit.rules.TestRule

@@ -1,6 +1,5 @@
 package pl.propertea.http
 
-import authTokenHeader
 import com.memoizr.assertk.isEqualTo
 import com.snitch.extensions.parseJson
 import io.mockk.every
@@ -14,7 +13,6 @@ import pl.propertea.dsl.relaxed
 import pl.propertea.models.*
 import pl.propertea.repositories.RepositoriesModule.topicsRepository
 import pl.tools.json
-import ro.kreator.aRandom
 import ro.kreator.aRandomListOf
 
 class TopicsHttpTest : SparkTest({
@@ -25,19 +23,19 @@ class TopicsHttpTest : SparkTest({
     )
 }) {
     val topics by aRandomListOf<TopicWithOwner>(10)
-    val owner by aRandom<Owner>()
-    val expectedComments by aRandomListOf<CommentWithOwner> { map{ it.copy(owner = owner)} }
+    val expectedComments by aRandomListOf<CommentWithOwner> { map { it.copy(owner = owner) } }
 
     @Test
     fun `creates a topic`() {
         every { clock().getDateTime() } returns now
-        every { authenticator().authenticate(AuthToken("myToken")) } returns owner
 
-        whenPerform POST "/v1/communities/cid/topics" withHeaders hashMapOf(authTokenHeader to "myToken") withBody json {
-            "communityId" _ "Id"
-            "subject" _ "s1"
-            "description" _ "d1"
-        } expectCode 201
+        whenPerform.POST("/v1/communities/cid/topics")
+            .authenticated()
+            .withBody(json {
+                "communityId" _ "Id"
+                "subject" _ "s1"
+                "description" _ "d1"
+            }).expectCode(201)
 
         verify {
             topicsRepository().crateTopic(
@@ -56,17 +54,21 @@ class TopicsHttpTest : SparkTest({
     fun `returns a list of topics`() {
         every { topicsRepository().getTopics(any()) } returns topics
 
-        whenPerform GET "/v1/communities/cid/topics" withHeaders hashMapOf(authTokenHeader to "x3") expectBodyJson topics.toResponse()
+        whenPerform
+            .GET("/v1/communities/cid/topics")
+            .authenticated()
+            .expectBodyJson(topics.toResponse())
     }
 
     @Test
     fun `creates a new comment for a topic`() {
-        every { authenticator().authenticate(AuthToken("myBullshitToken")) } returns owner
-
-        whenPerform POST "/v1/communities/cid/topics/atopicid/comments" withBody json {
-            "content" _ "blah"
-            "createdBy" _ "id"
-        } withHeaders hashMapOf(authTokenHeader to "myBullshitToken") expectCode 201
+        whenPerform.POST("/v1/communities/cid/topics/atopicid/comments")
+            .withBody(json {
+                "content" _ "blah"
+                "createdBy" _ "id"
+            })
+            .authenticated()
+            .expectCode(201)
 
         verify {
             topicsRepository().createComment(
@@ -83,10 +85,13 @@ class TopicsHttpTest : SparkTest({
     fun `gets all comments for a topic`() {
         every { topicsRepository().getComments(TopicId("atopicid")) } returns expectedComments
 
-        whenPerform GET "/v1/communities/cid/topics/atopicid/comments" withHeaders hashMapOf(authTokenHeader to "90334") expectCode 200 expect {
-            it.text.parseJson<GetCommentsResponse>()
-                .comments
-                .map { it.content } isEqualTo expectedComments.map { it.comment.content }
-        }
+        whenPerform.GET("/v1/communities/cid/topics/atopicid/comments")
+            .authenticated()
+            .expectCode(200)
+            .expect {
+                it.text.parseJson<GetCommentsResponse>()
+                    .comments
+                    .map { it.content } isEqualTo expectedComments.map { it.comment.content }
+            }
     }
 }

@@ -20,29 +20,32 @@ interface CommunityRepository {
 
 class PostgresCommunityRepository(private val database: Database, private val idGenerator: IdGenerator) :
     CommunityRepository {
-    override fun crateCommunity(community: Community): CommunityId {
-        return transaction(database) {
-            Communities.insert {
+
+    override fun crateCommunity(community: Community): CommunityId = transaction(database) {
+        Communities
+            .insert {
                 it[id] = community.id.id
                 it[name] = community.name
                 it[totalShares] = community.totalShares
             }
-            community.id
-        }
+        community.id
     }
 
     override fun setMembership(ownerId: OwnerId, communityId: CommunityId, shares: Shares) {
         transaction(database) {
-            OwnerMembership.insert {
-                it[id] = idGenerator.newId()
-                it[OwnerMembership.ownerId] = ownerId.id
-                it[OwnerMembership.communityId] = communityId.id
-                it[OwnerMembership.shares] = shares.value
-            }
+            OwnerMembership
+                .insert {
+                    it[id] = idGenerator.newId()
+                    it[OwnerMembership.ownerId] = ownerId.id
+                    it[OwnerMembership.communityId] = communityId.id
+                    it[OwnerMembership.shares] = shares.value
+                }
         }
     }
 
     override fun getCommunities(): List<Community> = transaction(database) {
-        Communities.selectAll().map { Community(CommunityId(it[Communities.id]), it[Communities.name],it[Communities.totalShares]) }
+        Communities
+            .selectAll()
+            .map { Community(CommunityId(it[Communities.id]), it[Communities.name], it[Communities.totalShares]) }
     }
 }
