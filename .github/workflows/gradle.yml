@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - uses: docker-practice/actions-setup-docker@master
     - uses: actions/checkout@v2
     - name: Set up JDK 11
       uses: actions/setup-java@v2
@@ -23,5 +24,7 @@ jobs:
         distribution: 'adopt'
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
+    - name: Start PG
+      run: ./gradlew startP
     - name: Build with Gradle
       run: ./gradlew test
