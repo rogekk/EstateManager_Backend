@@ -115,17 +115,17 @@ private fun setAccessControlHeaders(http: Service) {
         }
     }
 
-    http.exception(AuthenticationException::class.java) { exception, _, response ->
+    http.exception(AuthenticationException::class.java) { _, _, response ->
         response.status(401)
         response.body("Unauthenticated")
     }
 
-    http.exception(JWTDecodeException::class.java) { exception, _, response ->
+    http.exception(JWTDecodeException::class.java) { _, _, response ->
         response.status(401)
         response.body("Unauthenticated")
     }
 
-    http.exception(IllegalArgumentException::class.java) { exception, _, response ->
+    http.exception(IllegalArgumentException::class.java) { _, _, response ->
         response.status(400)
         response.body("Cannot parse body of request")
     }
@@ -143,11 +143,7 @@ fun RequestHandler<*>.setHeader(key: String, value: String) {
     (response as SparkResponseWrapper).response.header(key, value)
 }
 
-fun RequestHandler<*>.onlyAuthenticated() {
-    authenticator().authenticate(request[authTokenHeader])
-}
-
-class AuthenticationException() : Exception()
+class AuthenticationException : Exception()
 
 val success = GenericResponse("success").ok
 val createdSuccessfully = GenericResponse("successful creation").created
