@@ -1,5 +1,6 @@
 package pl.propertea.repositories
 
+import com.snitch.extensions.print
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
@@ -34,7 +35,7 @@ class PostgresTopicsRepository(private val database: Database) : TopicsRepositor
                         it[TopicsTable.createdAt],
                         CommunityId(it[TopicsTable.communityId]),
                         it[TopicsTable.description],
-                        it[CommentsTable.topicId.count()].toInt(),
+                        it[CommentsTable.topicId.count()].toInt().print(),
                     ),
                     Owner(
                         OwnerId(it[Owners.id]),

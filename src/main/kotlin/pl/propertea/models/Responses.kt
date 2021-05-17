@@ -16,14 +16,18 @@ fun Resolution.toResponse() = ResolutionResponse(
     number,
     subject,
     createdAt.toDateTimeISO().toString(),
-    description
+    description,
+    sharesPro,
+    sharesAgainst
 )
 data class ResolutionResponse(
     val id: String,
     val number: String,
     val subject: String,
     val createdAt: String,
-    val description: String?
+    val description: String?,
+    val sharesPro: Int,
+    val sharesAgainst: Int,
 )
 
 data class LoginResponse(
