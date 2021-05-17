@@ -13,6 +13,7 @@ import pl.propertea.dsl.relaxed
 import pl.propertea.models.*
 import pl.propertea.repositories.RepositoriesModule.topicsRepository
 import pl.tools.json
+import ro.kreator.aRandom
 import ro.kreator.aRandomListOf
 
 class TopicsHttpTest : SparkTest({
@@ -22,6 +23,8 @@ class TopicsHttpTest : SparkTest({
         authenticator.relaxed
     )
 }) {
+    val community by aRandom<Community>()
+    val topic by aRandom<Topic>()
     val topics by aRandomListOf<TopicWithOwner>(10)
     val expectedComments by aRandomListOf<CommentWithOwner> { map { it.copy(owner = owner) } }
 
@@ -29,7 +32,7 @@ class TopicsHttpTest : SparkTest({
     fun `creates a topic`() {
         every { clock().getDateTime() } returns now
 
-        whenPerform.POST("/v1/communities/cid/topics")
+        whenPerform.POST("/v1/communities/${community.id.id}/topics")
             .authenticated()
             .withBody(json {
                 "communityId" _ "Id"
@@ -55,14 +58,14 @@ class TopicsHttpTest : SparkTest({
         every { topicsRepository().getTopics(any()) } returns topics
 
         whenPerform
-            .GET("/v1/communities/cid/topics")
+            .GET("/v1/communities/${community.id.id}/topics")
             .authenticated()
             .expectBodyJson(topics.toResponse())
     }
 
     @Test
     fun `creates a new comment for a topic`() {
-        whenPerform.POST("/v1/communities/cid/topics/atopicid/comments")
+        whenPerform.POST("/v1/communities/${community.id.id}/topics/${topic.id.id}/comments")
             .withBody(json {
                 "content" _ "blah"
                 "createdBy" _ "id"
@@ -74,7 +77,7 @@ class TopicsHttpTest : SparkTest({
             topicsRepository().createComment(
                 CommentCreation(
                     owner.id,
-                    TopicId("atopicid"),
+                    topic.id,
                     "blah"
                 )
             )
@@ -83,9 +86,9 @@ class TopicsHttpTest : SparkTest({
 
     @Test
     fun `gets all comments for a topic`() {
-        every { topicsRepository().getComments(TopicId("atopicid")) } returns expectedComments
+        every { topicsRepository().getComments(topic.id) } returns expectedComments
 
-        whenPerform.GET("/v1/communities/cid/topics/atopicid/comments")
+        whenPerform.GET("/v1/communities/${community.id.id}/topics/${topic.id.id}/comments")
             .authenticated()
             .expectCode(200)
             .expect {

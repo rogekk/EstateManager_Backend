@@ -10,6 +10,7 @@ import pl.propertea.dsl.relaxed
 import pl.propertea.models.*
 import pl.propertea.repositories.RepositoriesModule.resolutionsRepository
 import pl.tools.json
+import ro.kreator.aRandom
 import ro.kreator.aRandomListOf
 
 class ResolutionsHttpTest : SparkTest({
@@ -19,10 +20,12 @@ class ResolutionsHttpTest : SparkTest({
     )
 }) {
     val resolutions by aRandomListOf<Resolution>()
+    val communityId by aRandom<CommunityId>()
+    val resolutionId by aRandom<ResolutionId>()
 
     @Test
     fun `creates a resolution`() {
-        POST("/v1/communities/c1/resolutions")
+        POST("/v1/communities/${communityId.id}/resolutions")
             .withBody(json {
                 "number" _ "one"
                 "subject" _ "burn down building every tuesday?"
@@ -34,7 +37,7 @@ class ResolutionsHttpTest : SparkTest({
         verify {
             resolutionsRepository().crateResolution(
                 ResolutionCreation(
-                    CommunityId("c1"),
+                    communityId,
                     "one",
                     "burn down building every tuesday?",
                     "expensive but fun"
@@ -45,9 +48,9 @@ class ResolutionsHttpTest : SparkTest({
 
     @Test
     fun `lists all resolutions`() {
-        every { resolutionsRepository().getResolutions(CommunityId("c1")) } returns resolutions
+        every { resolutionsRepository().getResolutions(communityId) } returns resolutions
 
-        GET("/v1/communities/c1/resolutions")
+        GET("/v1/communities/${communityId.id}/resolutions")
             .authenticated()
             .expectCode(200)
             .expectBodyJson(ResolutionsResponse(
@@ -63,54 +66,52 @@ class ResolutionsHttpTest : SparkTest({
         every { resolutionsRepository().getResolution(resolution.id) } returns resolution
         every { resolutionsRepository().hasVoted(owner.id, resolution.id) } returns true
 
-        GET("/v1/communities/c1/resolutions/${resolution.id.id}")
+        GET("/v1/communities/${communityId.id}/resolutions/${resolution.id.id}")
             .authenticated()
             .expectCode(200)
-            .expectBodyJson(resolution.let {
-                it.toResponse().copy(votedByOwner = true)
-            })
+            .expectBodyJson(resolution.toResponse().copy(votedByOwner = true))
     }
 
     @Test
     fun `allows user to vote pro resolution`() {
 
-        whenPerform.POST("/v1/communities/c1/resolutions/resId/votes")
+        whenPerform.POST("/v1/communities/${communityId.id}/resolutions/${resolutionId.id}/votes")
             .withBody(json {
                 "vote" _ "pro"
             })
             .authenticated()
             .expectCode(201)
 
-        verify { resolutionsRepository().vote(CommunityId("c1"), ResolutionId("resId"), owner.id, Vote.PRO) }
+        verify { resolutionsRepository().vote(communityId, resolutionId, owner.id, Vote.PRO) }
     }
 
     @Test
     fun `allows user to vote against resolution`() {
-        whenPerform.POST("/v1/communities/c1/resolutions/resId/votes")
+        whenPerform.POST("/v1/communities/${communityId.id}/resolutions/${resolutionId.id}/votes")
             .withBody(json {
                 "vote" _ "against"
             })
             .authenticated()
             .expectCode(201)
 
-        verify { resolutionsRepository().vote(CommunityId("c1"), ResolutionId("resId"), owner.id, Vote.AGAINST) }
+        verify { resolutionsRepository().vote(communityId, resolutionId, owner.id, Vote.AGAINST) }
     }
 
     @Test
     fun `allows user to vote abstain resolution`() {
-        whenPerform.POST("/v1/communities/c1/resolutions/resId/votes")
+        whenPerform.POST("/v1/communities/${communityId.id}/resolutions/${resolutionId.id}/votes")
             .withBody(json {
                 "vote" _ "abstain"
             })
             .authenticated()
             .expectCode(201)
 
-        verify { resolutionsRepository().vote(CommunityId("c1"), ResolutionId("resId"), owner.id, Vote.ABSTAIN) }
+        verify { resolutionsRepository().vote(communityId, resolutionId, owner.id, Vote.ABSTAIN) }
     }
 
     @Test
     fun `do not allow user to cast invalid vote for resolution`() {
-        whenPerform.POST("/v1/communities/c1/resolutions/resId/votes")
+        whenPerform.POST("/v1/communities/${communityId.id}/resolutions/${resolutionId.id}/votes")
             .withBody(json {
                 "vote" _ "blah"
             })

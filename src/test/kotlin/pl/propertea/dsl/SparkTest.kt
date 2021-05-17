@@ -112,7 +112,7 @@ abstract class SparkTest(mockBlock: () -> Mocks = { Mocks() }) : BaseTest({Mocks
 
         infix fun withBody(body: Any) = copy(body = body)
 
-        infix fun withHeaders(headers: Map<out HeaderParameter<*>, Any?>) =
+        infix fun withHeaders(headers: Map<out HeaderParameter<*,*>, Any?>) =
             copy(headers = headers.map { it.key.name to it.value.toString() }.toMap())
 
         infix fun expectBody(body: String) = apply {

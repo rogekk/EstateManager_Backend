@@ -6,7 +6,7 @@ import pl.propertea.handlers.auth.createOwnerHandler
 import pl.propertea.handlers.communities.createCommunityHandler
 import pl.propertea.handlers.communities.createMembershipHandler
 import pl.propertea.handlers.communities.getCommunitiesHandler
-import pl.topics.*
+import pl.propertea.handlers.topics.*
 import pl.propertea.handlers.profile.getProfile
 import pl.propertea.handlers.profile.updateOwnersHandler
 import pl.propertea.common.CommonModule.authenticator
@@ -18,11 +18,12 @@ import pl.propertea.handlers.resolutions.getResolutions
 import spark.Service
 import java.lang.IllegalArgumentException
 
-val topicId = path("topicId", "Id of the topic", NonEmptyString)
-val communityId = path("communityId", "Id of the community", NonEmptyString)
-val resolutionId = path("resolutionId", "Id of the resolution", NonEmptyString)
-val ownerId = path("ownerId", "Id of the owner", NonEmptyString)
-val authTokenHeader = header("X-Auth-Token", "the auth token", NonEmptyString)
+val topicId = path("topicId", condition = ulid("topic", ::TopicId))
+val communityId = path("communityId", condition = ulid("community", ::CommunityId))
+val resolutionId = path("resolutionId", condition = ulid("resolution", ::ResolutionId))
+val ownerId = path("ownerId", condition = ulid("owner", ::OwnerId))
+val authTokenHeader = header("X-Auth-Token", condition = AuthTokenValidator)
+
 
 fun routes(http: Service): Router.() -> Unit = {
     "v1" / {
@@ -87,7 +88,7 @@ fun routes(http: Service): Router.() -> Unit = {
             .authenticated()
             .isHandledBy(getResolution)
 
-        POST("/communities" / communityId / "resolutions" / resolutionId / "votes" )
+        POST("/communities" / communityId / "resolutions" / resolutionId / "votes")
             .authenticated()
             .with(body<ResolutionVoteRequest>())
             .isHandledBy(createResolutionVoteHandler)
@@ -134,7 +135,7 @@ fun <T : Any> Endpoint<T>.authenticated() = withHeader(authTokenHeader)
 
 fun RequestHandler<*>.authenticatedOwner(): Owner {
     val authTokenValue = request[authTokenHeader]
-    return kotlin.runCatching { authenticator().authenticate(AuthToken(authTokenValue)) }
+    return kotlin.runCatching { authenticator().authenticate(authTokenValue) }
         .getOrNull() ?: throw AuthenticationException()
 }
 
@@ -143,7 +144,7 @@ fun RequestHandler<*>.setHeader(key: String, value: String) {
 }
 
 fun RequestHandler<*>.onlyAuthenticated() {
-    authenticator().authenticate(AuthToken(request[authTokenHeader]))
+    authenticator().authenticate(request[authTokenHeader])
 }
 
 class AuthenticationException() : Exception()

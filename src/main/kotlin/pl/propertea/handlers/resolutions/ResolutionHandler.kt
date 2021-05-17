@@ -14,19 +14,19 @@ import success
 
 
 val getResolutions: Handler<Nothing, ResolutionsResponse> = {
-    resolutionsRepository().getResolutions(CommunityId(request[communityId])).toResponse().ok
+    resolutionsRepository().getResolutions(request[communityId]).toResponse().ok
 }
 
 val getResolution: Handler<Nothing, ResolutionResponse> = {
-    val resolution = resolutionsRepository().getResolution(ResolutionId(request[resolutionId]))
-    val hasVoted = resolutionsRepository().hasVoted(authenticatedOwner().id, ResolutionId(request[resolutionId]))
+    val resolution = resolutionsRepository().getResolution(request[resolutionId])
+    val hasVoted = resolutionsRepository().hasVoted(authenticatedOwner().id, request[resolutionId])
     resolution?.toResponse()?.copy(votedByOwner = hasVoted)?.ok ?: notFound()
 }
 
 val createResolutionsHandler: Handler<ResolutionRequest, GenericResponse> = {
     resolutionsRepository().crateResolution(
         ResolutionCreation(
-            CommunityId(request[communityId]),
+            request[communityId],
             body.number,
             body.subject,
             body.description
@@ -38,8 +38,8 @@ val createResolutionsHandler: Handler<ResolutionRequest, GenericResponse> = {
 
 val createResolutionVoteHandler: Handler<ResolutionVoteRequest, GenericResponse> = {
     resolutionsRepository().vote(
-        CommunityId(request[communityId]),
-        ResolutionId(request[resolutionId]),
+        request[communityId],
+        request[resolutionId],
         authenticatedOwner().id,
         when (body.vote) {
             VoteRequest.pro -> Vote.PRO
