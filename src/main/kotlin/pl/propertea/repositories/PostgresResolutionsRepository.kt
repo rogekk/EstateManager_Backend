@@ -23,9 +23,9 @@ class PostgresResolutionsRepository(
     private val clock: Clock
 ) : ResolutionsRepository {
 
-    override fun getResolutions(id: CommunityId): List<Resolution> = transaction(database) {
+    override fun getResolutions(communityId: CommunityId): List<Resolution> = transaction(database) {
         ResolutionsTable
-            .select { ResolutionsTable.communityId eq id.id }
+            .select { ResolutionsTable.communityId eq communityId.id }
             .map { it.readResolution() }
     }
 

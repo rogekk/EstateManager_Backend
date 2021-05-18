@@ -12,16 +12,18 @@ repositories {
     maven("https://jitpack.io")
 }
 
+val snitchVersion = "fe68a855f2"
+
 dependencies {
     implementation(kotlin("stdlib"))
     implementation("org.postgresql:postgresql:42.2.2")
     implementation("org.jetbrains.exposed:exposed-core:0.31.1")
     implementation("org.jetbrains.exposed:exposed-jdbc:0.31.1")
     implementation("org.jetbrains.exposed:exposed-jodatime:0.31.1")
-    implementation("com.github.memoizr.snitch:sparkjava:68db35c0af") {
+    implementation("com.github.memoizr.snitch:sparkjava:$snitchVersion") {
         exclude(group = "org.jetbrains.kotlin")
     }
-    implementation("com.github.memoizr.snitch:core:68db35c0af") {
+    implementation("com.github.memoizr.snitch:core:$snitchVersion") {
 
         exclude(group = "org.jetbrains.kotlin")
     }

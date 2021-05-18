@@ -88,10 +88,10 @@ class PostgresResolutionsRepositoryTest : DatabaseTest({
     @Test
     fun `gets a single existing resolution`() {
         communityRepository().crateCommunity(community)
+
         val id = resolution putIn resolutionsRepository()
-        expect that resolutionsRepository().getResolution(id!!) isEqualTo resolution.copy(
-            id = id,
-        )
+
+        expect that resolutionsRepository().getResolution(id) isEqualTo resolution.copy(id = id)
     }
 
     @Test
@@ -104,7 +104,7 @@ class PostgresResolutionsRepositoryTest : DatabaseTest({
         val owner2Id = owner2 with 30.shares inThis community putIn ownersRepository()
         val owner3Id = owner3 with 100.shares inThis community putIn ownersRepository()
 
-        expect that resolutionsRepository().getResolution(id!!)?.sharesPro isEqualTo 0
+        expect that resolutionsRepository().getResolution(id)?.sharesPro isEqualTo 0
 
         resolutionsRepository().vote(community.id, id, owner1Id, Vote.PRO)
         resolutionsRepository().vote(community.id, id, owner2Id, Vote.PRO)
@@ -122,7 +122,7 @@ class PostgresResolutionsRepositoryTest : DatabaseTest({
 
         val owner1Id = owner1 with 10.shares inThis community putIn ownersRepository()
 
-        expect that resolutionsRepository().getResolution(id!!)?.sharesPro isEqualTo 0
+        expect that resolutionsRepository().getResolution(id)?.sharesPro isEqualTo 0
 
         val success = resolutionsRepository().vote(community.id, id, owner1Id, Vote.PRO)
         val failed = resolutionsRepository().vote(community.id, id, owner1Id, Vote.PRO)
@@ -184,11 +184,11 @@ class PostgresResolutionsRepositoryTest : DatabaseTest({
 }
 
 infix fun Resolution.putIn(resolutionsRepository: ResolutionsRepository) =
-    resolutionsRepository().crateResolution(ResolutionCreation(communityId, number, subject, description))!!
+    resolutionsRepository.crateResolution(ResolutionCreation(communityId, number, subject, description))!!
 
 infix fun List<Resolution>.putIn(resolutionsRepository: ResolutionsRepository) =
     forEach {
-        resolutionsRepository().crateResolution(
+        resolutionsRepository.crateResolution(
             ResolutionCreation(
                 it.communityId,
                 it.number,

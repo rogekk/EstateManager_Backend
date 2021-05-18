@@ -45,7 +45,7 @@ class AuthHttpTest : SparkTest({ Mocks(ownersRepository.relaxed) }) {
         POST("/v1/login")
             .withBody(json { "username" _ owner.username; "password" _ "b" })
             .expect {
-                whenPerform.GET("/v1/owners/ownid")
+                whenPerform.GET("/v1/owners/${owner.id.id}")
                     .authenticated()
                     .expectBodyJson(json {
                         "phoneNumber" _ owner.phoneNumber

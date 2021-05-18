@@ -119,7 +119,7 @@ abstract class HttpTest(mockBlock: () -> Mocks = { Mocks() }) : BaseTest(mockBlo
 
         infix fun withBody(body: Any) = copy(body = body)
 
-        infix fun withHeaders(headers: Map<out HeaderParameter<*>, Any?>) =
+        infix fun withHeaders(headers: Map<out HeaderParameter<*,*>, Any?>) =
             copy(headers = headers.map { it.key.name to it.value.toString() }.toMap())
 
         infix fun expectCode(code: Int) = apply {

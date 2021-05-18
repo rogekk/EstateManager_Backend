@@ -22,8 +22,7 @@ class ProfileHttpTest : SparkTest({ Mocks(ownersRepository.relaxed, authenticato
 
     @Test
     fun `allow users to change details`() {
-        every { authenticator().authenticate(AuthToken("profileToken")) } returns owner
-        PATCH("/v1/owners/ownersId")
+        PATCH("/v1/owners/${owner.id.id}")
             .withBody(json {
                 "email" _ "email"
                 "phoneNumber" _ "phoneNumber"
@@ -36,10 +35,9 @@ class ProfileHttpTest : SparkTest({ Mocks(ownersRepository.relaxed, authenticato
 
     @Test
     fun `gets user profile`() {
-        every { authenticator().authenticate(AuthToken("profileToken")) } returns owner
         every { ownersRepository().getProfile(owner.id) } returns OwnerProfile(owner, communities)
 
-        GET("/v1/owners/ownersId")
+        GET("/v1/owners/${owner.id.id}")
             .authenticated()
             .expectBody(json {
                 "id" _ owner.id.id

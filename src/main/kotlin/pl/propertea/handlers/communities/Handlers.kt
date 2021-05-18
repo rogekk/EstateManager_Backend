@@ -9,14 +9,14 @@ import pl.propertea.repositories.RepositoriesModule.communityRepository
 
 
 val createCommunityHandler: Handler<CommunityRequest, GenericResponse> = {
-    communityRepository().crateCommunity(Community(CommunityId(body.id), body.name,body.totalShares))
+    communityRepository().crateCommunity(Community(CommunityId(body.id), body.name, body.totalShares))
     createdSuccessfully
 }
 
 val createMembershipHandler: Handler<CreateCommunityMembershipRequest, GenericResponse> = {
     communityRepository().setMembership(
         OwnerId(body.ownerId),
-        CommunityId(request[communityId]),
+        request[communityId],
         Shares(body.shares)
     )
     createdSuccessfully
