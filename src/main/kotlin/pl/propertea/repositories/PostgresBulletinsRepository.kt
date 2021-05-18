@@ -1,6 +1,7 @@
 package pl.propertea.repositories
 
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -22,23 +23,19 @@ class PostgresBulletinsRepository(
     private val database: Database,
     private val idGenerator: IdGenerator,
     private val clock: Clock
-    ): BulletinsRepository {
+) : BulletinsRepository {
 
-    override fun getBulletins(id: CommunityId): List<Bulletin> {
-        return transaction(database) {
-            BulletinTable.select {
-                BulletinTable.communityId eq id.id
-            }
-                .map {
-                    Bulletin(
-                        BulletinId(it[BulletinTable.id]),
-                        it[BulletinTable.subject],
-                        it[BulletinTable.content],
-                        it[BulletinTable.createdAt],
-                        CommunityId(it[BulletinTable.communityId])
-                    )
-                }
-        }
+    override fun getBulletins(id: CommunityId): List<Bulletin> = transaction(database) {
+        BulletinTable
+            .select { BulletinTable.communityId eq id.id }
+            .map { it.readBulletin() }
+    }
+
+    override fun getBulletin(id: BulletinId): Bulletin? = transaction(database) {
+        BulletinTable
+            .select { BulletinTable.id eq id.id }
+            .map { it.readBulletin() }
+            .firstOrNull()
     }
 
     override fun createBulletin(bulletinCreation: BulletinCreation): BulletinId {
@@ -53,22 +50,6 @@ class PostgresBulletinsRepository(
             }
         }
         return BulletinId(bulletinId)
-    }
-
-    override fun getBulletin(id: BulletinId): Bulletin? {
-        return transaction(database) {
-            BulletinTable
-                .select { BulletinTable.id eq id.id }
-                .map {
-                    Bulletin(
-                        BulletinId(it[BulletinTable.id]),
-                        it[BulletinTable.subject],
-                        it[BulletinTable.content],
-                        it[BulletinTable.createdAt],
-                        CommunityId(it[BulletinTable.communityId])
-                    )
-                }.firstOrNull()
-        }
     }
 }
 

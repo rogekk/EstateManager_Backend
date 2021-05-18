@@ -10,6 +10,9 @@ import pl.propertea.handlers.topics.*
 import pl.propertea.handlers.profile.getProfile
 import pl.propertea.handlers.profile.updateOwnersHandler
 import pl.propertea.common.CommonModule.authenticator
+import pl.propertea.handlers.`bulletins `.createBulletinHandler
+import pl.propertea.handlers.`bulletins `.getBulletinHandler
+import pl.propertea.handlers.`bulletins `.getBulletinsHandler
 import pl.propertea.models.*
 import pl.propertea.handlers.resolutions.createResolutionVoteHandler
 import pl.propertea.handlers.resolutions.createResolutionsHandler
@@ -100,11 +103,11 @@ fun routes(http: Service): Router.() -> Unit = {
 
         GET("/communities" / communityId / "bulletins")
             .authenticated()
-            .isHandledBy(getBulletins)
+            .isHandledBy(getBulletinsHandler)
 
         GET("/communities" / communityId / "bulletins" / bulletinId)
             .authenticated()
-            .isHandledBy(getBulletin)
+            .isHandledBy(getBulletinHandler)
     }
 
     setAccessControlHeaders(http)

@@ -1,13 +1,25 @@
 package pl.propertea.handlers.`bulletins `
 
+import bulletinId
+import com.snitch.Handler
+import com.snitch.notFound
+import com.snitch.ok
 import communityId
-import pl.propertea.models.BulletinResponse
-import pl.propertea.models.CommunityId
-import pl.propertea.models.toResponse
+import createdSuccessfully
+import pl.propertea.models.*
 import pl.propertea.repositories.RepositoriesModule.bulletinRepository
-import java.util.logging.Handler
 
 
-val getBulletins: Handler<Nothing, BulletinResponse> = {
-    bulletinRepository().getBulletins(CommunityId(request[communityId])).toResponse().ok
+val getBulletinHandler: Handler<Nothing, BulletinResponse> = {
+    bulletinRepository().getBulletin(request[bulletinId])?.toResponse()?.ok ?: notFound()
+}
+
+val getBulletinsHandler: Handler<Nothing, BulletinsResponse> = {
+    bulletinRepository().getBulletins(request[communityId]).toResponse().ok
+}
+
+val createBulletinHandler: Handler<BulletinRequest, GenericResponse> = {
+    bulletinRepository().createBulletin(BulletinCreation(body.subject, body.content, request[communityId]))
+
+    createdSuccessfully
 }

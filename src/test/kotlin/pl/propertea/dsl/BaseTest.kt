@@ -13,10 +13,7 @@ import org.junit.Before
 import pl.propertea.common.CommonModule.environment
 import pl.propertea.common.CommonModule.idGenerator
 import pl.propertea.env.TestEnvironmentVariables
-import pl.propertea.models.CommunityId
-import pl.propertea.models.OwnerId
-import pl.propertea.models.ResolutionId
-import pl.propertea.models.TopicId
+import pl.propertea.models.*
 import ro.kreator.customize
 import ro.kreator.registerCustomizations
 import kotlin.reflect.KClass
@@ -32,6 +29,7 @@ abstract class BaseTest(val mockBlock: () -> Mocks = { Mocks() }) {
     private val customDate by customize { now }
     private val customOwnerId by customize { OwnerId(ulid()) }
     private val customTopicId by customize { TopicId(ulid()) }
+    private val customBulletinId by customize { BulletinId(ulid()) }
     private val customCommunityId by customize { CommunityId(ulid()) }
     private val customResolutionId by customize { ResolutionId(ulid()) }
 
@@ -53,6 +51,7 @@ abstract class BaseTest(val mockBlock: () -> Mocks = { Mocks() }) {
             customTopicId,
             customCommunityId,
             customResolutionId,
+            customBulletinId,
         )
 
         val root =

@@ -2,10 +2,7 @@ package pl.propertea.repositories
 
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.count
-import pl.propertea.db.CommentsTable
-import pl.propertea.db.Owners
-import pl.propertea.db.ResolutionsTable
-import pl.propertea.db.TopicsTable
+import pl.propertea.db.*
 import pl.propertea.models.*
 
 fun ResultRow.readOwner() = Owner(
@@ -47,4 +44,12 @@ fun ResultRow.readResolution() = Resolution(
     0,
     this[ResolutionsTable.description],
     this[ResolutionsTable.result].toResult(),
+)
+
+fun ResultRow.readBulletin() = Bulletin(
+    BulletinId(this[BulletinTable.id]),
+    this[BulletinTable.subject],
+    this[BulletinTable.content],
+    this[BulletinTable.createdAt],
+    CommunityId(this[BulletinTable.communityId])
 )

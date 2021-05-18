@@ -18,25 +18,25 @@ import pl.propertea.repositories.RepositoriesModule.communityRepository
 import ro.kreator.aRandom
 import ro.kreator.aRandomListOf
 
-class PostgresBulletinBoardTest: DatabaseTest({ Mocks(idGenerator.strict, clock.strict) }) {
+class PostgresBulletinBoardTest : DatabaseTest({ Mocks(idGenerator.strict, clock.strict) }) {
     val community by aRandom<Community>()
-    val expectedBulletins by aRandomListOf<Bulletin>(10){
+    val expectedBulletins by aRandomListOf<Bulletin>(10) {
         map {
             it.copy(communityId = community.id)
         }.sortedByDescending { it.createdAt }
-        }
-    val bulletin by aRandom<Bulletin>{
+    }
+    val bulletin by aRandom<Bulletin> {
         copy(communityId = community.id)
     }
 
     @Before
-    fun beforeEach(){
+    fun beforeEach() {
         every { clock().getDateTime() } returns now
         every { idGenerator().newId() } returnsMany expectedBulletins.map { it.id.id }
     }
 
     @After
-    fun after(){
+    fun after() {
         bulletinRepository.override(null)
     }
 
@@ -48,11 +48,11 @@ class PostgresBulletinBoardTest: DatabaseTest({ Mocks(idGenerator.strict, clock.
     }
 
     @Test
-    fun `returns a bulletin after creating one`(){
+    fun `returns a bulletin after creating one`() {
         communityRepository().crateCommunity(community)
         expectedBulletins.forEach {
             bulletinRepository().createBulletin(
-                BulletinCreation(it.subject, it.content, it.createdAt, it.communityId)
+                BulletinCreation(it.subject, it.content, it.communityId)
             )
         }
         val bulletin: List<Bulletin> = bulletinRepository().getBulletins(community.id)
@@ -62,24 +62,29 @@ class PostgresBulletinBoardTest: DatabaseTest({ Mocks(idGenerator.strict, clock.
 
 
     @Test
-    fun `returns a board with bulletins`(){
+    fun `returns a board with bulletins`() {
         communityRepository().crateCommunity(community)
+
+        expectedBulletins.forEach {
+            bulletinRepository().createBulletin(
+                BulletinCreation(it.subject, it.content, it.communityId)
+            )
+        }
 
         val emptyBulletin = bulletinRepository().getBulletins(community.id)
 
-        expect that emptyBulletin isEqualTo emptyList()
+        expect that emptyBulletin isEqualTo expectedBulletins
     }
 
     @Test
-    fun `gets a single existing bulletin`(){
+    fun `gets a single existing bulletin`() {
         communityRepository().crateCommunity(community)
         val id = bulletinRepository().createBulletin(
-            BulletinCreation(bulletin.subject, bulletin.content, bulletin.createdAt, bulletin.communityId)
+            BulletinCreation(bulletin.subject, bulletin.content, bulletin.communityId)
         )
         expect that bulletinRepository().getBulletin(id!!) isEqualTo bulletin.copy(
-            id = id,
-            createdAt = now
+            id = id, createdAt = now
         )
     }
-    }
+}
 

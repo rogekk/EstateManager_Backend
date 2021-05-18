@@ -6,15 +6,15 @@ data class GenericResponse(val message: String)
 
 data class BulletinsResponse(val bulletins: List<BulletinResponse>)
 
-fun List<Bulletin>.toResponse() = BulletinsResponse(
+fun List<Bulletin>.toResponse(): BulletinsResponse = BulletinsResponse(
     map { it.toResponse() }
 )
 
 fun Bulletin.toResponse() = BulletinResponse(
-    bulletin.id.id,
-    bulletin.subject,
-    bulletin.content,
-    bulletin.createdAt.toDateTimeISO().toString()
+    id = id.id,
+    subject = subject,
+    content = content,
+    createdAt = createdAt.toDateTimeISO().toString()
 )
 
 data class BulletinResponse(
