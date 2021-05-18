@@ -1,16 +1,15 @@
 package pl.propertea.handlers.topics
 
-import authenticatedOwner
 import com.snitch.Handler
 import com.snitch.ok
-import communityId
-import createdSuccessfully
 import pl.propertea.common.CommonModule.clock
 import pl.propertea.models.*
 import pl.propertea.repositories.RepositoriesModule.communityRepository
 import pl.propertea.repositories.RepositoriesModule.topicsRepository
-import success
-import topicId
+import pl.propertea.routes.authenticatedOwner
+import pl.propertea.routes.communityId
+import pl.propertea.routes.createdSuccessfully
+import pl.propertea.routes.topicId
 
 val getTopics: Handler<Nothing, TopicsResponse> = {
     topicsRepository().getTopics(request[communityId]).toResponse().ok

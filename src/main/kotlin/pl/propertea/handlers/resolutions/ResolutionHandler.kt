@@ -1,16 +1,15 @@
 package pl.propertea.handlers.resolutions
 
-import authenticatedOwner
 import com.snitch.Handler
 import com.snitch.created
 import com.snitch.notFound
 import com.snitch.ok
-import communityId
-import createdSuccessfully
 import pl.propertea.models.*
 import pl.propertea.repositories.RepositoriesModule.resolutionsRepository
-import resolutionId
-import success
+import pl.propertea.routes.authenticatedOwner
+import pl.propertea.routes.communityId
+import pl.propertea.routes.createdSuccessfully
+import pl.propertea.routes.resolutionId
 
 
 val getResolutions: Handler<Nothing, ResolutionsResponse> = {

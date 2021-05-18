@@ -5,7 +5,7 @@ import pl.propertea.common.CommonModule.authenticator
 import pl.propertea.models.*
 import pl.propertea.repositories.*
 import pl.propertea.repositories.RepositoriesModule.ownersRepository
-import setHeader
+import pl.propertea.routes.setHeader
 
 
 val createOwnerHandler: Handler<CreateOwnerRequest, GenericResponse> = {

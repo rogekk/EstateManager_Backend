@@ -1,6 +1,5 @@
 package pl.propertea.dsl
 
-import authTokenHeader
 import com.memoizr.assertk.AssertionHook
 import com.memoizr.assertk.expect
 import com.snitch.HeaderParameter
@@ -14,6 +13,7 @@ import org.junit.rules.RuleChain
 import pl.propertea.common.CommonModule.authenticator
 import pl.propertea.models.AuthToken
 import pl.propertea.models.Owner
+import pl.propertea.routes.authTokenHeader
 import ro.kreator.aRandom
 
 abstract class SparkTest(mockBlock: () -> Mocks = { Mocks() }) : BaseTest({Mocks(*mockBlock.invoke().mocks.toList().plus(authenticator.strict).toTypedArray())}) {
