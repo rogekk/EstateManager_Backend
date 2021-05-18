@@ -4,6 +4,27 @@ import com.snitch.documentation.Description
 
 data class GenericResponse(val message: String)
 
+data class BulletinsResponse(val bulletins: List<BulletinResponse>)
+
+fun List<Bulletin>.toResponse() = BulletinsResponse(
+    map { it.toResponse() }
+)
+
+fun Bulletin.toResponse() = BulletinResponse(
+    bulletin.id.id,
+    bulletin.subject,
+    bulletin.content,
+    bulletin.createdAt.toDateTimeISO().toString()
+)
+
+data class BulletinResponse(
+    val id: String,
+    val subject: String,
+    val content: String,
+    val createdAt: String,
+
+)
+
 
 data class ResolutionsResponse(val resolutions: List<ResolutionResponse>)
 

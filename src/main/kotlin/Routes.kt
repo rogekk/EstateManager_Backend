@@ -23,7 +23,7 @@ val communityId = path("communityId", condition = ulid("community", ::CommunityI
 val resolutionId = path("resolutionId", condition = ulid("resolution", ::ResolutionId))
 val ownerId = path("ownerId", condition = ulid("owner", ::OwnerId))
 val authTokenHeader = header("X-Auth-Token", condition = AuthTokenValidator)
-
+val bulletinId = path("bulletinId", condition = ulid("bulletin", ::BulletinId))
 
 fun routes(http: Service): Router.() -> Unit = {
     "v1" / {
@@ -92,6 +92,19 @@ fun routes(http: Service): Router.() -> Unit = {
             .authenticated()
             .with(body<ResolutionVoteRequest>())
             .isHandledBy(createResolutionVoteHandler)
+
+        POST("/communities" / communityId / "bulletins")
+            .authenticated()
+            .with(body<BulletinRequest>())
+            .isHandledBy(createBulletinHandler)
+
+        GET("/communities" / communityId / "bulletins")
+            .authenticated()
+            .isHandledBy(getBulletins)
+
+        GET("/communities" / communityId / "bulletins" / bulletinId)
+            .authenticated()
+            .isHandledBy(getBulletin)
     }
 
     setAccessControlHeaders(http)

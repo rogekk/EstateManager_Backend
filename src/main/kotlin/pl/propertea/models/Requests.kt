@@ -13,6 +13,7 @@ data class CommunityMembershipRequest(val communityId: String, val shares: Int)
 
 data class LoginRequest(val username: String, val password: String)
 data class TopicRequest(val subject: String, val communityId: String, val description: String)
+data class BulletinRequest(val subject: String,val content: String)
 data class CommunityRequest(val id: String, val name: String, val totalShares: Int)
 data class ResolutionRequest(
     val number: String,

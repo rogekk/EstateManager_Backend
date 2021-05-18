@@ -38,7 +38,7 @@ data class Topic(
     val commentCount: Int,
 )
 
-data class TopicWithOwner(
+data class TopicWithOwner (
     val topic: Topic,
     val owner: Owner
 )
