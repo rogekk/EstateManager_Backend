@@ -53,3 +53,23 @@ fun ResultRow.readBulletin() = Bulletin(
     this[BulletinTable.createdAt],
     CommunityId(this[BulletinTable.communityId])
 )
+
+fun ResultRow.readIssue() = Issue(
+    IssueId(this[IssuesTable.id]),
+    this[IssuesTable.subject],
+    this[IssuesTable.description],
+    this[IssuesTable.attachments],
+    this[IssuesTable.createdAt],
+    OwnerId(this[IssuesTable.authorOwnerId]),
+    CommunityId(this[IssuesTable.communityId]),
+    this[IssuesTable.status].toStatus(),
+    this[AnswerTable.issueId.count()].toInt()
+)
+
+fun ResultRow.readAnswer() = Answer(
+    AnswerId(this[AnswerTable.id]),
+    this[AnswerTable.description],
+    this[AnswerTable.createdAt],
+    OwnerId(this[AnswerTable.authorOwnerId]),
+    IssueId(this[AnswerTable.issueId])
+)

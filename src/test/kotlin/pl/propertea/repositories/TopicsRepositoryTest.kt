@@ -21,7 +21,7 @@ class TopicsRepositoryTest : DatabaseTest() {
     val comments by aRandomListOf<Comment>(5) {
         map {
             it.copy(
-                topicId = expectedTopics[0].id,
+                topicId = expectedTopics[0].id
             )
         }
     }

@@ -1,13 +1,15 @@
 package pl.propertea.handlers.`bulletins `
 
-import com.snitch.Handler
+
 import com.snitch.notFound
 import com.snitch.ok
+import com.snitch.Handler
 import pl.propertea.models.*
 import pl.propertea.repositories.RepositoriesModule.bulletinRepository
 import pl.propertea.routes.bulletinId
 import pl.propertea.routes.communityId
 import pl.propertea.routes.createdSuccessfully
+
 
 
 val getBulletinHandler: Handler<Nothing, BulletinResponse> = {

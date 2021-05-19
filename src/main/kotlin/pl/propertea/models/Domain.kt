@@ -9,6 +9,8 @@ data class CommunityId(val id: String)
 data class CommentId(val id: String)
 data class ResolutionId(val id: String)
 data class BulletinId(val id: String)
+data class IssueId(val id: String)
+data class AnswerId(val id: String)
 
 data class Shares(val value: Int)
 
@@ -25,7 +27,49 @@ data class BulletinCreation(
     val content: String,
     val communityId: CommunityId
 )
+data class Issue(
+    val id: IssueId,
+    val subject: String,
+    val description: String,
+    val attachments: String,
+    val createdAt: DateTime,
+    val createdBy: OwnerId,
+    val communityId: CommunityId,
+    val status: IssueStatus,
+    val commentCount: Int,
+)
 
+data class IssueCreation(
+    val subject: String,
+    val description: String,
+    val attachments: String,
+    val createdBy: OwnerId,
+    val communityId: CommunityId,
+)
+
+data class IssueWithOwner(
+    val owner: Owner,
+    val issueId: Issue
+)
+
+data class Answer(
+    val id: AnswerId,
+    val description: String,
+    val createdAt: DateTime,
+    val createdBy: OwnerId,
+    val issueId: IssueId
+)
+
+data class AnswerCreation(
+    val description: String,
+    val issueId: IssueId,
+    val createdBy: OwnerId
+)
+
+data class AnswerWithOwners(
+    val owner: Owner,
+    val issueId: Issue
+)
 
 data class Topic(
     val id: TopicId,
@@ -67,6 +111,9 @@ data class ResolutionCreation(
 
 enum class ResolutionResult {
     APPROVED, REJECTED, OPEN_FOR_VOTING, CANCELED
+}
+enum class IssueStatus{
+    NEW, RECEIVED, IN_PROGRESS, CLOSED, RE_OPENED
 }
 
 enum class Vote {
