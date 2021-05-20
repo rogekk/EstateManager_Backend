@@ -12,7 +12,8 @@ repositories {
     maven("https://jitpack.io")
 }
 
-val snitchVersion = "fe68a855f2"
+//val snitchVersion = "fe68a855f2"
+val snitchVersion = "before_after-SNAPSHOT"
 
 dependencies {
     implementation(kotlin("stdlib"))
