@@ -15,7 +15,8 @@ val schema = arrayOf(
     TopicsTable,
     CommentsTable,
     BulletinTable,
-    IssuesTable
+    IssuesTable,
+    AnswerTable,
 )
 
 typealias UsersTable = Owners

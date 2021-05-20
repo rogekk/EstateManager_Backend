@@ -68,7 +68,7 @@ data class AnswerCreation(
 
 data class AnswerWithOwners(
     val owner: Owner,
-    val issueId: Issue
+    val answer: Answer
 )
 
 data class Topic(

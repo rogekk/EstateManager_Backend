@@ -63,7 +63,7 @@ fun ResultRow.readIssue() = Issue(
     OwnerId(this[IssuesTable.authorOwnerId]),
     CommunityId(this[IssuesTable.communityId]),
     this[IssuesTable.status].toStatus(),
-    this[AnswerTable.issueId.count()].toInt()
+    0
 )
 
 fun ResultRow.readAnswer() = Answer(
