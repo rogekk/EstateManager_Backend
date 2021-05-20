@@ -14,6 +14,7 @@ import pl.propertea.common.CommonModule.environment
 import pl.propertea.common.CommonModule.idGenerator
 import pl.propertea.env.TestEnvironmentVariables
 import pl.propertea.models.*
+import ro.kreator.Seed
 import ro.kreator.customize
 import ro.kreator.registerCustomizations
 import kotlin.reflect.KClass
@@ -33,7 +34,7 @@ abstract class BaseTest(val mockBlock: () -> Mocks = { Mocks() }) {
     private val customCommunityId by customize { CommunityId(ulid()) }
     private val customResolutionId by customize { ResolutionId(ulid()) }
 
-    fun ulid() = UlidCreator.getMonotonicUlid().toString()
+    fun ulid() = UlidCreator.getMonotonicUlid(now.millis).toString()
 
 
     val mockss = mutableListOf<Pair<KClass<Any>, Any>>()
