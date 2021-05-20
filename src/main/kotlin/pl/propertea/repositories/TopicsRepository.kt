@@ -28,7 +28,6 @@ class PostgresTopicsRepository(private val database: Database) : TopicsRepositor
             .map { TopicWithOwner(it.readTopic(), it.readOwner()) }
     }
 
-
     override fun crateTopic(topicCreation: TopicCreation): TopicId? {
         val topicId = UUID.randomUUID().toString()
         transaction(database) {
@@ -61,9 +60,7 @@ class PostgresTopicsRepository(private val database: Database) : TopicsRepositor
             CommentsTable
                 .leftJoin(Owners)
                 .slice(Owners.columns + CommentsTable.columns)
-                .select {
-                    CommentsTable.topicId eq id.id
-                }
+                .select { CommentsTable.topicId eq id.id }
                 .map { CommentWithOwner(it.readComment(), it.readOwner()) }
         }
     }
