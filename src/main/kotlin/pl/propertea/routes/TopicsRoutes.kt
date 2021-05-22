@@ -1,14 +1,11 @@
 import com.snitch.Router
 import com.snitch.body
-import pl.propertea.handlers.topics.createCommentHandler
-import pl.propertea.handlers.topics.createTopicsHandler
-import pl.propertea.handlers.topics.getCommentsHandler
-import pl.propertea.handlers.topics.getTopics
+import pl.propertea.handlers.topics.*
 import pl.propertea.models.CreateCommentRequest
+import pl.propertea.models.PermissionTypes
+import pl.propertea.models.PermissionTypes.Manager
 import pl.propertea.models.TopicRequest
-import pl.propertea.routes.authenticated
-import pl.propertea.routes.communityId
-import pl.propertea.routes.topicId
+import pl.propertea.routes.*
 
 fun Router.topicsRoutes() {
     "topics" {
@@ -16,6 +13,11 @@ fun Router.topicsRoutes() {
             .inSummary("Gets all the topics in the community")
             .authenticated()
             .isHandledBy(getTopics)
+
+        GET("/communities" / communityId / "topics" / topicId / "comments")
+            .inSummary("Gets all the comments for a topic")
+            .authenticated()
+            .isHandledBy(getCommentsHandler)
 
         POST("/communities" / communityId / "topics")
             .inSummary("Creates a new topic in the community")
@@ -29,9 +31,14 @@ fun Router.topicsRoutes() {
             .authenticated()
             .isHandledBy(createCommentHandler)
 
-        GET("/communities" / communityId / "topics" / topicId / "comments")
-            .inSummary("Gets all the comments for a topic")
-            .authenticated()
-            .isHandledBy(getCommentsHandler)
+        DELETE("/communities" / communityId / "topics" / topicId)
+            .inSummary("Deletes a Topic")
+            .restrictTo(Manager)
+            .isHandledBy(deleteTopicHandler)
+
+        DELETE("/communities" / communityId / "topics" / topicId / "comments" / commentId)
+            .inSummary("Deletes a Comment")
+            .restrictTo(Manager)
+            .isHandledBy(deleteCommentHandler)
     }
 }

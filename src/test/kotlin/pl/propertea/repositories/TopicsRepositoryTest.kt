@@ -11,7 +11,7 @@ import ro.kreator.aRandom
 import ro.kreator.aRandomListOf
 
 class TopicsRepositoryTest : DatabaseTest() {
-    val community by aRandom<Community>()
+    val community by aRandom<Community> {copy(communityRepository().createCommunity(this))}
     val owner by aRandom<Owner>()
     val expectedTopics by aRandomListOf<Topic>(10) {
         map {
@@ -28,8 +28,7 @@ class TopicsRepositoryTest : DatabaseTest() {
 
     @Test
     fun `returns a forum with topics`() {
-        communityRepository().createCommunity(community)
-        val ownerId = owner inThis community putIn ownersRepository()
+        val ownerId = owner inThis community.id putIn ownersRepository()
 
         val emptyTopics = topicsRepository().getTopics(community.id)
 
@@ -53,14 +52,37 @@ class TopicsRepositoryTest : DatabaseTest() {
     }
 
     @Test
+    fun `deletes a topic`() {
+        val ownerId = owner inThis community.id putIn ownersRepository()
+
+        val topics = expectedTopics.map {
+            topicsRepository().crateTopic(
+                TopicCreation(
+                    it.subject,
+                    ownerId,
+                    it.createdAt,
+                    it.communityId,
+                    it.description
+                )
+            )
+        }
+
+        topicsRepository().delete(topics.first())
+
+        expect that topicsRepository().getTopics(community.id).map { it.topic.subject } containsOnly expectedTopics
+            .drop(1)
+            .map { it.subject }
+    }
+
+
+    @Test
     fun `adds a comment to a topic`() {
-        communityRepository().createCommunity(community)
-        val ownerId = owner inThis community putIn ownersRepository()
+        val ownerId = owner inThis community.id putIn ownersRepository()
 
         val topic = TopicCreation("subj", ownerId, now, community.id, "desc")
         val topicId = topicsRepository().crateTopic(topic)
 
-        val commentCreation = CommentCreation(ownerId, topicId!!, "hello everyone")
+        val commentCreation = CommentCreation(ownerId, topicId, "hello everyone")
         topicsRepository().createComment(commentCreation)
 
         expect that topicsRepository().getComments(topicId)
@@ -68,15 +90,26 @@ class TopicsRepositoryTest : DatabaseTest() {
     }
 
     @Test
-    fun `returns the comment count with the result`() {
-        communityRepository().createCommunity(community)
+    fun `deletes a comment in a topic`() {
+        val ownerId = owner inThis community.id putIn ownersRepository()
+        val topic = TopicCreation("subj", ownerId, now, community.id, "desc")
+        val topicId = topicsRepository().crateTopic(topic)
+        val commentCreation = CommentCreation(ownerId, topicId, "hello everyone")
+        val commentId = topicsRepository().createComment(commentCreation)
 
-        val ownerId = owner inThis community putIn ownersRepository()
+        topicsRepository().deleteComment(commentId)
+
+        expect that topicsRepository().getComments(topicId) isEqualTo emptyList()
+    }
+
+    @Test
+    fun `returns the comment count with the result`() {
+        val ownerId = owner inThis community.id putIn ownersRepository()
         val topic = TopicCreation("subj", ownerId, now, community.id, "desc")
         val topicId = topicsRepository().crateTopic(topic)
 
         comments.forEach {
-            topicsRepository().createComment(CommentCreation(ownerId, topicId!!, it.content))
+            topicsRepository().createComment(CommentCreation(ownerId, topicId, it.content))
         }
 
         expect that topicsRepository().getTopics(community.id).first().topic.commentCount isEqualTo 5

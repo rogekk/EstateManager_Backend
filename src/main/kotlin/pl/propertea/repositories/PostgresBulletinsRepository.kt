@@ -12,7 +12,7 @@ import pl.propertea.models.CommunityId
 
 interface BulletinsRepository {
     fun getBulletins(id: CommunityId): List<Bulletin>
-    fun createBulletin(bulletinCreation: BulletinCreation): BulletinId?
+    fun createBulletin(bulletinCreation: BulletinCreation): BulletinId
     fun getBulletin(id: BulletinId): Bulletin?
 }
 

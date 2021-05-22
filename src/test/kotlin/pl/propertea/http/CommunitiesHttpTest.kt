@@ -10,6 +10,7 @@ import pl.propertea.dsl.SparkTest
 import pl.propertea.dsl.relaxed
 import pl.propertea.models.*
 import pl.propertea.models.PermissionTypes.Manager
+import pl.propertea.models.PermissionTypes.Superior
 import pl.propertea.repositories.RepositoriesModule.communityRepository
 import pl.propertea.tools.json
 import ro.kreator.aRandom
@@ -17,6 +18,7 @@ import ro.kreator.aRandomListOf
 
 class CommunitiesHttpTest : SparkTest({ Mocks(communityRepository.relaxed) }) {
     val community by aRandom<Community>()
+    val ownerId by aRandom<OwnerId>()
     val communities by aRandomListOf<Community>()
 
     @Test
@@ -35,15 +37,22 @@ class CommunitiesHttpTest : SparkTest({ Mocks(communityRepository.relaxed) }) {
 
     @Test
     fun `creates a community membership`() {
-        POST("/v1/communities/${community.id.id}/members")
-            .authenticated(owner.id)
-            .withBody(json {
-                "ownerId" _ "oId"
-                "shares" _ 100
-            })
+        PUT("/v1/communities/${community.id.id}/members/${ownerId.id}")
+            .verifyPermissions(Manager)
+            .withBody(json { "shares" _ 100 })
             .expectCode(201)
 
-        verify { communityRepository().setMembership(OwnerId("oId"), community.id, Shares(100)) }
+        verify { communityRepository().setMembership(ownerId, community.id, Shares(100)) }
+    }
+
+    @Test
+    fun `removes an owner from a community`() {
+        DELETE("/v1/communities/${community.id.id}/members/${ownerId.id}")
+            .verifyPermissions(Superior)
+            .withBody(json { "shares" _ 100 })
+            .expectCode(200)
+
+        verify { communityRepository().removeMembership(ownerId, community.id) }
     }
 
     @Test

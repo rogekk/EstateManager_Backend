@@ -1,11 +1,13 @@
 package pl.propertea.handlers.topics
 
 import com.snitch.Handler
+import com.snitch.get
 import com.snitch.ok
 import pl.propertea.common.CommonModule.clock
 import pl.propertea.models.*
 import pl.propertea.repositories.RepositoriesModule.topicsRepository
 import pl.propertea.routes.authenticatedOwner
+import pl.propertea.routes.commentId
 import pl.propertea.routes.communityId
 import pl.propertea.routes.topicId
 
@@ -59,3 +61,14 @@ val createCommentHandler: Handler<CreateCommentRequest, GenericResponse> = {
     createdSuccessfully
 }
 
+val deleteTopicHandler: Handler<Nothing, GenericResponse> = {
+    topicsRepository().delete(request[topicId])
+
+    success
+}
+
+val deleteCommentHandler: Handler<Nothing, GenericResponse> = {
+    topicsRepository().deleteComment(request[commentId])
+
+    success
+}

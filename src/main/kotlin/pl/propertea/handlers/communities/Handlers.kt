@@ -5,6 +5,7 @@ import com.snitch.ok
 import pl.propertea.models.*
 import pl.propertea.repositories.RepositoriesModule.communityRepository
 import pl.propertea.routes.communityId
+import pl.propertea.routes.ownerId
 
 val getCommunitiesHandler: Handler<Nothing, CommunitiesResponse> = {
     CommunitiesResponse(communityRepository().getCommunities().map {
@@ -23,10 +24,16 @@ val createCommunityHandler: Handler<CommunityRequest, GenericResponse> = {
 
 val createMembershipHandler: Handler<CreateCommunityMembershipRequest, GenericResponse> = {
     communityRepository().setMembership(
-        OwnerId(body.ownerId),
+        request[ownerId],
         request[communityId],
         Shares(body.shares)
     )
 
     createdSuccessfully
+}
+
+val deleteMembershipHandler: Handler<Nothing, GenericResponse> = {
+    communityRepository().removeMembership(request[ownerId], request[communityId])
+
+    success
 }

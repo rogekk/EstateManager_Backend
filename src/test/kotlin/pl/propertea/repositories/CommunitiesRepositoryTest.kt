@@ -5,7 +5,6 @@ import org.junit.Test
 import pl.propertea.dsl.DatabaseTest
 import pl.propertea.models.Community
 import pl.propertea.models.Owner
-import pl.propertea.models.Shares
 import pl.propertea.repositories.RepositoriesModule.communityRepository
 import pl.propertea.repositories.RepositoriesModule.ownersRepository
 import ro.kreator.aRandom
@@ -18,22 +17,33 @@ class CommunitiesRepositoryTest : DatabaseTest() {
 
     @Test
     fun `gets all communities`() {
-        communities.forEach { communityRepository().createCommunity(it) }
+        val ids = communities.map { communityRepository().createCommunity(it) }
 
-        expect that communityRepository().getCommunities() containsOnly communities
+        expect that communityRepository().getCommunities().map { it.id } containsOnly ids
     }
 
     @Test
     fun `sets a user membership`() {
-        communityRepository().createCommunity(community)
+        val id = communityRepository().createCommunity(community)
         val ids = communities.map { communityRepository().createCommunity(it) }
 
-        val ownerId = owner inThis community putIn ownersRepository()
+        val ownerId = owner inThis id putIn ownersRepository()
 
         ids.forEach {
             communityRepository().setMembership(ownerId, it, 100.shares)
         }
 
-        expect that ownersRepository().getProfile(ownerId).communities.map { it.id } containsOnly ids + community.id
+        expect that ownersRepository().getProfile(ownerId).communities.map { it.id } containsOnly ids + id
+    }
+
+    @Test
+    fun `deletes a user membership`() {
+        val commId = communityRepository().createCommunity(community)
+        val ids = communities.map { it.copy(id = communityRepository().createCommunity(it)) }
+        val ownerId = owner inThese ids.map { it.id } putIn ownersRepository()
+
+        communityRepository().removeMembership(ownerId, commId)
+
+        expect that ownersRepository().getProfile(ownerId).communities isEqualTo ids
     }
 }
