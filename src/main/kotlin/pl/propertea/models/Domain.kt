@@ -86,7 +86,12 @@ data class TopicWithOwner (
     val owner: Owner
 )
 
-data class AuthToken(val token: String)
+
+data class Claims(
+    val permissions: Set<PermissionTypes>
+)
+
+data class AuthToken(val token: String, val expiresAt: DateTime, val claims: Claims, val ownerId: OwnerId?)
 
 data class Resolution(
     val id: ResolutionId,
@@ -166,3 +171,17 @@ data class OwnerProfile(
     val owner: Owner,
     val communities: List<Community>
 )
+
+enum class PermissionTypes {
+    Superior, Manager, Owner;
+
+    companion object {
+        fun fromString(string: String?): PermissionTypes? = when (string) {
+            Superior.name -> Superior
+            Manager.name -> Manager
+            Owner.name -> Owner
+            else -> null
+        }
+
+    }
+}

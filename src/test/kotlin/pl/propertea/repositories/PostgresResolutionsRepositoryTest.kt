@@ -69,14 +69,14 @@ class PostgresResolutionsRepositoryTest : DatabaseTest({
 
     @Test
     fun `when there are no resolutions returns an empty list`() {
-        communityRepository().crateCommunity(community)
+        communityRepository().createCommunity(community)
         val emptyResolutions: List<Resolution> = resolutionsRepository().getResolutions(community.id)
         expect that emptyResolutions isEqualTo emptyList()
     }
 
     @Test
     fun `after creating some resolutions returns the resolutions`() {
-        communityRepository().crateCommunity(community)
+        communityRepository().createCommunity(community)
 
         expectedResolutions putIn resolutionsRepository()
 
@@ -87,7 +87,7 @@ class PostgresResolutionsRepositoryTest : DatabaseTest({
 
     @Test
     fun `gets a single existing resolution`() {
-        communityRepository().crateCommunity(community)
+        communityRepository().createCommunity(community)
 
         val id = resolution putIn resolutionsRepository()
 
@@ -97,7 +97,7 @@ class PostgresResolutionsRepositoryTest : DatabaseTest({
     @Test
     fun `adds votes to resolution`() {
         idGenerator.override(null)
-        communityRepository().crateCommunity(community)
+        communityRepository().createCommunity(community)
         val id = resolution putIn resolutionsRepository()
 
         val owner1Id = owner1 with 10.shares inThis community putIn ownersRepository()
@@ -117,7 +117,7 @@ class PostgresResolutionsRepositoryTest : DatabaseTest({
     @Test
     fun `it does not allow double voting`() {
         idGenerator.override(null)
-        communityRepository().crateCommunity(community)
+        communityRepository().createCommunity(community)
         val id = resolution putIn resolutionsRepository()
 
         val owner1Id = owner1 with 10.shares inThis community putIn ownersRepository()
@@ -134,7 +134,7 @@ class PostgresResolutionsRepositoryTest : DatabaseTest({
     @Test
     fun `sets the result of a resolution`() {
         idGenerator.override(null)
-        communityRepository().crateCommunity(community)
+        communityRepository().createCommunity(community)
 
         val id = resolution putIn resolutionsRepository()
 
@@ -169,7 +169,7 @@ class PostgresResolutionsRepositoryTest : DatabaseTest({
     @Test
     fun `can tell if an owner has already voted in a resolution`() {
         idGenerator.override(null)
-        communityRepository().crateCommunity(community)
+        communityRepository().createCommunity(community)
 
         val ownerId = owner1 inThis community putIn ownersRepository()
         val id = resolution putIn resolutionsRepository()

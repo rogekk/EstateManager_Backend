@@ -15,9 +15,10 @@ val createOwnerHandler: Handler<CreateOwnerRequest, GenericResponse> = {
         body.password,
         body.email,
         body.phoneNumber,
-        body.address
+        body.address,
+        body.profileImageUrl,
     )) {
-        is OwnerCreated -> GenericResponse("created").ok
+        is OwnerCreated -> createdSuccessfully
         UsernameTaken -> badRequest("username ${body.username} is already taken")
     }
 }
@@ -26,7 +27,7 @@ val loginHandler: Handler<LoginRequest, LoginResponse> = {
     val checkOwnersCredentials = ownersRepository().checkOwnersCredentials(body.username, body.password)
     when (checkOwnersCredentials) {
         is Verified -> {
-            val token = authenticator().getToken(body.username)
+            val token = authenticator().getTokenWithPermission(checkOwnersCredentials.id, PermissionTypes.Owner)
             setHeader("Token", token)
             LoginResponse(id = checkOwnersCredentials.id.id, token = token).ok
         }

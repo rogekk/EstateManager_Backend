@@ -6,7 +6,6 @@ interface Clock {
     fun getDateTime(): DateTime
 }
 
-
 class SystemClock : Clock {
     override fun getDateTime(): DateTime = DateTime.now()
 }

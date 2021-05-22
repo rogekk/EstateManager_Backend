@@ -1,4 +1,4 @@
-package pl.tools
+package pl.propertea.tools
 
 fun <T> l(vararg a: T) = a.asList()
 

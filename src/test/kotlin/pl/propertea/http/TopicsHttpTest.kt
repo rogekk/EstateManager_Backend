@@ -4,23 +4,23 @@ import com.memoizr.assertk.isEqualTo
 import com.snitch.extensions.parseJson
 import io.mockk.every
 import io.mockk.verify
+import org.junit.Before
 import org.junit.Test
-import pl.propertea.common.CommonModule.authenticator
 import pl.propertea.common.CommonModule.clock
 import pl.propertea.dsl.Mocks
 import pl.propertea.dsl.SparkTest
 import pl.propertea.dsl.relaxed
+import pl.propertea.dsl.strict
 import pl.propertea.models.*
 import pl.propertea.repositories.RepositoriesModule.topicsRepository
-import pl.tools.json
+import pl.propertea.tools.json
 import ro.kreator.aRandom
 import ro.kreator.aRandomListOf
 
 class TopicsHttpTest : SparkTest({
     Mocks(
         topicsRepository.relaxed,
-        clock.relaxed,
-        authenticator.relaxed
+        clock.strict,
     )
 }) {
     val community by aRandom<Community>()
@@ -28,12 +28,15 @@ class TopicsHttpTest : SparkTest({
     val topics by aRandomListOf<TopicWithOwner>(10)
     val expectedComments by aRandomListOf<CommentWithOwner> { map { it.copy(owner = owner) } }
 
+    @Before
+    fun before() {
+        every { clock().getDateTime() } returns now
+    }
+
     @Test
     fun `creates a topic`() {
-        every { clock().getDateTime() } returns now
-
         whenPerform.POST("/v1/communities/${community.id.id}/topics")
-            .authenticated()
+            .authenticated(owner.id)
             .withBody(json {
                 "communityId" _ "Id"
                 "subject" _ "s1"
@@ -59,7 +62,7 @@ class TopicsHttpTest : SparkTest({
 
         whenPerform
             .GET("/v1/communities/${community.id.id}/topics")
-            .authenticated()
+            .authenticated(owner.id)
             .expectBodyJson(topics.toResponse())
     }
 
@@ -70,7 +73,7 @@ class TopicsHttpTest : SparkTest({
                 "content" _ "blah"
                 "createdBy" _ "id"
             })
-            .authenticated()
+            .authenticated(owner.id)
             .expectCode(201)
 
         verify {
@@ -89,7 +92,7 @@ class TopicsHttpTest : SparkTest({
         every { topicsRepository().getComments(topic.id) } returns expectedComments
 
         whenPerform.GET("/v1/communities/${community.id.id}/topics/${topic.id.id}/comments")
-            .authenticated()
+            .authenticated(owner.id)
             .expectCode(200)
             .expect {
                 it.text.parseJson<GetCommentsResponse>()

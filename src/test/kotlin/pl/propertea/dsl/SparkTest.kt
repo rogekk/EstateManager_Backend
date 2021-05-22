@@ -5,26 +5,29 @@ import com.memoizr.assertk.expect
 import com.snitch.HeaderParameter
 import com.snitch.extensions.json
 import com.snitch.extensions.toHashMap
-import io.mockk.every
 import khttp.responses.Response
 import org.json.JSONObject
 import org.junit.Rule
 import org.junit.rules.RuleChain
 import pl.propertea.common.CommonModule.authenticator
-import pl.propertea.models.AuthToken
 import pl.propertea.models.Owner
+import pl.propertea.models.OwnerId
+import pl.propertea.models.PermissionTypes
 import pl.propertea.routes.authTokenHeader
 import ro.kreator.aRandom
 
-abstract class SparkTest(mockBlock: () -> Mocks = { Mocks() }) : BaseTest({Mocks(*mockBlock.invoke().mocks.toList().plus(authenticator.strict).toTypedArray())}) {
+abstract class SparkTest(mockBlock: () -> Mocks = { Mocks() }) :
+    BaseTest({ Mocks(*mockBlock.invoke().mocks) }) {
 
     val owner by aRandom<Owner>()
 
-    val port = HttpTest.nextPort()
+    companion object {
+        var currentPort: Int = 23000
 
-    init {
-//        Dependencies.registerFactories()
+        fun nextPort(): Int = ++currentPort
     }
+
+    val port = nextPort()
 
     @Rule
     @JvmField
@@ -34,9 +37,20 @@ abstract class SparkTest(mockBlock: () -> Mocks = { Mocks() }) : BaseTest({Mocks
 
     val whenPerform = this
 
-    fun Expectation.authenticated() = withHeaders(hashMapOf(authTokenHeader to "myToken")).also {
-        every { authenticator().verify(AuthToken("myToken")) } returns Unit
-        every { authenticator().authenticate(AuthToken("myToken")) } returns owner
+    fun Expectation.authenticated(ownerId: OwnerId): Expectation {
+        withHeaders(hashMapOf(authTokenHeader to null)).expectCode(401)
+        withHeaders(hashMapOf(authTokenHeader to "foo")).expectCode(401)
+        return withHeaders(hashMapOf(authTokenHeader to authenticator().getTokenWithPermission(ownerId, PermissionTypes.Owner)))
+    }
+
+    fun Expectation.verifyPermissions(permissionType: PermissionTypes): Expectation {
+
+        val noPermission = authenticator().getTokenWithPermission(OwnerId(""), null)
+        val withRightPermission = authenticator().getTokenWithPermission(OwnerId(""), permissionType)
+
+        withHeaders(hashMapOf(authTokenHeader to noPermission)).expectCode(403)
+
+        return withHeaders(hashMapOf(authTokenHeader to withRightPermission))
     }
 
     infix fun GET(endpoint: String): Expectation {
@@ -52,6 +66,7 @@ abstract class SparkTest(mockBlock: () -> Mocks = { Mocks() }) : BaseTest({Mocks
     }
 
     infix fun DELETE(endpoint: String): Expectation {
+
         return Expectation(port, HttpMethod.DELETE, endpoint)
     }
 
@@ -112,7 +127,7 @@ abstract class SparkTest(mockBlock: () -> Mocks = { Mocks() }) : BaseTest({Mocks
 
         infix fun withBody(body: Any) = copy(body = body)
 
-        infix fun withHeaders(headers: Map<out HeaderParameter<*,*>, Any?>) =
+        infix fun withHeaders(headers: Map<out HeaderParameter<*, *>, Any?>) =
             copy(headers = headers.map { it.key.name to it.value.toString() }.toMap())
 
         infix fun expectBody(body: String) = apply {
@@ -129,6 +144,7 @@ abstract class SparkTest(mockBlock: () -> Mocks = { Mocks() }) : BaseTest({Mocks
 
         infix fun expect(block: AssertionHook.(Response) -> Unit) = apply {
             expect.block(response)
+
         }
     }
 }

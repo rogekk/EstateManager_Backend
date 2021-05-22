@@ -8,7 +8,7 @@ import pl.propertea.dsl.SparkTest
 import pl.propertea.dsl.relaxed
 import pl.propertea.models.*
 import pl.propertea.repositories.RepositoriesModule.bulletinRepository
-import pl.tools.json
+import pl.propertea.tools.json
 import ro.kreator.aRandom
 import ro.kreator.aRandomListOf
 
@@ -22,14 +22,14 @@ class BulletinHttpTest : SparkTest({ Mocks(bulletinRepository.relaxed) }) {
         every { bulletinRepository().getBulletins(communityId) } returns bulletins
 
         GET("/v1/communities/${communityId.id}/bulletins")
-            .authenticated()
+            .authenticated(owner.id)
             .expectBodyJson(bulletins.toResponse())
     }
 
     @Test
     fun `creates a bulletin`() {
         POST("/v1/communities/${communityId.id}/bulletins")
-            .authenticated()
+            .authenticated(owner.id)
             .withBody(json { "subject" _ "subj"; "content" _ "content" })
             .expectCode(201)
 
@@ -41,7 +41,7 @@ class BulletinHttpTest : SparkTest({ Mocks(bulletinRepository.relaxed) }) {
         every { bulletinRepository().getBulletin(bulletin.id) } returns bulletin
 
         GET("/v1/communities/${communityId.id}/bulletins/${bulletin.id.id}")
-            .authenticated()
+            .authenticated(owner.id)
             .expectCode(200)
             .expectBodyJson(bulletin.toResponse())
     }
@@ -51,7 +51,7 @@ class BulletinHttpTest : SparkTest({ Mocks(bulletinRepository.relaxed) }) {
         every { bulletinRepository().getBulletin(bulletin.id) } returns null
 
         GET("/v1/communities/${communityId.id}/bulletins/${bulletin.id.id}")
-            .authenticated()
+            .authenticated(owner.id)
             .expectCode(404)
     }
 }

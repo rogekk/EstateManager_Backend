@@ -3,19 +3,17 @@ package pl.propertea.http
 import io.mockk.every
 import io.mockk.verify
 import org.junit.Test
-import pl.propertea.common.CommonModule.authenticator
 import pl.propertea.dsl.Mocks
 import pl.propertea.dsl.SparkTest
 import pl.propertea.dsl.relaxed
 import pl.propertea.models.*
 import pl.propertea.repositories.RepositoriesModule.resolutionsRepository
-import pl.tools.json
+import pl.propertea.tools.json
 import ro.kreator.aRandom
 import ro.kreator.aRandomListOf
 
 class ResolutionsHttpTest : SparkTest({
     Mocks(
-        authenticator.relaxed,
         resolutionsRepository.relaxed
     )
 }) {
@@ -31,7 +29,7 @@ class ResolutionsHttpTest : SparkTest({
                 "subject" _ "burn down building every tuesday?"
                 "description" _ "expensive but fun"
             })
-            .authenticated()
+            .authenticated(owner.id)
             .expectCode(201)
 
         verify {
@@ -51,7 +49,7 @@ class ResolutionsHttpTest : SparkTest({
         every { resolutionsRepository().getResolutions(communityId) } returns resolutions
 
         GET("/v1/communities/${communityId.id}/resolutions")
-            .authenticated()
+            .authenticated(owner.id)
             .expectCode(200)
             .expectBodyJson(ResolutionsResponse(
                 resolutions.map {
@@ -67,19 +65,18 @@ class ResolutionsHttpTest : SparkTest({
         every { resolutionsRepository().hasVoted(owner.id, resolution.id) } returns true
 
         GET("/v1/communities/${communityId.id}/resolutions/${resolution.id.id}")
-            .authenticated()
+            .authenticated(owner.id)
             .expectCode(200)
             .expectBodyJson(resolution.toResponse().copy(votedByOwner = true))
     }
 
     @Test
     fun `allows user to vote pro resolution`() {
-
-        whenPerform.POST("/v1/communities/${communityId.id}/resolutions/${resolutionId.id}/votes")
+        POST("/v1/communities/${communityId.id}/resolutions/${resolutionId.id}/votes")
             .withBody(json {
                 "vote" _ "pro"
             })
-            .authenticated()
+            .authenticated(owner.id)
             .expectCode(201)
 
         verify { resolutionsRepository().vote(communityId, resolutionId, owner.id, Vote.PRO) }
@@ -87,11 +84,11 @@ class ResolutionsHttpTest : SparkTest({
 
     @Test
     fun `allows user to vote against resolution`() {
-        whenPerform.POST("/v1/communities/${communityId.id}/resolutions/${resolutionId.id}/votes")
+        POST("/v1/communities/${communityId.id}/resolutions/${resolutionId.id}/votes")
             .withBody(json {
                 "vote" _ "against"
             })
-            .authenticated()
+            .authenticated(owner.id)
             .expectCode(201)
 
         verify { resolutionsRepository().vote(communityId, resolutionId, owner.id, Vote.AGAINST) }
@@ -99,11 +96,11 @@ class ResolutionsHttpTest : SparkTest({
 
     @Test
     fun `allows user to vote abstain resolution`() {
-        whenPerform.POST("/v1/communities/${communityId.id}/resolutions/${resolutionId.id}/votes")
+        POST("/v1/communities/${communityId.id}/resolutions/${resolutionId.id}/votes")
             .withBody(json {
                 "vote" _ "abstain"
             })
-            .authenticated()
+            .authenticated(owner.id)
             .expectCode(201)
 
         verify { resolutionsRepository().vote(communityId, resolutionId, owner.id, Vote.ABSTAIN) }
@@ -111,11 +108,11 @@ class ResolutionsHttpTest : SparkTest({
 
     @Test
     fun `do not allow user to cast invalid vote for resolution`() {
-        whenPerform.POST("/v1/communities/${communityId.id}/resolutions/${resolutionId.id}/votes")
+        POST("/v1/communities/${communityId.id}/resolutions/${resolutionId.id}/votes")
             .withBody(json {
                 "vote" _ "blah"
             })
-            .authenticated()
+            .authenticated(owner.id)
             .expectCode(400)
     }
 }

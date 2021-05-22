@@ -72,14 +72,13 @@ class PostgresIssuesRepository(
         return AnswerId(answerId)
     }
 
-    override fun getAnswers(id: IssueId): List<AnswerWithOwners> {
-        return transaction(database) {
-            AnswerTable
-                .leftJoin(Owners)
-                .slice(Owners.columns + AnswerTable.columns)
-                .select { AnswerTable.issueId eq id.id }
-                .map { AnswerWithOwners(it.readOwner(), it.readAnswer()) }
-        }
+    override fun getAnswers(id: IssueId): List<AnswerWithOwners> = transaction(database) {
+        AnswerTable
+            .leftJoin(Owners)
+            .slice(Owners.columns + AnswerTable.columns)
+            .select { AnswerTable.issueId eq id.id }
+            .orderBy(AnswerTable.createdAt, SortOrder.DESC)
+            .map { AnswerWithOwners(it.readOwner(), it.readAnswer()) }
     }
 
     override fun updateIssuesStatus(id: IssueId, status: IssueStatus) {

@@ -1,9 +1,6 @@
 package pl.propertea.repositories
 
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import pl.propertea.common.Clock
 import pl.propertea.common.IdGenerator
@@ -28,6 +25,7 @@ class PostgresBulletinsRepository(
     override fun getBulletins(id: CommunityId): List<Bulletin> = transaction(database) {
         BulletinTable
             .select { BulletinTable.communityId eq id.id }
+            .orderBy(BulletinTable.createdAt, SortOrder.DESC)
             .map { it.readBulletin() }
     }
 
@@ -38,18 +36,16 @@ class PostgresBulletinsRepository(
             .firstOrNull()
     }
 
-    override fun createBulletin(bulletinCreation: BulletinCreation): BulletinId {
+    override fun createBulletin(bulletinCreation: BulletinCreation): BulletinId = transaction(database) {
         val bulletinId = idGenerator.newId()
-        transaction(database) {
-            BulletinTable.insert {
-                it[id] = bulletinId
-                it[communityId] = bulletinCreation.communityId.id
-                it[subject] = bulletinCreation.subject
-                it[content] = bulletinCreation.content
-                it[createdAt] = clock.getDateTime()
-            }
+        BulletinTable.insert {
+            it[id] = bulletinId
+            it[communityId] = bulletinCreation.communityId.id
+            it[subject] = bulletinCreation.subject
+            it[content] = bulletinCreation.content
+            it[createdAt] = clock.getDateTime()
         }
-        return BulletinId(bulletinId)
+        BulletinId(bulletinId)
     }
 }
 

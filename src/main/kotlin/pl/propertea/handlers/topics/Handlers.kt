@@ -4,42 +4,11 @@ import com.snitch.Handler
 import com.snitch.ok
 import pl.propertea.common.CommonModule.clock
 import pl.propertea.models.*
-import pl.propertea.repositories.RepositoriesModule.communityRepository
 import pl.propertea.repositories.RepositoriesModule.topicsRepository
 import pl.propertea.routes.authenticatedOwner
 import pl.propertea.routes.communityId
-import pl.propertea.routes.createdSuccessfully
 import pl.propertea.routes.topicId
 
-val getTopics: Handler<Nothing, TopicsResponse> = {
-    topicsRepository().getTopics(request[communityId]).toResponse().ok
-}
-
-val createTopicsHandler: Handler<TopicRequest, GenericResponse> = {
-    topicsRepository().crateTopic(
-        TopicCreation(
-            body.subject,
-            authenticatedOwner().id,
-            clock().getDateTime(),
-            CommunityId(body.communityId),
-            body.description
-        )
-    )
-
-    createdSuccessfully
-}
-
-val createCommentHandler: Handler<CreateCommentRequest, GenericResponse> = {
-    topicsRepository().createComment(
-        CommentCreation(
-            authenticatedOwner().id,
-            request[topicId],
-            body.content
-        )
-    )
-
-    createdSuccessfully
-}
 
 val getCommentsHandler: Handler<Nothing, GetCommentsResponse> = {
     val comments = topicsRepository().getComments(request[topicId])
@@ -58,5 +27,35 @@ val getCommentsHandler: Handler<Nothing, GetCommentsResponse> = {
         }
 
     GetCommentsResponse(comments).ok
+}
+
+val getTopics: Handler<Nothing, TopicsResponse> = {
+    topicsRepository().getTopics(request[communityId]).toResponse().ok
+}
+
+val createTopicsHandler: Handler<TopicRequest, GenericResponse> = {
+    topicsRepository().crateTopic(
+        TopicCreation(
+            body.subject,
+            authenticatedOwner(),
+            clock().getDateTime(),
+            CommunityId(body.communityId),
+            body.description
+        )
+    )
+
+    createdSuccessfully
+}
+
+val createCommentHandler: Handler<CreateCommentRequest, GenericResponse> = {
+    topicsRepository().createComment(
+        CommentCreation(
+            authenticatedOwner(),
+            request[topicId],
+            body.content
+        )
+    )
+
+    createdSuccessfully
 }
 

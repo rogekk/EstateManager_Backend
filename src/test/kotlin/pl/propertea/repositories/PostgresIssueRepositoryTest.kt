@@ -26,7 +26,7 @@ class PostgresIssueRepositoryTest : DatabaseTest({ Mocks(clock.strict) }) {
         }.sortedByDescending { it.createdAt }
     }
 
-    val createdCommunityId = communityRepository().crateCommunity(community)
+    val createdCommunityId = communityRepository().createCommunity(community)
     val createdOwnerId = owner inThis community putIn ownersRepository()
     val issue by aRandom<Issue>()
     val issueAnswers by aRandomListOf<Answer>(8)
@@ -34,8 +34,7 @@ class PostgresIssueRepositoryTest : DatabaseTest({ Mocks(clock.strict) }) {
 
     @Before
     fun beforeEach() {
-        every { CommonModule.clock().getDateTime() } returns now
-
+        every { clock().getDateTime() } returns now
     }
 
     @After
@@ -87,17 +86,20 @@ class PostgresIssueRepositoryTest : DatabaseTest({ Mocks(clock.strict) }) {
             val time = now.plusHours(index)
             every { clock().getDateTime() } returns time
 
-            val answerId = issueRepository().createAnswer(AnswerCreation(answer.description, createdIssueId, createdOwnerId))
+            val answerId = issueRepository().createAnswer(AnswerCreation("Desc $index", createdIssueId, createdOwnerId))
 
             AnswerWithOwners(owner.copy(id = createdOwnerId), answer.copy(
                 id = answerId,
+                description = "Desc $index",
                 createdBy = createdOwnerId,
                 issueId = createdIssueId,
                 createdAt = time,
             ))
         }
 
-        expect that issueRepository().getAnswers(createdIssueId) isEqualTo expectedAnswers
+        expect that issueRepository().getAnswers(createdIssueId) isEqualTo expectedAnswers.sortedByDescending {
+            it.answer.createdAt
+        }
     }
 
     @Test

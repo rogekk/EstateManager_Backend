@@ -1,6 +1,8 @@
 package pl.propertea.models
 
+import com.snitch.created
 import com.snitch.documentation.Description
+import com.snitch.ok
 
 data class GenericResponse(val message: String)
 
@@ -22,9 +24,7 @@ data class BulletinResponse(
     val subject: String,
     val content: String,
     val createdAt: String,
-
 )
-
 
 data class ResolutionsResponse(val resolutions: List<ResolutionResponse>)
 
@@ -140,3 +140,6 @@ data class CommunityResponse(
     val id: String,
     val name: String
 )
+
+val success = GenericResponse("success").ok
+val createdSuccessfully = GenericResponse("successful creation").created

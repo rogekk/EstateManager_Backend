@@ -1,6 +1,5 @@
 package pl.propertea.repositories
 
-import com.snitch.extensions.print
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import pl.propertea.common.IdGenerator
@@ -8,15 +7,12 @@ import pl.propertea.db.Communities
 import pl.propertea.db.OwnerMembership
 import pl.propertea.db.Owners
 import pl.propertea.models.*
-import pl.tools.hash
-import pl.tools.verify
-import java.util.*
+import pl.propertea.tools.hash
+import pl.propertea.tools.verify
 
 
 interface OwnersRepository {
     fun getById(ownerId: OwnerId): Owner?
-
-    fun getByUsername(username: String): Owner?
 
     fun createOwner(
         communities: List<Pair<CommunityId, Shares>>,
@@ -45,16 +41,26 @@ interface OwnersRepository {
 class PostgresOwnersRepository(private val database: Database, private val idGenerator: IdGenerator) :
     OwnersRepository {
 
+    override fun getProfile(id: OwnerId): OwnerProfile = transaction(database) {
+        OwnerMembership
+            .leftJoin(Communities)
+            .leftJoin(Owners)
+            .slice(Communities.columns + Owners.columns + OwnerMembership.shares)
+            .selectAll()
+            .map {
+                it.readOwner() to Community(
+                    CommunityId(it[Communities.id]),
+                    it[Communities.name],
+                    it[Communities.totalShares]
+                )
+            }
+            .groupBy { it.first }
+            .map { OwnerProfile(it.key, it.value.map { it.second }) }.first()
+    }
+
     override fun getById(ownerId: OwnerId): Owner? = transaction(database) {
         Owners
             .select { Owners.id eq ownerId.id }
-            .map { it.readOwner() }
-            .firstOrNull()
-    }
-
-    override fun getByUsername(username: String): Owner? = transaction(database) {
-        Owners
-            .select { Owners.username eq username }
             .map { it.readOwner() }
             .firstOrNull()
     }
@@ -129,24 +135,6 @@ class PostgresOwnersRepository(private val database: Database, private val idGen
                     it[Owners.profileImageUrl] = profileImageUrl
             }
         }
-    }
-
-    override fun getProfile(id: OwnerId): OwnerProfile = transaction(database) {
-        OwnerMembership
-            .leftJoin(Communities)
-            .leftJoin(Owners)
-            .slice(Communities.columns + Owners.columns + OwnerMembership.shares)
-            .selectAll()
-            .map {
-                it.readOwner() to Community(
-                    CommunityId(it[Communities.id]),
-                    it[Communities.name],
-                    it[Communities.totalShares]
-                )
-            }
-            .groupBy { it.first }
-            .map { OwnerProfile(it.key, it.value.map { it.second }) }.first()
-
     }
 }
 
