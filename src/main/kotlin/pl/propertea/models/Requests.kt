@@ -40,3 +40,14 @@ data class CreateCommunityMembershipRequest(
 
 
 data class CreateCommentRequest(val content: String)
+
+data class IssueRequest(val subject: String,
+                        val description: String,
+                        val attachments: String
+                        )
+
+enum class StatusRequest{
+    new, recived, openForVoting, closed, reOpend
+}
+
+data class CreateAnswerRequest(val description: String)
