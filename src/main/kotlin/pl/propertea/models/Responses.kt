@@ -22,9 +22,7 @@ data class BulletinResponse(
     val subject: String,
     val content: String,
     val createdAt: String,
-
 )
-
 
 data class ResolutionsResponse(val resolutions: List<ResolutionResponse>)
 

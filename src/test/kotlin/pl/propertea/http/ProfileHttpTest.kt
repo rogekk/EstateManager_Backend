@@ -28,7 +28,7 @@ class ProfileHttpTest : SparkTest({ Mocks(ownersRepository.relaxed, authenticato
                 "phoneNumber" _ "phoneNumber"
                 "address" _ "address"
             })
-            .authenticated()
+            .authenticated(owner.id)
             .expectCode(200)
         verify { ownersRepository().updateOwnersDetails(owner.id, "email", "address", "phoneNumber") }
     }
@@ -38,7 +38,7 @@ class ProfileHttpTest : SparkTest({ Mocks(ownersRepository.relaxed, authenticato
         every { ownersRepository().getProfile(owner.id) } returns OwnerProfile(owner, communities)
 
         GET("/v1/owners/${owner.id.id}")
-            .authenticated()
+            .authenticated(owner.id)
             .expectBody(json {
                 "id" _ owner.id.id
                 "username" _ owner.username

@@ -1,19 +1,24 @@
 package pl.propertea.routes
 
 import AuthTokenValidator
+import ForbiddenException
 import authenticationRoutes
 import bulletinsRoutes
+import checkPermission
 import com.auth0.jwt.exceptions.JWTDecodeException
 import com.snitch.*
+import com.snitch.extensions.json
 import com.snitch.spark.SparkResponseWrapper
 import communitiesRoutes
 import ownersRoutes
 import pl.propertea.common.CommonModule.authenticator
 import pl.propertea.models.*
+import pl.tools.json
 import resolutionsRoutes
 import spark.Service
 import topicsRoutes
 import ulid
+import verify
 import java.lang.IllegalArgumentException
 
 val topicId = path("topicId", condition = ulid("topic", ::TopicId))
@@ -61,31 +66,50 @@ private fun setAccessControlHeaders(http: Service) {
 
     http.exception(AuthenticationException::class.java) { _, _, response ->
         response.status(401)
-        response.body("Unauthenticated")
+        response.body(json { "error" _ "Unauthenticated" }.json)
     }
 
     http.exception(JWTDecodeException::class.java) { _, _, response ->
         response.status(401)
-        response.body("Unauthenticated")
+        response.body(json { "error" _ "Unauthenticated" }.json)
+    }
+
+    http.exception(ForbiddenException::class.java) { _, _, response ->
+        response.status(403)
+        response.body(json { "error" _ "Forbidden" }.json)
     }
 
     http.exception(IllegalArgumentException::class.java) { _, _, response ->
         response.status(400)
         response.body("Cannot parse body of request")
     }
+
 }
 
 fun <T : Any> Endpoint<T>.authenticated() = withHeader(authTokenHeader)
+    .copy(before = {
+        println("verifying")
+        verify(it[authTokenHeader])
+        println("verified")
+    }
 
-fun RequestHandler<*>.authenticatedOwner(): Owner {
+    )
+
+fun <T : Any> Endpoint<T>.restrictTo(permissionTypes: PermissionTypes) =
+    withHeader(authTokenHeader)
+        .copy(before = {
+            checkPermission(it[authTokenHeader], permissionTypes)
+        })
+
+fun RequestHandler<*>.authenticatedOwner(): OwnerId {
     val authTokenValue = request[authTokenHeader]
-    return kotlin.runCatching { authenticator().authenticate(authTokenValue) }
-        .getOrNull() ?: throw AuthenticationException()
+    return authTokenValue.ownerId!!
 }
 
 fun RequestHandler<*>.setHeader(key: String, value: String) {
     (response as SparkResponseWrapper).response.header(key, value)
 }
+
 
 class AuthenticationException : Exception()
 

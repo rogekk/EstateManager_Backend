@@ -31,7 +31,7 @@ class ResolutionsHttpTest : SparkTest({
                 "subject" _ "burn down building every tuesday?"
                 "description" _ "expensive but fun"
             })
-            .authenticated()
+            .authenticated(owner.id)
             .expectCode(201)
 
         verify {
@@ -51,7 +51,7 @@ class ResolutionsHttpTest : SparkTest({
         every { resolutionsRepository().getResolutions(communityId) } returns resolutions
 
         GET("/v1/communities/${communityId.id}/resolutions")
-            .authenticated()
+            .authenticated(owner.id)
             .expectCode(200)
             .expectBodyJson(ResolutionsResponse(
                 resolutions.map {
@@ -67,7 +67,7 @@ class ResolutionsHttpTest : SparkTest({
         every { resolutionsRepository().hasVoted(owner.id, resolution.id) } returns true
 
         GET("/v1/communities/${communityId.id}/resolutions/${resolution.id.id}")
-            .authenticated()
+            .authenticated(owner.id)
             .expectCode(200)
             .expectBodyJson(resolution.toResponse().copy(votedByOwner = true))
     }
@@ -79,7 +79,7 @@ class ResolutionsHttpTest : SparkTest({
             .withBody(json {
                 "vote" _ "pro"
             })
-            .authenticated()
+            .authenticated(owner.id)
             .expectCode(201)
 
         verify { resolutionsRepository().vote(communityId, resolutionId, owner.id, Vote.PRO) }
@@ -91,7 +91,7 @@ class ResolutionsHttpTest : SparkTest({
             .withBody(json {
                 "vote" _ "against"
             })
-            .authenticated()
+            .authenticated(owner.id)
             .expectCode(201)
 
         verify { resolutionsRepository().vote(communityId, resolutionId, owner.id, Vote.AGAINST) }
@@ -103,7 +103,7 @@ class ResolutionsHttpTest : SparkTest({
             .withBody(json {
                 "vote" _ "abstain"
             })
-            .authenticated()
+            .authenticated(owner.id)
             .expectCode(201)
 
         verify { resolutionsRepository().vote(communityId, resolutionId, owner.id, Vote.ABSTAIN) }
@@ -115,7 +115,7 @@ class ResolutionsHttpTest : SparkTest({
             .withBody(json {
                 "vote" _ "blah"
             })
-            .authenticated()
+            .authenticated(owner.id)
             .expectCode(400)
     }
 }

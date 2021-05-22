@@ -12,9 +12,7 @@ import pl.propertea.routes.success
 
 
 val getProfile: Handler<Nothing, ProfileResponse> = {
-    val user = authenticatedOwner()
-
-    val profile = ownersRepository().getProfile(user.id)
+    val profile = ownersRepository().getProfile(authenticatedOwner())
 
     ProfileResponse(
         profile.owner.id.id,
@@ -32,7 +30,7 @@ val getProfile: Handler<Nothing, ProfileResponse> = {
 
 val updateOwnersHandler: Handler<UpdateOwnersRequest, GenericResponse> = {
     ownersRepository().updateOwnersDetails(
-        authenticatedOwner().id,
+        authenticatedOwner(),
         email = body.email,
         address = body.address,
         phoneNumber = body.phoneNumber,

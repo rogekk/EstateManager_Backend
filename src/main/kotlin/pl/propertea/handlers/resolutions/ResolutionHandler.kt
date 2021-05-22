@@ -18,7 +18,7 @@ val getResolutions: Handler<Nothing, ResolutionsResponse> = {
 
 val getResolution: Handler<Nothing, ResolutionResponse> = {
     val resolution = resolutionsRepository().getResolution(request[resolutionId])
-    val hasVoted = resolutionsRepository().hasVoted(authenticatedOwner().id, request[resolutionId])
+    val hasVoted = resolutionsRepository().hasVoted(authenticatedOwner(), request[resolutionId])
     resolution?.toResponse()?.copy(votedByOwner = hasVoted)?.ok ?: notFound()
 }
 
@@ -39,7 +39,7 @@ val createResolutionVoteHandler: Handler<ResolutionVoteRequest, GenericResponse>
     resolutionsRepository().vote(
         request[communityId],
         request[resolutionId],
-        authenticatedOwner().id,
+        authenticatedOwner(),
         when (body.vote) {
             VoteRequest.pro -> Vote.PRO
             VoteRequest.against -> Vote.AGAINST

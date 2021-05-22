@@ -19,7 +19,7 @@ val createTopicsHandler: Handler<TopicRequest, GenericResponse> = {
     topicsRepository().crateTopic(
         TopicCreation(
             body.subject,
-            authenticatedOwner().id,
+            authenticatedOwner(),
             clock().getDateTime(),
             CommunityId(body.communityId),
             body.description
@@ -32,7 +32,7 @@ val createTopicsHandler: Handler<TopicRequest, GenericResponse> = {
 val createCommentHandler: Handler<CreateCommentRequest, GenericResponse> = {
     topicsRepository().createComment(
         CommentCreation(
-            authenticatedOwner().id,
+            authenticatedOwner(),
             request[topicId],
             body.content
         )
