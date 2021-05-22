@@ -21,11 +21,13 @@ abstract class SparkTest(mockBlock: () -> Mocks = { Mocks() }) :
 
     val owner by aRandom<Owner>()
 
-    val port = HttpTest.nextPort()
+    companion object {
+        var currentPort: Int = 23000
 
-    init {
-//        Dependencies.registerFactories()
+        fun nextPort(): Int = ++currentPort
     }
+
+    val port = nextPort()
 
     @Rule
     @JvmField
@@ -35,9 +37,11 @@ abstract class SparkTest(mockBlock: () -> Mocks = { Mocks() }) :
 
     val whenPerform = this
 
-    fun Expectation.authenticated(ownerId: OwnerId) =
-        withHeaders(hashMapOf(authTokenHeader to authenticator().getTokenWithPermission(ownerId, PermissionTypes.Owner)))
-            .also { }
+    fun Expectation.authenticated(ownerId: OwnerId): Expectation {
+        withHeaders(hashMapOf(authTokenHeader to null)).expectCode(401)
+        withHeaders(hashMapOf(authTokenHeader to "foo")).expectCode(401)
+        return withHeaders(hashMapOf(authTokenHeader to authenticator().getTokenWithPermission(ownerId, PermissionTypes.Owner)))
+    }
 
     fun Expectation.verifyPermissions(permissionType: PermissionTypes): Expectation {
 
@@ -46,7 +50,6 @@ abstract class SparkTest(mockBlock: () -> Mocks = { Mocks() }) :
 
         withHeaders(hashMapOf(authTokenHeader to noPermission)).expectCode(403)
 
-//        every { authenticator().authenticate(AuthToken(withRightPermission)) } returns owner
         return withHeaders(hashMapOf(authTokenHeader to withRightPermission))
     }
 

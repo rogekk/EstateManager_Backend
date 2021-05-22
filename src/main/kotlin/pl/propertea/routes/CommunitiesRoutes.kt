@@ -17,6 +17,7 @@ fun Router.communitiesRoutes() {
         .isHandledBy(createCommunityHandler)
 
     GET("/communities")
+        .authenticated()
         .isHandledBy(getCommunitiesHandler)
 
     POST("/communities" / communityId / "members")
