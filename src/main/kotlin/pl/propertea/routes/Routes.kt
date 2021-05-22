@@ -7,7 +7,6 @@ import com.snitch.*
 import com.snitch.spark.SparkResponseWrapper
 import communitiesRoutes
 import ownersRoutes
-import pl.propertea.common.CommonModule.authenticator
 import pl.propertea.models.*
 import resolutionsRoutes
 import spark.Service
@@ -40,26 +39,9 @@ fun routes(http: Service): Router.() -> Unit = {
     handleExceptions(http)
 }
 
-fun <T : Any> Endpoint<T>.authenticated() = withHeader(authTokenHeader)
-    .copy(before = { authenticator().verify(it[authTokenHeader].token) })
-
-fun <T : Any> Endpoint<T>.restrictTo(permissionTypes: PermissionTypes) =
-    withHeader(authTokenHeader)
-        .copy(before = {
-            authenticator().checkPermission(it[authTokenHeader], permissionTypes)
-        })
-
-fun RequestHandler<*>.authenticatedOwner(): OwnerId {
-    val authTokenValue = request[authTokenHeader]
-    return authTokenValue.ownerId!!
-}
+class AuthenticationException : Exception()
 
 fun RequestHandler<*>.setHeader(key: String, value: String) {
     (response as SparkResponseWrapper).response.header(key, value)
 }
 
-
-class AuthenticationException : Exception()
-
-val success = GenericResponse("success").ok
-val createdSuccessfully = GenericResponse("successful creation").created

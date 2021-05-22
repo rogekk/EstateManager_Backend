@@ -1,12 +1,11 @@
 package pl.propertea.db
 
-import com.snitch.created
 import org.joda.time.DateTime
 import pl.propertea.models.*
 import pl.propertea.repositories.RepositoriesModule.communityRepository
-import pl.propertea.repositories.RepositoriesModule.topicsRepository
 import pl.propertea.repositories.RepositoriesModule.ownersRepository
 import pl.propertea.repositories.RepositoriesModule.resolutionsRepository
+import pl.propertea.repositories.RepositoriesModule.topicsRepository
 
 fun main() {
 

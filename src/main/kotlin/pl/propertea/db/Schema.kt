@@ -19,8 +19,6 @@ val schema = arrayOf(
     AnswerTable,
 )
 
-typealias UsersTable = Owners
-
 object Owners : Table() {
     val id = text("id")
     val username = text("username").uniqueIndex()

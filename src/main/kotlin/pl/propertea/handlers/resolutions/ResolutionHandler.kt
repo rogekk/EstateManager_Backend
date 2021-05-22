@@ -8,7 +8,6 @@ import pl.propertea.models.*
 import pl.propertea.repositories.RepositoriesModule.resolutionsRepository
 import pl.propertea.routes.authenticatedOwner
 import pl.propertea.routes.communityId
-import pl.propertea.routes.createdSuccessfully
 import pl.propertea.routes.resolutionId
 
 

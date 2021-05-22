@@ -2,13 +2,9 @@ package pl.propertea.handlers.profile
 
 import com.snitch.Handler
 import com.snitch.ok
-import pl.propertea.models.CommunityMembershipResponse
-import pl.propertea.models.GenericResponse
-import pl.propertea.models.ProfileResponse
-import pl.propertea.models.UpdateOwnersRequest
+import pl.propertea.models.*
 import pl.propertea.repositories.RepositoriesModule.ownersRepository
 import pl.propertea.routes.authenticatedOwner
-import pl.propertea.routes.success
 
 
 val getProfile: Handler<Nothing, ProfileResponse> = {

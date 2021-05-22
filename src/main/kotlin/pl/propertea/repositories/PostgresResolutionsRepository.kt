@@ -23,27 +23,17 @@ class PostgresResolutionsRepository(
     private val clock: Clock
 ) : ResolutionsRepository {
 
+    override fun hasVoted(owner: OwnerId, id: ResolutionId): Boolean = transaction(database) {
+        ResolutionVotes
+            .select { (ResolutionVotes.resolutionId eq id.id) and (ResolutionVotes.ownerId eq owner.id) }
+            .map { true }
+            .firstOrNull() ?: false
+    }
+
     override fun getResolutions(communityId: CommunityId): List<Resolution> = transaction(database) {
         ResolutionsTable
             .select { ResolutionsTable.communityId eq communityId.id }
             .map { it.readResolution() }
-    }
-
-    override fun crateResolution(resolutionCreation: ResolutionCreation): ResolutionId? {
-        val resolutionId = idGenerator.newId()
-        transaction(database) {
-            ResolutionsTable
-                .insert {
-                    it[id] = resolutionId
-                    it[communityId] = resolutionCreation.communityId.id
-                    it[number] = resolutionCreation.number
-                    it[subject] = resolutionCreation.subject
-                    it[createdAt] = clock.getDateTime()
-                    it[description] = resolutionCreation.description
-                    it[result] = PGResolutionResult.OPEN_FOR_VOTING
-                }
-        }
-        return ResolutionId(resolutionId)
     }
 
     override fun getResolution(id: ResolutionId): Resolution? = transaction(database) {
@@ -64,6 +54,22 @@ class PostgresResolutionsRepository(
             }
     }
 
+    override fun crateResolution(resolutionCreation: ResolutionCreation): ResolutionId? {
+        val resolutionId = idGenerator.newId()
+        transaction(database) {
+            ResolutionsTable
+                .insert {
+                    it[id] = resolutionId
+                    it[communityId] = resolutionCreation.communityId.id
+                    it[number] = resolutionCreation.number
+                    it[subject] = resolutionCreation.subject
+                    it[createdAt] = clock.getDateTime()
+                    it[description] = resolutionCreation.description
+                    it[result] = PGResolutionResult.OPEN_FOR_VOTING
+                }
+        }
+        return ResolutionId(resolutionId)
+    }
 
     override fun vote(
         communityId: CommunityId,
@@ -103,13 +109,6 @@ class PostgresResolutionsRepository(
                     it[this.result] = PGResolutionResult.fromResult(result)
                 }
         }
-    }
-
-    override fun hasVoted(owner: OwnerId, id: ResolutionId): Boolean = transaction(database) {
-        ResolutionVotes
-            .select { (ResolutionVotes.resolutionId eq id.id) and (ResolutionVotes.ownerId eq owner.id) }
-            .map { true }
-            .firstOrNull() ?: false
     }
 }
 

@@ -45,6 +45,23 @@ interface OwnersRepository {
 class PostgresOwnersRepository(private val database: Database, private val idGenerator: IdGenerator) :
     OwnersRepository {
 
+    override fun getProfile(id: OwnerId): OwnerProfile = transaction(database) {
+        OwnerMembership
+            .leftJoin(Communities)
+            .leftJoin(Owners)
+            .slice(Communities.columns + Owners.columns + OwnerMembership.shares)
+            .selectAll()
+            .map {
+                it.readOwner() to Community(
+                    CommunityId(it[Communities.id]),
+                    it[Communities.name],
+                    it[Communities.totalShares]
+                )
+            }
+            .groupBy { it.first }
+            .map { OwnerProfile(it.key, it.value.map { it.second }) }.first()
+    }
+
     override fun getById(ownerId: OwnerId): Owner? = transaction(database) {
         Owners
             .select { Owners.id eq ownerId.id }
@@ -129,24 +146,6 @@ class PostgresOwnersRepository(private val database: Database, private val idGen
                     it[Owners.profileImageUrl] = profileImageUrl
             }
         }
-    }
-
-    override fun getProfile(id: OwnerId): OwnerProfile = transaction(database) {
-        OwnerMembership
-            .leftJoin(Communities)
-            .leftJoin(Owners)
-            .slice(Communities.columns + Owners.columns + OwnerMembership.shares)
-            .selectAll()
-            .map {
-                it.readOwner() to Community(
-                    CommunityId(it[Communities.id]),
-                    it[Communities.name],
-                    it[Communities.totalShares]
-                )
-            }
-            .groupBy { it.first }
-            .map { OwnerProfile(it.key, it.value.map { it.second }) }.first()
-
     }
 }
 

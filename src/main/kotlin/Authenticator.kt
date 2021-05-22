@@ -16,8 +16,8 @@ interface Authenticator {
 }
 
 class JWTAuthenticator : Authenticator {
-    val algorithm = Algorithm.HMAC256("secret")
-    val verifier: JWTVerifier = JWT.require(algorithm)
+    private val algorithm = Algorithm.HMAC256("secret")
+    private val verifier: JWTVerifier = JWT.require(algorithm)
         .withIssuer("auth0")
         .build() //Reusable verifier instance
 
@@ -33,7 +33,7 @@ class JWTAuthenticator : Authenticator {
         return PermissionTypes.Owner
     }
 
-    override fun verify(authToken: String) = verifier.verify(authToken)
+    override fun verify(authToken: String): DecodedJWT = verifier.verify(authToken)
 
     override fun checkPermission(authToken: AuthToken, permission: PermissionTypes) {
         val jwt = verifier.verify(authToken.token)
@@ -56,4 +56,4 @@ class JWTAuthenticator : Authenticator {
 }
 
 
-class ForbiddenException() : Exception()
+class ForbiddenException : Exception()

@@ -19,5 +19,4 @@ fun setAccessControlHeaders(http: Service) {
             response.body("")
         }
     }
-
 }
