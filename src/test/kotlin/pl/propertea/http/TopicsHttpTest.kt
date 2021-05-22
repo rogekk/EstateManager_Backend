@@ -22,7 +22,6 @@ class TopicsHttpTest : SparkTest({
     Mocks(
         topicsRepository.relaxed,
         clock.strict,
-        authenticator.relaxed
     )
 }) {
     val community by aRandom<Community>()

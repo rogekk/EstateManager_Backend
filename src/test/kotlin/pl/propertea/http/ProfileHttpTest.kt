@@ -17,7 +17,7 @@ import pl.propertea.tools.json
 import pl.propertea.tools.l
 import ro.kreator.aRandomListOf
 
-class ProfileHttpTest : SparkTest({ Mocks(ownersRepository.relaxed, authenticator.relaxed) }) {
+class ProfileHttpTest : SparkTest({ Mocks(ownersRepository.relaxed) }) {
     val communities by aRandomListOf<Community>(2)
 
     @Test

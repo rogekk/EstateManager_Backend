@@ -1,25 +1,18 @@
 package pl.propertea.routes
 
 import AuthTokenValidator
-import ForbiddenException
 import authenticationRoutes
 import bulletinsRoutes
-import checkPermission
-import com.auth0.jwt.exceptions.JWTDecodeException
 import com.snitch.*
-import com.snitch.extensions.json
 import com.snitch.spark.SparkResponseWrapper
 import communitiesRoutes
 import ownersRoutes
 import pl.propertea.common.CommonModule.authenticator
 import pl.propertea.models.*
-import pl.tools.json
 import resolutionsRoutes
 import spark.Service
 import topicsRoutes
 import ulid
-import verify
-import java.lang.IllegalArgumentException
 
 val topicId = path("topicId", condition = ulid("topic", ::TopicId))
 val communityId = path("communityId", condition = ulid("community", ::CommunityId))
@@ -44,61 +37,16 @@ fun routes(http: Service): Router.() -> Unit = {
     }
 
     setAccessControlHeaders(http)
-}
-
-private fun setAccessControlHeaders(http: Service) {
-    http.after { request, response ->
-        // This header should be set for every response
-        response.header("Access-Control-Allow-Origin", "*")
-
-        val requestMethod = request.headers("Access-Control-Request-Method")
-        val requestHeaders = request.headers("Access-Control-Request-Headers")
-
-        // These headers are only needed for preflight requests
-        if (request.requestMethod() == "OPTIONS" && (requestMethod != "" || requestHeaders != "")) {
-            response.header("Access-Control-Allow-Methods", requestMethod)
-            response.header("Access-Control-Allow-Headers", requestHeaders)
-
-            response.status(200)
-            response.body("")
-        }
-    }
-
-    http.exception(AuthenticationException::class.java) { _, _, response ->
-        response.status(401)
-        response.body(json { "error" _ "Unauthenticated" }.json)
-    }
-
-    http.exception(JWTDecodeException::class.java) { _, _, response ->
-        response.status(401)
-        response.body(json { "error" _ "Unauthenticated" }.json)
-    }
-
-    http.exception(ForbiddenException::class.java) { _, _, response ->
-        response.status(403)
-        response.body(json { "error" _ "Forbidden" }.json)
-    }
-
-    http.exception(IllegalArgumentException::class.java) { _, _, response ->
-        response.status(400)
-        response.body("Cannot parse body of request")
-    }
-
+    handleExceptions(http)
 }
 
 fun <T : Any> Endpoint<T>.authenticated() = withHeader(authTokenHeader)
-    .copy(before = {
-        println("verifying")
-        verify(it[authTokenHeader])
-        println("verified")
-    }
-
-    )
+    .copy(before = { authenticator().verify(it[authTokenHeader].token) })
 
 fun <T : Any> Endpoint<T>.restrictTo(permissionTypes: PermissionTypes) =
     withHeader(authTokenHeader)
         .copy(before = {
-            checkPermission(it[authTokenHeader], permissionTypes)
+            authenticator().checkPermission(it[authTokenHeader], permissionTypes)
         })
 
 fun RequestHandler<*>.authenticatedOwner(): OwnerId {

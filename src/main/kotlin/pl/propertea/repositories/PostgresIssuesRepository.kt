@@ -78,6 +78,7 @@ class PostgresIssuesRepository(
                 .leftJoin(Owners)
                 .slice(Owners.columns + AnswerTable.columns)
                 .select { AnswerTable.issueId eq id.id }
+                .orderBy(AnswerTable.createdAt, SortOrder.DESC)
                 .map { AnswerWithOwners(it.readOwner(), it.readAnswer()) }
         }
     }

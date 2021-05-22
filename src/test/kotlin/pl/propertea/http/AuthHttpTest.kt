@@ -14,9 +14,7 @@ import pl.propertea.models.OwnerProfile
 import pl.propertea.repositories.NotVerified
 import pl.propertea.repositories.RepositoriesModule.ownersRepository
 import pl.propertea.repositories.Verified
-import pl.propertea.routes.ownerId
 import pl.propertea.tools.json
-import verifier
 
 class AuthHttpTest : SparkTest({ Mocks(clock.strict, ownersRepository.relaxed) }) {
 
@@ -29,7 +27,7 @@ class AuthHttpTest : SparkTest({ Mocks(clock.strict, ownersRepository.relaxed) }
             .withBody(json { "username" _ "foo"; "password" _ "pass" })
             .expectCode(200)
             .expect {
-                expect that DateTime(verifier.verify(it.headers["token"]).expiresAt) isEqualTo now.plusWeeks(1).roundedToSecond()
+                expect that DateTime(authenticator().verify(it.headers["token"]!!).expiresAt) isEqualTo now.plusWeeks(1).roundedToSecond()
             }
     }
 
@@ -46,7 +44,6 @@ class AuthHttpTest : SparkTest({ Mocks(clock.strict, ownersRepository.relaxed) }
         every { ownersRepository().getProfile(owner.id) } returns OwnerProfile(owner, emptyList())
         every { ownersRepository().checkOwnersCredentials(owner.username, "b") } returns Verified(owner.id)
         every { clock().getDateTime() } returns now
-//        every { authenticator().getToken(owner.username) } returns "thetoken"
 
         POST("/v1/login")
             .withBody(json { "username" _ owner.username; "password" _ "b" })
@@ -63,7 +60,7 @@ class AuthHttpTest : SparkTest({ Mocks(clock.strict, ownersRepository.relaxed) }
                     })
             }
             .expect {
-                expect that DateTime(verifier.verify(it.headers["token"]).expiresAt) isEqualTo now.plusWeeks(1).roundedToSecond()
+                expect that DateTime(authenticator().verify(it.headers["token"]!!).expiresAt) isEqualTo now.plusWeeks(1).roundedToSecond()
             }
     }
 }

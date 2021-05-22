@@ -1,7 +1,6 @@
 package pl.propertea.handlers.auth
 
 import com.snitch.*
-import getTokenWithPermission
 import pl.propertea.common.CommonModule.authenticator
 import pl.propertea.models.*
 import pl.propertea.repositories.*
@@ -27,7 +26,7 @@ val loginHandler: Handler<LoginRequest, LoginResponse> = {
     val checkOwnersCredentials = ownersRepository().checkOwnersCredentials(body.username, body.password)
     when (checkOwnersCredentials) {
         is Verified -> {
-            val token = getTokenWithPermission(checkOwnersCredentials.id, PermissionTypes.Owner)
+            val token = authenticator().getTokenWithPermission(checkOwnersCredentials.id, PermissionTypes.Owner)
             setHeader("Token", token)
             LoginResponse(id = checkOwnersCredentials.id.id, token = token).ok
         }

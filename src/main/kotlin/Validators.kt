@@ -21,7 +21,7 @@ object AuthTokenValidator : Validator<String, AuthToken> {
     override val description = "The auth token"
     override val regex = ".*".toRegex()
     override val parse = { value: String ->
-        val jwt = verifier.verify(value)
+        val jwt = authenticator().verify(value)
         val p = PermissionTypes.fromString(jwt.claims["permission"]?.asString())?.let { setOf(it) } ?: emptySet()
 
         val ownerId = jwt.claims["ownerId"]?.asString()?.let { OwnerId(it) }

@@ -5,14 +5,11 @@ import com.memoizr.assertk.expect
 import com.snitch.HeaderParameter
 import com.snitch.extensions.json
 import com.snitch.extensions.toHashMap
-import getTokenWithPermission
-import io.mockk.every
 import khttp.responses.Response
 import org.json.JSONObject
 import org.junit.Rule
 import org.junit.rules.RuleChain
 import pl.propertea.common.CommonModule.authenticator
-import pl.propertea.models.AuthToken
 import pl.propertea.models.Owner
 import pl.propertea.models.OwnerId
 import pl.propertea.models.PermissionTypes
@@ -20,7 +17,7 @@ import pl.propertea.routes.authTokenHeader
 import ro.kreator.aRandom
 
 abstract class SparkTest(mockBlock: () -> Mocks = { Mocks() }) :
-    BaseTest({ Mocks(*mockBlock.invoke().mocks.toList().plus(authenticator.strict).toTypedArray()) }) {
+    BaseTest({ Mocks(*mockBlock.invoke().mocks) }) {
 
     val owner by aRandom<Owner>()
 
@@ -39,13 +36,13 @@ abstract class SparkTest(mockBlock: () -> Mocks = { Mocks() }) :
     val whenPerform = this
 
     fun Expectation.authenticated(ownerId: OwnerId) =
-        withHeaders(hashMapOf(authTokenHeader to getTokenWithPermission(ownerId, PermissionTypes.Owner)))
+        withHeaders(hashMapOf(authTokenHeader to authenticator().getTokenWithPermission(ownerId, PermissionTypes.Owner)))
             .also { }
 
     fun Expectation.verifyPermissions(permissionType: PermissionTypes): Expectation {
 
-        val noPermission = getTokenWithPermission(OwnerId(""), null)
-        val withRightPermission = getTokenWithPermission(OwnerId(""), permissionType)
+        val noPermission = authenticator().getTokenWithPermission(OwnerId(""), null)
+        val withRightPermission = authenticator().getTokenWithPermission(OwnerId(""), permissionType)
 
         withHeaders(hashMapOf(authTokenHeader to noPermission)).expectCode(403)
 

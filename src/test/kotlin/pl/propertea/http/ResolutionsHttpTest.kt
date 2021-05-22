@@ -15,7 +15,6 @@ import ro.kreator.aRandomListOf
 
 class ResolutionsHttpTest : SparkTest({
     Mocks(
-        authenticator.relaxed,
         resolutionsRepository.relaxed
     )
 }) {
