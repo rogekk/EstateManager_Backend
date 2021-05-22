@@ -28,7 +28,7 @@ class TopicsRepositoryTest : DatabaseTest() {
 
     @Test
     fun `returns a forum with topics`() {
-        communityRepository().crateCommunity(community)
+        communityRepository().createCommunity(community)
         val ownerId = owner inThis community putIn ownersRepository()
 
         val emptyTopics = topicsRepository().getTopics(community.id)
@@ -54,7 +54,7 @@ class TopicsRepositoryTest : DatabaseTest() {
 
     @Test
     fun `adds a comment to a topic`() {
-        communityRepository().crateCommunity(community)
+        communityRepository().createCommunity(community)
         val ownerId = owner inThis community putIn ownersRepository()
 
         val topic = TopicCreation("subj", ownerId, now, community.id, "desc")
@@ -69,7 +69,7 @@ class TopicsRepositoryTest : DatabaseTest() {
 
     @Test
     fun `returns the comment count with the result`() {
-        communityRepository().crateCommunity(community)
+        communityRepository().createCommunity(community)
 
         val ownerId = owner inThis community putIn ownersRepository()
         val topic = TopicCreation("subj", ownerId, now, community.id, "desc")

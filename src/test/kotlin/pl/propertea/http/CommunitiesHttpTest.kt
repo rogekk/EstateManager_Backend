@@ -11,7 +11,7 @@ import pl.propertea.dsl.relaxed
 import pl.propertea.models.*
 import pl.propertea.models.PermissionTypes.Manager
 import pl.propertea.repositories.RepositoriesModule.communityRepository
-import pl.tools.json
+import pl.propertea.tools.json
 import ro.kreator.aRandom
 import ro.kreator.aRandomListOf
 
@@ -30,7 +30,7 @@ class CommunitiesHttpTest : SparkTest({ Mocks(communityRepository.relaxed) }) {
             .verifyPermissions(Manager)
             .expectCode(201)
 
-        verify { communityRepository().crateCommunity(Community(CommunityId("id"), "name", 50)) }
+        verify { communityRepository().createCommunity(Community(CommunityId("id"), "name", 50)) }
     }
 
     @Test

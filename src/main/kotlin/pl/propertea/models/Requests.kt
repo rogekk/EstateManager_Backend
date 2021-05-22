@@ -6,7 +6,8 @@ data class CreateOwnerRequest(
     val email: String,
     val phoneNumber: String,
     val address: String,
-    val memberships: List<CommunityMembershipRequest>
+    val memberships: List<CommunityMembershipRequest>,
+    val profileImageUrl: String? = null,
 )
 
 data class CommunityMembershipRequest(val communityId: String, val shares: Int)

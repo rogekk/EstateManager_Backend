@@ -3,16 +3,11 @@ package pl.propertea.routes
 import ForbiddenException
 import com.auth0.jwt.exceptions.JWTDecodeException
 import com.snitch.extensions.json
-import pl.tools.json
+import pl.propertea.tools.json
 import spark.Service
 import java.lang.IllegalArgumentException
 
 fun handleExceptions(http: Service) {
-    http.exception(AuthenticationException::class.java) { _, _, response ->
-        response.status(401)
-        response.body(json { "error" _ "Unauthenticated" }.json)
-    }
-
     http.exception(JWTDecodeException::class.java) { _, _, response ->
         response.status(401)
         response.body(json { "error" _ "Unauthenticated" }.json)

@@ -1,8 +1,6 @@
 package pl.propertea.repositories
 
 import com.memoizr.assertk.expect
-import com.snitch.description
-import com.snitch.extensions.print
 import io.mockk.every
 import org.junit.After
 import org.junit.Before
@@ -28,7 +26,7 @@ class PostgresIssueRepositoryTest : DatabaseTest({ Mocks(clock.strict) }) {
         }.sortedByDescending { it.createdAt }
     }
 
-    val createdCommunityId = communityRepository().crateCommunity(community)
+    val createdCommunityId = communityRepository().createCommunity(community)
     val createdOwnerId = owner inThis community putIn ownersRepository()
     val issue by aRandom<Issue>()
     val issueAnswers by aRandomListOf<Answer>(8)
@@ -36,8 +34,7 @@ class PostgresIssueRepositoryTest : DatabaseTest({ Mocks(clock.strict) }) {
 
     @Before
     fun beforeEach() {
-        every { CommonModule.clock().getDateTime() } returns now
-
+        every { clock().getDateTime() } returns now
     }
 
     @After

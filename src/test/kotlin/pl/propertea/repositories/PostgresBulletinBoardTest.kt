@@ -42,14 +42,14 @@ class PostgresBulletinBoardTest : DatabaseTest({ Mocks(idGenerator.strict, clock
 
     @Test
     fun `when there are no bulletins returns an empty list`() {
-        communityRepository().crateCommunity(community)
+        communityRepository().createCommunity(community)
         val emptyBulletin: List<Bulletin> = bulletinRepository().getBulletins(community.id)
         expect that emptyBulletin isEqualTo emptyList()
     }
 
     @Test
     fun `returns a bulletin after creating one`() {
-        communityRepository().crateCommunity(community)
+        communityRepository().createCommunity(community)
         expectedBulletins.forEach {
             bulletinRepository().createBulletin(
                 BulletinCreation(it.subject, it.content, it.communityId)
@@ -63,7 +63,7 @@ class PostgresBulletinBoardTest : DatabaseTest({ Mocks(idGenerator.strict, clock
 
     @Test
     fun `returns a board with bulletins`() {
-        communityRepository().crateCommunity(community)
+        communityRepository().createCommunity(community)
 
         expectedBulletins.forEach {
             bulletinRepository().createBulletin(
@@ -78,7 +78,7 @@ class PostgresBulletinBoardTest : DatabaseTest({ Mocks(idGenerator.strict, clock
 
     @Test
     fun `gets a single existing bulletin`() {
-        communityRepository().crateCommunity(community)
+        communityRepository().createCommunity(community)
         val id = bulletinRepository().createBulletin(
             BulletinCreation(bulletin.subject, bulletin.content, bulletin.communityId)
         )

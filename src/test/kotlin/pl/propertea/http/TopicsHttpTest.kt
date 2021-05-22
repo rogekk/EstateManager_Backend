@@ -6,7 +6,6 @@ import io.mockk.every
 import io.mockk.verify
 import org.junit.Before
 import org.junit.Test
-import pl.propertea.common.CommonModule.authenticator
 import pl.propertea.common.CommonModule.clock
 import pl.propertea.dsl.Mocks
 import pl.propertea.dsl.SparkTest
@@ -14,7 +13,7 @@ import pl.propertea.dsl.relaxed
 import pl.propertea.dsl.strict
 import pl.propertea.models.*
 import pl.propertea.repositories.RepositoriesModule.topicsRepository
-import pl.tools.json
+import pl.propertea.tools.json
 import ro.kreator.aRandom
 import ro.kreator.aRandomListOf
 

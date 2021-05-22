@@ -8,7 +8,6 @@ import pl.propertea.models.OwnerId
 import pl.propertea.models.PermissionTypes
 
 interface Authenticator {
-    fun getToken(ownerId: String, username: String): String
     fun getPermissionType(authToken: AuthToken): PermissionTypes?
     fun verify(authToken: String): DecodedJWT
     fun getTokenWithPermission(ownerId: OwnerId, permission: PermissionTypes?): String
@@ -20,14 +19,6 @@ class JWTAuthenticator : Authenticator {
     private val verifier: JWTVerifier = JWT.require(algorithm)
         .withIssuer("auth0")
         .build() //Reusable verifier instance
-
-    override fun getToken(ownerId: String, username: String): String = JWT
-        .create()
-        .withIssuer("auth0")
-        .withClaim("ownerId", ownerId)
-        .withClaim("username", username)
-        .withExpiresAt(clock().getDateTime().plusWeeks(1).toDate())
-        .sign(algorithm)
 
     override fun getPermissionType(authToken: AuthToken): PermissionTypes? {
         return PermissionTypes.Owner

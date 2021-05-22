@@ -39,8 +39,6 @@ fun routes(http: Service): Router.() -> Unit = {
     handleExceptions(http)
 }
 
-class AuthenticationException : Exception()
-
 fun RequestHandler<*>.setHeader(key: String, value: String) {
     (response as SparkResponseWrapper).response.header(key, value)
 }

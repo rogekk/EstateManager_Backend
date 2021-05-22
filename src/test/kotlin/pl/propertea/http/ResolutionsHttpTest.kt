@@ -3,13 +3,12 @@ package pl.propertea.http
 import io.mockk.every
 import io.mockk.verify
 import org.junit.Test
-import pl.propertea.common.CommonModule.authenticator
 import pl.propertea.dsl.Mocks
 import pl.propertea.dsl.SparkTest
 import pl.propertea.dsl.relaxed
 import pl.propertea.models.*
 import pl.propertea.repositories.RepositoriesModule.resolutionsRepository
-import pl.tools.json
+import pl.propertea.tools.json
 import ro.kreator.aRandom
 import ro.kreator.aRandomListOf
 
@@ -73,8 +72,7 @@ class ResolutionsHttpTest : SparkTest({
 
     @Test
     fun `allows user to vote pro resolution`() {
-
-        whenPerform.POST("/v1/communities/${communityId.id}/resolutions/${resolutionId.id}/votes")
+        POST("/v1/communities/${communityId.id}/resolutions/${resolutionId.id}/votes")
             .withBody(json {
                 "vote" _ "pro"
             })
@@ -86,7 +84,7 @@ class ResolutionsHttpTest : SparkTest({
 
     @Test
     fun `allows user to vote against resolution`() {
-        whenPerform.POST("/v1/communities/${communityId.id}/resolutions/${resolutionId.id}/votes")
+        POST("/v1/communities/${communityId.id}/resolutions/${resolutionId.id}/votes")
             .withBody(json {
                 "vote" _ "against"
             })
@@ -98,7 +96,7 @@ class ResolutionsHttpTest : SparkTest({
 
     @Test
     fun `allows user to vote abstain resolution`() {
-        whenPerform.POST("/v1/communities/${communityId.id}/resolutions/${resolutionId.id}/votes")
+        POST("/v1/communities/${communityId.id}/resolutions/${resolutionId.id}/votes")
             .withBody(json {
                 "vote" _ "abstain"
             })
@@ -110,7 +108,7 @@ class ResolutionsHttpTest : SparkTest({
 
     @Test
     fun `do not allow user to cast invalid vote for resolution`() {
-        whenPerform.POST("/v1/communities/${communityId.id}/resolutions/${resolutionId.id}/votes")
+        POST("/v1/communities/${communityId.id}/resolutions/${resolutionId.id}/votes")
             .withBody(json {
                 "vote" _ "blah"
             })

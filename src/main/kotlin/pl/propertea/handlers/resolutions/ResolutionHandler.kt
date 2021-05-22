@@ -1,7 +1,6 @@
 package pl.propertea.handlers.resolutions
 
 import com.snitch.Handler
-import com.snitch.created
 import com.snitch.notFound
 import com.snitch.ok
 import pl.propertea.models.*

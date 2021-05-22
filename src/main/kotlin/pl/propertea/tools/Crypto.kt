@@ -1,4 +1,4 @@
-package pl.tools
+package pl.propertea.tools
 
 import com.lambdaworks.crypto.SCryptUtil
 

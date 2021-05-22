@@ -2,6 +2,7 @@ package pl.propertea.http
 
 import com.memoizr.assertk.expect
 import io.mockk.every
+import io.mockk.verify
 import org.joda.time.DateTime
 import org.junit.Test
 import pl.propertea.common.CommonModule.authenticator
@@ -10,13 +11,38 @@ import pl.propertea.dsl.Mocks
 import pl.propertea.dsl.SparkTest
 import pl.propertea.dsl.relaxed
 import pl.propertea.dsl.strict
-import pl.propertea.models.OwnerProfile
+import pl.propertea.models.*
 import pl.propertea.repositories.NotVerified
+import pl.propertea.repositories.OwnerCreated
 import pl.propertea.repositories.RepositoriesModule.ownersRepository
 import pl.propertea.repositories.Verified
 import pl.propertea.tools.json
+import ro.kreator.aRandom
 
 class AuthHttpTest : SparkTest({ Mocks(clock.strict, ownersRepository.relaxed) }) {
+    val createOwnerRequest by aRandom <CreateOwnerRequest>()
+
+    @Test
+    fun `creates an owner`() {
+        every { ownersRepository().createOwner(any(), any(), any(), any(), any(), any(), any()) } returns OwnerCreated(
+            OwnerId("hey")
+        )
+
+        POST("/v1/owners")
+            .withBody(createOwnerRequest)
+            .expectCode(201)
+
+        verify { ownersRepository().createOwner(
+            createOwnerRequest.memberships.map { CommunityId(it.communityId) to Shares(it.shares) },
+            createOwnerRequest.username,
+            createOwnerRequest.password,
+            createOwnerRequest.email,
+            createOwnerRequest.phoneNumber,
+            createOwnerRequest.address,
+            createOwnerRequest.profileImageUrl
+        ) }
+    }
+
 
     @Test
     fun `returns success for successful login`() {
@@ -40,7 +66,6 @@ class AuthHttpTest : SparkTest({ Mocks(clock.strict, ownersRepository.relaxed) }
 
     @Test
     fun `after successful login sets a valid JWT`() {
-        every { ownersRepository().getByUsername(owner.username) } returns owner
         every { ownersRepository().getProfile(owner.id) } returns OwnerProfile(owner, emptyList())
         every { ownersRepository().checkOwnersCredentials(owner.username, "b") } returns Verified(owner.id)
         every { clock().getDateTime() } returns now

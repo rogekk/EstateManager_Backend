@@ -15,9 +15,10 @@ val createOwnerHandler: Handler<CreateOwnerRequest, GenericResponse> = {
         body.password,
         body.email,
         body.phoneNumber,
-        body.address
+        body.address,
+        body.profileImageUrl,
     )) {
-        is OwnerCreated -> GenericResponse("created").ok
+        is OwnerCreated -> createdSuccessfully
         UsernameTaken -> badRequest("username ${body.username} is already taken")
     }
 }

@@ -13,7 +13,7 @@ import pl.propertea.db.OwnerMembership.shares
 import pl.propertea.models.*
 
 interface CommunityRepository {
-    fun crateCommunity(community: Community): CommunityId
+    fun createCommunity(community: Community): CommunityId
     fun setMembership(ownerId: OwnerId, communityId: CommunityId, shares: Shares)
     fun getCommunities(): List<Community>
 }
@@ -27,7 +27,7 @@ class PostgresCommunityRepository(private val database: Database, private val id
             .map { Community(CommunityId(it[Communities.id]), it[Communities.name], it[Communities.totalShares]) }
     }
 
-    override fun crateCommunity(community: Community): CommunityId = transaction(database) {
+    override fun createCommunity(community: Community): CommunityId = transaction(database) {
         Communities
             .insert {
                 it[id] = community.id.id

@@ -22,8 +22,8 @@ class PostgresOwnersRepositoryTest : DatabaseTest() {
 
     @Before
     fun before() {
-        communityRepository().crateCommunity(community)
-        communities.forEach { communityRepository().crateCommunity(it) }
+        communityRepository().createCommunity(community)
+        communities.forEach { communityRepository().createCommunity(it) }
     }
 
     @Test

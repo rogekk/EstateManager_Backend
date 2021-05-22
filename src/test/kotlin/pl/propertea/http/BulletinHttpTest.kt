@@ -8,7 +8,7 @@ import pl.propertea.dsl.SparkTest
 import pl.propertea.dsl.relaxed
 import pl.propertea.models.*
 import pl.propertea.repositories.RepositoriesModule.bulletinRepository
-import pl.tools.json
+import pl.propertea.tools.json
 import ro.kreator.aRandom
 import ro.kreator.aRandomListOf
 

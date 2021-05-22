@@ -16,7 +16,7 @@ val getCommunitiesHandler: Handler<Nothing, CommunitiesResponse> = {
 }
 
 val createCommunityHandler: Handler<CommunityRequest, GenericResponse> = {
-    communityRepository().crateCommunity(Community(CommunityId(body.id), body.name, body.totalShares))
+    communityRepository().createCommunity(Community(CommunityId(body.id), body.name, body.totalShares))
 
     createdSuccessfully
 }
