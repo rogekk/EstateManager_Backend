@@ -11,17 +11,22 @@ import pl.propertea.routes.communityId
 import pl.propertea.routes.restrictTo
 
 fun Router.communitiesRoutes() {
-    POST("/communities")
-        .with(body<CommunityRequest>())
-        .restrictTo(Manager)
-        .isHandledBy(createCommunityHandler)
+    "communities" {
+        POST("/communities")
+            .with(body<CommunityRequest>())
+            .inSummary("Creates a new community")
+            .restrictTo(Manager)
+            .isHandledBy(createCommunityHandler)
 
-    GET("/communities")
-        .authenticated()
-        .isHandledBy(getCommunitiesHandler)
+        GET("/communities")
+            .inSummary("Gets all communities")
+            .restrictTo(Manager)
+            .isHandledBy(getCommunitiesHandler)
 
-    POST("/communities" / communityId / "members")
-        .authenticated()
-        .with(body<CreateCommunityMembershipRequest>())
-        .isHandledBy(createMembershipHandler)
+        POST("/communities" / communityId / "members")
+            .with(body<CreateCommunityMembershipRequest>())
+            .inSummary("Gets all members in a community")
+            .authenticated()
+            .isHandledBy(createMembershipHandler)
+    }
 }

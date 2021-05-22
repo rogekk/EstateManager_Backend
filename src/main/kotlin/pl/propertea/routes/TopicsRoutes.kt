@@ -11,21 +11,27 @@ import pl.propertea.routes.communityId
 import pl.propertea.routes.topicId
 
 fun Router.topicsRoutes() {
-    GET("/communities" / communityId / "topics")
-        .authenticated()
-        .isHandledBy(getTopics)
+    "topics" {
+        GET("/communities" / communityId / "topics")
+            .inSummary("Gets all the topics in the community")
+            .authenticated()
+            .isHandledBy(getTopics)
 
-    POST("/communities" / communityId / "topics")
-        .authenticated()
-        .with(body<TopicRequest>())
-        .isHandledBy(createTopicsHandler)
+        POST("/communities" / communityId / "topics")
+            .inSummary("Creates a new topic in the community")
+            .with(body<TopicRequest>())
+            .authenticated()
+            .isHandledBy(createTopicsHandler)
 
-    POST("/communities" / communityId / "topics" / topicId / "comments")
-        .authenticated()
-        .with(body<CreateCommentRequest>())
-        .isHandledBy(createCommentHandler)
+        POST("/communities" / communityId / "topics" / topicId / "comments")
+            .inSummary("Creates a new comment in the topic")
+            .with(body<CreateCommentRequest>())
+            .authenticated()
+            .isHandledBy(createCommentHandler)
 
-    GET("/communities" / communityId / "topics" / topicId / "comments")
-        .authenticated()
-        .isHandledBy(getCommentsHandler)
+        GET("/communities" / communityId / "topics" / topicId / "comments")
+            .inSummary("Gets all the comments for a topic")
+            .authenticated()
+            .isHandledBy(getCommentsHandler)
+    }
 }

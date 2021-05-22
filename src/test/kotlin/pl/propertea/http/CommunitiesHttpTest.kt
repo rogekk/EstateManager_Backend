@@ -52,6 +52,7 @@ class CommunitiesHttpTest : SparkTest({ Mocks(communityRepository.relaxed) }) {
 
         GET("/v1/communities")
             .authenticated(owner.id)
+            .verifyPermissions(Manager)
             .expect {
                 it.text.parseJson<CommunitiesResponse>().communities.map {
                     it.id
