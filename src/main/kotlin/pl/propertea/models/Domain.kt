@@ -36,6 +36,7 @@ data class Issue(
     val createdBy: OwnerId,
     val communityId: CommunityId,
     val commentCount: Int,
+    val status: IssueStatus
 )
 
 data class IssueCreation(

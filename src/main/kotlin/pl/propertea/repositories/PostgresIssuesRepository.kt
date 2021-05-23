@@ -5,6 +5,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import pl.propertea.common.Clock
 import pl.propertea.common.IdGenerator
 import pl.propertea.db.*
+import pl.propertea.db.IssuesTable.status
 import pl.propertea.models.*
 
 interface IssuesRepository {
@@ -31,7 +32,7 @@ class PostgresIssuesRepository(
             .select { IssuesTable.communityId eq communityId.id }
             .groupBy(IssuesTable.id, Owners.id)
             .orderBy(IssuesTable.createdAt, SortOrder.DESC)
-            .map { IssueWithOwner(it.readOwner(), it.readIssue()) }
+            .map { IssueWithOwner(it.readOwner(), it.readIssue(), status = IssueStatus.NEW) }
     }
 
     override fun getIssue(id: IssueId): Issue? = transaction(database) {

@@ -45,9 +45,11 @@ data class IssueRequest(val subject: String,
                         val description: String,
                         val attachments: String
                         )
-
+data class IssueStatusRequest(
+    val status: StatusRequest,
+)
 enum class StatusRequest{
-    new, recived, openForVoting, closed, reOpend
+    new, recived, in_progress, closed, re_opend
 }
 
 data class CreateAnswerRequest(val description: String)
