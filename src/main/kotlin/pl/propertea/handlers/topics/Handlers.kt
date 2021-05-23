@@ -1,12 +1,11 @@
 package pl.propertea.handlers.topics
 
 import com.snitch.Handler
-import com.snitch.get
 import com.snitch.ok
 import pl.propertea.common.CommonModule.clock
 import pl.propertea.models.*
 import pl.propertea.repositories.RepositoriesModule.topicsRepository
-import pl.propertea.routes.authenticatedOwner
+import pl.propertea.routes.authenticatedUser
 import pl.propertea.routes.commentId
 import pl.propertea.routes.communityId
 import pl.propertea.routes.topicId
@@ -39,7 +38,7 @@ val createTopicsHandler: Handler<TopicRequest, GenericResponse> = {
     topicsRepository().crateTopic(
         TopicCreation(
             body.subject,
-            authenticatedOwner(),
+            authenticatedUser(),
             clock().getDateTime(),
             CommunityId(body.communityId),
             body.description
@@ -52,7 +51,7 @@ val createTopicsHandler: Handler<TopicRequest, GenericResponse> = {
 val createCommentHandler: Handler<CreateCommentRequest, GenericResponse> = {
     topicsRepository().createComment(
         CommentCreation(
-            authenticatedOwner(),
+            authenticatedUser(),
             request[topicId],
             body.content
         )

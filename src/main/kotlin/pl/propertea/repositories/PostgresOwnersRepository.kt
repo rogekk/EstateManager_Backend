@@ -38,20 +38,20 @@ interface OwnersRepository {
     fun checkOwnersCredentials(username: String, password: String): OwnerCredentials
 
     fun updateOwnersDetails(
-        ownerId: OwnerId,
+        ownerId: UserId,
         email: String? = null,
         address: String? = null,
         phoneNumber: String? = null,
         profileImageUrl: String? = null,
     )
 
-    fun getProfile(id: OwnerId): OwnerProfile
+    fun getProfile(id: UserId): OwnerProfile
 }
 
 class PostgresOwnersRepository(private val database: Database, private val idGenerator: IdGenerator) :
     OwnersRepository {
 
-    override fun getProfile(id: OwnerId): OwnerProfile = transaction(database) {
+    override fun getProfile(id: UserId): OwnerProfile = transaction(database) {
         OwnerMembership
             .leftJoin(Communities)
             .leftJoin(Users)
@@ -160,7 +160,7 @@ class PostgresOwnersRepository(private val database: Database, private val idGen
     }
 
     override fun updateOwnersDetails(
-        ownerId: OwnerId,
+        ownerId: UserId,
         email: String?,
         address: String?,
         phoneNumber: String?,

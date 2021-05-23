@@ -10,9 +10,7 @@ import org.json.JSONObject
 import org.junit.Rule
 import org.junit.rules.RuleChain
 import pl.propertea.common.CommonModule.authenticator
-import pl.propertea.models.Owner
-import pl.propertea.models.OwnerId
-import pl.propertea.models.PermissionTypes
+import pl.propertea.models.*
 import pl.propertea.routes.authTokenHeader
 import ro.kreator.aRandom
 
@@ -37,15 +35,18 @@ abstract class SparkTest(mockBlock: () -> Mocks = { Mocks() }) :
 
     val whenPerform = this
 
-    fun Expectation.authenticated(ownerId: OwnerId): Expectation {
+    fun Expectation.authenticated(userId: UserId): Expectation {
         withHeaders(hashMapOf(authTokenHeader to null)).expectCode(401)
         withHeaders(hashMapOf(authTokenHeader to "foo")).expectCode(401)
-        return withHeaders(hashMapOf(authTokenHeader to authenticator().getTokenWithPermission(ownerId, PermissionTypes.Owner)))
+        return when (userId) {
+            is OwnerId -> withHeaders(hashMapOf(authTokenHeader to authenticator().getTokenWithPermission(userId, PermissionTypes.Owner)))
+            is AdminId -> withHeaders(hashMapOf(authTokenHeader to authenticator().getTokenWithPermission(userId, PermissionTypes.Manager)))
+        }
     }
 
     fun Expectation.verifyPermissions(permissionType: PermissionTypes): Expectation {
 
-        val noPermission = authenticator().getTokenWithPermission(OwnerId(""), null)
+        val noPermission = authenticator().getTokenWithPermission(OwnerId(""), PermissionTypes.values().filterNot { it == permissionType }.first())
         val withRightPermission = authenticator().getTokenWithPermission(OwnerId(""), permissionType)
 
         withHeaders(hashMapOf(authTokenHeader to noPermission)).expectCode(403)

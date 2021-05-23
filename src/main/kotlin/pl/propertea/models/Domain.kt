@@ -19,7 +19,7 @@ sealed class UserId {
 }
 
 //Authentication
-data class AuthToken(val token: String, val expiresAt: DateTime, val claims: Claims, val ownerId: OwnerId?)
+data class AuthToken(val token: String, val expiresAt: DateTime, val claims: Claims, val userId: UserId)
 data class Claims(
     val permissions: Set<PermissionTypes>
 )
@@ -69,7 +69,7 @@ data class IssueCreation(
     val subject: String,
     val description: String,
     val attachments: String,
-    val createdBy: OwnerId,
+    val createdBy: UserId,
     val communityId: CommunityId,
 )
 
@@ -117,14 +117,14 @@ data class TopicWithOwner (
 )
 data class TopicCreation(
     val subject: String,
-    val createdBy: OwnerId,
+    val createdBy: UserId,
     val createdAt: DateTime,
     val communityId: CommunityId,
     val description: String,
 )
 
 data class CommentCreation(
-    val createdBy: OwnerId,
+    val createdBy: UserId,
     val topicId: TopicId,
     val content: String
 )

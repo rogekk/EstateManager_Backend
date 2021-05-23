@@ -30,6 +30,8 @@ class IssuesHttpTest : SparkTest({
     val nonExistentIssueId by aRandom<IssueId>()
     val updateRequest by aRandom<IssueStatusRequest>()
 
+    val admin by aRandom<Admin>()
+
 
 
     @Before
@@ -38,13 +40,27 @@ class IssuesHttpTest : SparkTest({
     }
 
     @Test
-    fun `returns a list of issues`() {
+    fun `returns a list of issues for the owner`() {
         every { issueRepository().getIssues(owner.id) } returns issues
 
         whenPerform
             .GET("/v1/communities/${communityId.id}/issues")
             .authenticated(owner.id)
             .expectBodyJson(issues.toResponse())
+
+        verify { issueRepository().getIssues(owner.id) }
+    }
+
+    @Test
+    fun `returns a list of issues for the admin`() {
+        every { issueRepository().getIssues(admin.id) } returns issues
+
+        whenPerform
+            .GET("/v1/communities/${communityId.id}/issues")
+            .authenticated(admin.id)
+            .expectBodyJson(issues.toResponse())
+
+        verify { issueRepository().getIssues(admin.id) }
     }
 
     @Test

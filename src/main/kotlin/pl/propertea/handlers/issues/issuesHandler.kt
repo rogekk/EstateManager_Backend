@@ -2,18 +2,19 @@ package pl.propertea.handlers.issues
 
 
 import com.snitch.Handler
+import com.snitch.extensions.print
 import com.snitch.notFound
 import com.snitch.ok
 import pl.propertea.models.*
 import pl.propertea.repositories.RepositoriesModule.issueRepository
-import pl.propertea.routes.authenticatedOwner
+import pl.propertea.routes.authenticatedUser
 import pl.propertea.routes.communityId
 import pl.propertea.routes.issueId
 import pl.propertea.routes.ownerId
 
 
 val getIssuesHandler: Handler<Nothing, IssuesResponse> = {
-    issueRepository().getIssues(authenticatedOwner()).toResponse().ok
+    issueRepository().getIssues(authenticatedUser()).toResponse().ok
 }
 
 val createIssueHandler: Handler<IssueRequest, GenericResponse> = {
@@ -22,7 +23,7 @@ val createIssueHandler: Handler<IssueRequest, GenericResponse> = {
             body.subject,
             body.description,
             body.attachments,
-            authenticatedOwner(),
+            authenticatedUser(),
             request[communityId]
         )
     )
