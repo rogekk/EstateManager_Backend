@@ -3,7 +3,7 @@ package pl.propertea.dsl
 import org.junit.Rule
 import org.junit.rules.RuleChain
 import org.junit.rules.TestRule
-import pl.propertea.models.Community
+import pl.propertea.models.CommunityId
 import pl.propertea.models.Owner
 import pl.propertea.models.Shares
 import pl.propertea.repositories.OwnerCreated
@@ -20,14 +20,15 @@ abstract class DatabaseTest(
         .around(DatabaseTestRule())
 
     infix fun Owner.with(shares: Shares) = Pair(this, shares)
-    infix fun Owner.inThis(community: Community) = this with 100.shares inThis community
+    infix fun Owner.inThis(community: CommunityId) = this with 100.shares inThis community
+    infix fun Owner.inThese(communities: List<CommunityId>) = this with 100.shares inThese communities
 
-    infix fun Pair<Owner, Shares>.inThis(community: Community) =
-        OwnerInsertion(first, "password", listOf(community.id to second))
+    infix fun Pair<Owner, Shares>.inThis(community: CommunityId) =
+        OwnerInsertion(first, "password", listOf(community to second))
 
 
-    infix fun Pair<Owner, Shares>.inThese(communities: List<Community>) =
-        OwnerInsertion(first, "password", communities.map { it.id to second})
+    infix fun Pair<Owner, Shares>.inThese(communities: List<CommunityId>) =
+        OwnerInsertion(first, "password", communities.map { it to second})
 
     infix fun OwnerInsertion.withPassword(password: String) = copy(password = password)
 

@@ -26,6 +26,7 @@ class TopicsHttpTest : SparkTest({
     val community by aRandom<Community>()
     val topic by aRandom<Topic>()
     val topics by aRandomListOf<TopicWithOwner>(10)
+    val comment by aRandom<Comment>()
     val expectedComments by aRandomListOf<CommentWithOwner> { map { it.copy(owner = owner) } }
 
     @Before
@@ -35,7 +36,7 @@ class TopicsHttpTest : SparkTest({
 
     @Test
     fun `creates a topic`() {
-        whenPerform.POST("/v1/communities/${community.id.id}/topics")
+        POST("/v1/communities/${community.id.id}/topics")
             .authenticated(owner.id)
             .withBody(json {
                 "communityId" _ "Id"
@@ -54,6 +55,24 @@ class TopicsHttpTest : SparkTest({
                 )
             )
         }
+    }
+
+    @Test
+    fun `deletes a topic`() {
+        DELETE("/v1/communities/${community.id.id}/topics/${topic.id.id}")
+            .verifyPermissions(PermissionTypes.Manager)
+            .expectCode(200)
+
+        verify { topicsRepository().delete(topic.id) }
+    }
+
+    @Test
+    fun `deletes a comment`() {
+        DELETE("/v1/communities/${community.id.id}/topics/${topic.id.id}/comments/${comment.id.id}")
+            .verifyPermissions(PermissionTypes.Manager)
+            .expectCode(200)
+
+        verify { topicsRepository().deleteComment(comment.id) }
     }
 
     @Test

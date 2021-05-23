@@ -24,12 +24,14 @@ class AuthHttpTest : SparkTest({ Mocks(clock.strict, ownersRepository.relaxed) }
 
     @Test
     fun `creates an owner`() {
+        every { clock().getDateTime() } returns now
         every { ownersRepository().createOwner(any(), any(), any(), any(), any(), any(), any()) } returns OwnerCreated(
             OwnerId("hey")
         )
 
         POST("/v1/owners")
             .withBody(createOwnerRequest)
+            .verifyPermissions(PermissionTypes.Superior)
             .expectCode(201)
 
         verify { ownersRepository().createOwner(

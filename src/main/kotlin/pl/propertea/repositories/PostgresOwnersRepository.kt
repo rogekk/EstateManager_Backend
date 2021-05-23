@@ -55,7 +55,8 @@ class PostgresOwnersRepository(private val database: Database, private val idGen
                 )
             }
             .groupBy { it.first }
-            .map { OwnerProfile(it.key, it.value.map { it.second }) }.first()
+            .map { OwnerProfile(it.key, it.value.map { it.second }) }
+            .first()
     }
 
     override fun getById(ownerId: OwnerId): Owner? = transaction(database) {

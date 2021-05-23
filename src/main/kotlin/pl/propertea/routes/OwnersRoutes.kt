@@ -7,12 +7,16 @@ import pl.propertea.routes.authenticated
 import pl.propertea.routes.ownerId
 
 fun Router.ownersRoutes() {
-    GET("/owners" / ownerId)
-        .authenticated()
-        .isHandledBy(getProfile)
+    "owners" {
+        GET("/owners" / ownerId)
+            .inSummary("Gets the owner's profile")
+            .authenticated()
+            .isHandledBy(getProfile)
 
-    PATCH("/owners" / ownerId)
-        .authenticated()
-        .with(body<UpdateOwnersRequest>())
-        .isHandledBy(updateOwnersHandler)
+        PATCH("/owners" / ownerId)
+            .inSummary("Updates the owner's details")
+            .with(body<UpdateOwnersRequest>())
+            .authenticated()
+            .isHandledBy(updateOwnersHandler)
+    }
 }
