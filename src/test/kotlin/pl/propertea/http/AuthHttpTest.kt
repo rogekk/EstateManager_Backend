@@ -25,7 +25,7 @@ class AuthHttpTest : SparkTest({ Mocks(clock.strict, ownersRepository.relaxed) }
     @Test
     fun `creates an owner`() {
         every { clock().getDateTime() } returns now
-        every { ownersRepository().createOwner(any(), any(), any(), any(), any(), any(), any()) } returns OwnerCreated(
+        every { ownersRepository().createUser(any(), any(), any(), any(), any(), any(), any()) } returns OwnerCreated(
             OwnerId("hey")
         )
 
@@ -34,7 +34,7 @@ class AuthHttpTest : SparkTest({ Mocks(clock.strict, ownersRepository.relaxed) }
             .verifyPermissions(PermissionTypes.Superior)
             .expectCode(201)
 
-        verify { ownersRepository().createOwner(
+        verify { ownersRepository().createUser(
             createOwnerRequest.memberships.map { CommunityId(it.communityId) to Shares(it.shares) },
             createOwnerRequest.username,
             createOwnerRequest.password,

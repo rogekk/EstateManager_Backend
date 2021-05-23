@@ -3,9 +3,10 @@ package pl.propertea.repositories
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import pl.propertea.common.IdGenerator
+import pl.propertea.db.AdminCommunities
 import pl.propertea.db.Communities
 import pl.propertea.db.OwnerMembership
-import pl.propertea.db.Owners
+import pl.propertea.db.Users
 import pl.propertea.models.*
 import pl.propertea.tools.hash
 import pl.propertea.tools.verify
@@ -14,7 +15,7 @@ import pl.propertea.tools.verify
 interface OwnersRepository {
     fun getById(ownerId: OwnerId): Owner?
 
-    fun createOwner(
+    fun createUser(
         communities: List<Pair<CommunityId, Shares>>,
         username: String,
         password: String,
@@ -23,6 +24,16 @@ interface OwnersRepository {
         address: String,
         profileImageUrl: String? = null,
     ): CreateOwnerResult
+
+    fun createAdmin(
+        communities: List<CommunityId>,
+        username: String,
+        password: String,
+        email: String,
+        phoneNumber: String,
+        address: String,
+        profileImageUrl: String? = null,
+    ): AdminId?
 
     fun checkOwnersCredentials(username: String, password: String): OwnerCredentials
 
@@ -35,7 +46,6 @@ interface OwnersRepository {
     )
 
     fun getProfile(id: OwnerId): OwnerProfile
-
 }
 
 class PostgresOwnersRepository(private val database: Database, private val idGenerator: IdGenerator) :
@@ -44,8 +54,8 @@ class PostgresOwnersRepository(private val database: Database, private val idGen
     override fun getProfile(id: OwnerId): OwnerProfile = transaction(database) {
         OwnerMembership
             .leftJoin(Communities)
-            .leftJoin(Owners)
-            .slice(Communities.columns + Owners.columns + OwnerMembership.shares)
+            .leftJoin(Users)
+            .slice(Communities.columns + Users.columns + OwnerMembership.shares)
             .selectAll()
             .map {
                 it.readOwner() to Community(
@@ -60,13 +70,13 @@ class PostgresOwnersRepository(private val database: Database, private val idGen
     }
 
     override fun getById(ownerId: OwnerId): Owner? = transaction(database) {
-        Owners
-            .select { Owners.id eq ownerId.id }
+        Users
+            .select { Users.id eq ownerId.id }
             .map { it.readOwner() }
             .firstOrNull()
     }
 
-    override fun createOwner(
+    override fun createUser(
         communities: List<Pair<CommunityId, Shares>>,
         username: String,
         password: String,
@@ -75,21 +85,21 @@ class PostgresOwnersRepository(private val database: Database, private val idGen
         address: String,
         profileImageUrl: String?
     ) = transaction(database) {
-        val user = Owners
-            .select { Owners.username eq username }
+        val user = Users
+            .select { Users.username eq username }
             .firstOrNull()
 
         val userId = idGenerator.newId()
 
         if (user == null) {
-            Owners.insert { ownersTable ->
+            Users.insert { ownersTable ->
                 ownersTable[id] = userId
-                ownersTable[Owners.username] = username
-                ownersTable[Owners.password] = hash(password)
-                ownersTable[Owners.email] = email
-                ownersTable[Owners.phoneNumber] = phoneNumber
-                ownersTable[Owners.address] = address
-                ownersTable[Owners.profileImageUrl] = profileImageUrl
+                ownersTable[Users.username] = username
+                ownersTable[Users.password] = hash(password)
+                ownersTable[Users.email] = email
+                ownersTable[Users.phoneNumber] = phoneNumber
+                ownersTable[Users.address] = address
+                ownersTable[Users.profileImageUrl] = profileImageUrl
             }
 
             communities.forEach { community ->
@@ -104,11 +114,43 @@ class PostgresOwnersRepository(private val database: Database, private val idGen
         if (user == null) OwnerCreated(OwnerId(userId)) else UsernameTaken
     }
 
+    override fun createAdmin(
+        communities: List<CommunityId>,
+        username: String,
+        password: String,
+        email: String,
+        phoneNumber: String,
+        address: String,
+        profileImageUrl: String?
+    ): AdminId? = transaction(database) {
+
+        val userId = idGenerator.newId()
+        Users.insert { ownersTable ->
+            ownersTable[id] = userId
+            ownersTable[Users.username] = username
+            ownersTable[Users.password] = hash(password)
+            ownersTable[Users.email] = email
+            ownersTable[Users.phoneNumber] = phoneNumber
+            ownersTable[Users.address] = address
+            ownersTable[Users.profileImageUrl] = profileImageUrl
+        }
+
+        communities.forEach { community ->
+            AdminCommunities.insert {
+                it[id] = idGenerator.newId()
+                it[adminId] = userId
+                it[communityId] = community.id
+            }
+        }
+
+        AdminId(userId)
+    }
+
     override fun checkOwnersCredentials(username: String, password: String) = transaction(database) {
         val hashedPassword =
-            Owners
-                .select { (Owners.username eq username) }
-                .map { it[Owners.id] to it[Owners.password] }
+            Users
+                .select { (Users.username eq username) }
+                .map { it[Users.id] to it[Users.password] }
                 .firstOrNull()
 
         if (hashedPassword != null && verify(password, hashedPassword.second))
@@ -125,15 +167,15 @@ class PostgresOwnersRepository(private val database: Database, private val idGen
         profileImageUrl: String?,
     ) {
         transaction(database) {
-            Owners.update({ Owners.id eq ownerId.id }) {
+            Users.update({ Users.id eq ownerId.id }) {
                 if (address != null)
-                    it[Owners.address] = address
+                    it[Users.address] = address
                 if (email != null)
-                    it[Owners.email] = email
+                    it[Users.email] = email
                 if (phoneNumber != null)
-                    it[Owners.phoneNumber] = phoneNumber
+                    it[Users.phoneNumber] = phoneNumber
                 if (profileImageUrl != null)
-                    it[Owners.profileImageUrl] = profileImageUrl
+                    it[Users.profileImageUrl] = profileImageUrl
             }
         }
     }

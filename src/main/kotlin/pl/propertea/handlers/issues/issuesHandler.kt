@@ -13,7 +13,7 @@ import pl.propertea.routes.ownerId
 
 
 val getIssuesHandler: Handler<Nothing, IssuesResponse> = {
-    issueRepository().getIssues(request[communityId]).toResponse().ok
+    issueRepository().getIssues(authenticatedOwner()).toResponse().ok
 }
 
 val createIssueHandler: Handler<IssueRequest, GenericResponse> = {

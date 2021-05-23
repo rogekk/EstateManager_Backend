@@ -6,12 +6,12 @@ import pl.propertea.db.*
 import pl.propertea.models.*
 
 fun ResultRow.readOwner() = Owner(
-    OwnerId(this[Owners.id]),
-    this[Owners.username],
-    this[Owners.email],
-    this[Owners.phoneNumber],
-    this[Owners.address],
-    this[Owners.profileImageUrl],
+    OwnerId(this[Users.id]),
+    this[Users.username],
+    this[Users.email],
+    this[Users.phoneNumber],
+    this[Users.address],
+    this[Users.profileImageUrl],
 )
 
 fun ResultRow.readComment() = Comment(

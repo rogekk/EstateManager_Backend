@@ -4,7 +4,8 @@ import org.joda.time.DateTime
 
 
 data class TopicId(val id: String)
-data class OwnerId(val id: String)
+data class OwnerId(override val id: String): UserId()
+data class AdminId(override val id: String): UserId()
 data class CommunityId(val id: String)
 data class CommentId(val id: String)
 data class ResolutionId(val id: String)
@@ -12,6 +13,10 @@ data class BulletinId(val id: String)
 data class IssueId(val id: String)
 data class AnswerId(val id: String)
 data class Shares(val value: Int)
+
+sealed class UserId {
+    abstract val id: String
+}
 
 //Authentication
 data class AuthToken(val token: String, val expiresAt: DateTime, val claims: Claims, val ownerId: OwnerId?)
@@ -176,14 +181,32 @@ data class Community(
     val totalShares: Int
 )
 
+sealed class User {
+    abstract val id: UserId
+    abstract val username: String
+    abstract val email: String
+    abstract val phoneNumber: String
+    abstract val address: String
+    abstract val profileImageUrl: String?
+}
+
+data class Admin(
+    override val id: AdminId,
+    override val username: String,
+    override val email: String,
+    override val phoneNumber: String,
+    override val address: String,
+    override val profileImageUrl: String?,
+): User()
+
 data class Owner(
-    val id: OwnerId,
-    val username: String,
-    val email: String,
-    val phoneNumber: String,
-    val address: String,
-    val profileImageUrl: String?,
-)
+    override val id: OwnerId,
+    override val username: String,
+    override val email: String,
+    override val phoneNumber: String,
+    override val address: String,
+    override val profileImageUrl: String?,
+): User()
 
 data class OwnerProfile(
     val owner: Owner,

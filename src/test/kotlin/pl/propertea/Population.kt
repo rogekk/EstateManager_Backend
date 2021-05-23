@@ -15,12 +15,12 @@ fun main() {
     }
 
     // create Owners
-    ownersRepository().createOwner(listOf(CommunityId("id1") to Shares(10)), "KRojek", "krojek12", "krojek@gmail.com", "111111111", "Bankowa")
-    ownersRepository().createOwner(listOf(CommunityId("id1") to Shares(10)), "JKowalski", "jkowalski12", "jkowalski@gmail.com", "222222222", "Bankowa")
-    ownersRepository().createOwner(listOf(CommunityId("id1") to Shares(10)), "JSmith", "jsmith12", "jsmith@gmail.com", "333333333", "Bankowa")
-    ownersRepository().createOwner(listOf(CommunityId("id1") to Shares(10)), "TNowak", "tnowak12", "tnowak@gmail.com", "444444444", "Kolejowa")
-    ownersRepository().createOwner(listOf(CommunityId("id1") to Shares(10)), "LWojcik", "lwojcik12", "lwojcik@gmail.com", "555555555", "Kolejowa")
-    ownersRepository().createOwner(listOf(CommunityId("id1") to Shares(10)), "RKowalczyk", "rkowalczyk12", "rkowalczyk@gmail.com", "666666666", "Kolejowa")
+    ownersRepository().createUser(listOf(CommunityId("id1") to Shares(10)), "KRojek", "krojek12", "krojek@gmail.com", "111111111", "Bankowa")
+    ownersRepository().createUser(listOf(CommunityId("id1") to Shares(10)), "JKowalski", "jkowalski12", "jkowalski@gmail.com", "222222222", "Bankowa")
+    ownersRepository().createUser(listOf(CommunityId("id1") to Shares(10)), "JSmith", "jsmith12", "jsmith@gmail.com", "333333333", "Bankowa")
+    ownersRepository().createUser(listOf(CommunityId("id1") to Shares(10)), "TNowak", "tnowak12", "tnowak@gmail.com", "444444444", "Kolejowa")
+    ownersRepository().createUser(listOf(CommunityId("id1") to Shares(10)), "LWojcik", "lwojcik12", "lwojcik@gmail.com", "555555555", "Kolejowa")
+    ownersRepository().createUser(listOf(CommunityId("id1") to Shares(10)), "RKowalczyk", "rkowalczyk12", "rkowalczyk@gmail.com", "666666666", "Kolejowa")
 
     // insertTopic
 //    val owner1 = ownersRepository().getByUsername("KRojek")!!.id

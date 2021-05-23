@@ -9,7 +9,7 @@ import pl.propertea.routes.setHeader
 
 
 val createOwnerHandler: Handler<CreateOwnerRequest, GenericResponse> = {
-    when (ownersRepository().createOwner(
+    when (ownersRepository().createUser(
         body.memberships.map { CommunityId(it.communityId) to Shares(it.shares) },
         body.username,
         body.password,

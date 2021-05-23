@@ -30,6 +30,8 @@ class IssuesHttpTest : SparkTest({
     val nonExistentIssueId by aRandom<IssueId>()
     val updateRequest by aRandom<IssueStatusRequest>()
 
+
+
     @Before
     fun before() {
         every { clock().getDateTime() } returns now
@@ -37,7 +39,7 @@ class IssuesHttpTest : SparkTest({
 
     @Test
     fun `returns a list of issues`() {
-        every { issueRepository().getIssues(communityId) } returns issues
+        every { issueRepository().getIssues(owner.id) } returns issues
 
         whenPerform
             .GET("/v1/communities/${communityId.id}/issues")

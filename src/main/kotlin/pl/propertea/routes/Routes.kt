@@ -4,6 +4,7 @@ import AuthTokenValidator
 import authenticationRoutes
 import bulletinsRoutes
 import com.snitch.*
+import com.snitch.Enum
 import com.snitch.spark.SparkResponseWrapper
 import communitiesRoutes
 import ownersRoutes

@@ -11,7 +11,7 @@ import pl.propertea.models.PermissionTypes
 
 fun Router.issuesRoutes() {
     "issues" {
-        GET("/communities" / communityId / "issues" / issueId / "answers")
+//        GET("/communities" / communityId / "issues" / issueId / "answers")
 
         GET("/communities" / communityId / "issues")
             .authenticated()
@@ -27,13 +27,13 @@ fun Router.issuesRoutes() {
             .isHandledBy(updateStatusHandler)
 
         POST("/communities" / communityId / "issues" / issueId / "answers")
-            .authenticated()
             .with(body<CreateAnswerRequest>())
+            .authenticated()
             .isHandledBy(createAnswerHandler)
 
         POST("/communities" / communityId / "issues")
-            .authenticated()
             .with(body<IssueRequest>())
+            .authenticated()
             .isHandledBy(createIssueHandler)
     }
 }
