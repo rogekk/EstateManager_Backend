@@ -11,7 +11,7 @@ import pl.propertea.models.*
 interface IssuesRepository {
 
     fun getIssues(id: CommunityId): List<IssueWithOwner>
-    fun getIssue(id: IssueId): Issue?
+    fun getIssue(id: IssueId): IssueWithOwner?
     fun createIssue(issueCreation: IssueCreation): IssueId
     fun createAnswer(answerCreation: AnswerCreation): AnswerId
     fun getAnswers(id: IssueId): List<AnswerWithOwners>
@@ -32,13 +32,14 @@ class PostgresIssuesRepository(
             .select { IssuesTable.communityId eq communityId.id }
             .groupBy(IssuesTable.id, Owners.id)
             .orderBy(IssuesTable.createdAt, SortOrder.DESC)
-            .map { IssueWithOwner(it.readOwner(), it.readIssue(), status = IssueStatus.NEW) }
+            .map { IssueWithOwner(it.readOwner(), it.readIssue()) }
     }
 
-    override fun getIssue(id: IssueId): Issue? = transaction(database) {
+    override fun getIssue(id: IssueId): IssueWithOwner? = transaction(database) {
         IssuesTable
+            .leftJoin(Owners)
             .select { IssuesTable.id eq id.id }
-            .map { it.readIssue() }
+            .map { IssueWithOwner(it.readOwner(), it.readIssue()) }
             .firstOrNull()
     }
 

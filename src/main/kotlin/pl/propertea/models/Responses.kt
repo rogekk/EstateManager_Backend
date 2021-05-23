@@ -158,7 +158,7 @@ fun IssueWithOwner.toResponse() = IssueResponse(
     issue.attachments,
     issue.createdAt.toDateTimeISO().toString(),
     IssueCreatorResponse(owner.id.id, owner.username,owner.profileImageUrl),
-    IssueStatusResponse.fromStatus(status),
+    IssueStatusResponse.fromStatus(issue.status),
     issue.commentCount
 )
 

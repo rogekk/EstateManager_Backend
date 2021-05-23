@@ -46,6 +46,15 @@ data class IssueRequest(val subject: String,
 data class IssueStatusRequest(
     val status: StatusRequest,
 )
+
+fun StatusRequest.toDomain() = when(this) {
+    StatusRequest.new -> IssueStatus.NEW
+    StatusRequest.recived -> IssueStatus.RECEIVED
+    StatusRequest.in_progress -> IssueStatus.IN_PROGRESS
+    StatusRequest.closed -> IssueStatus.CLOSED
+    StatusRequest.re_opend -> IssueStatus.RE_OPENED
+}
+
 enum class StatusRequest{
     new, recived, in_progress, closed, re_opend
 }

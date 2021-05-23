@@ -71,7 +71,6 @@ data class IssueCreation(
 data class IssueWithOwner(
     val owner: Owner,
     val issue: Issue,
-    val status: IssueStatus,
 )
 
 data class Answer(

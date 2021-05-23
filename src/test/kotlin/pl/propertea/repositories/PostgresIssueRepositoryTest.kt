@@ -111,13 +111,15 @@ class PostgresIssueRepositoryTest : DatabaseTest({ Mocks(clock.strict) }) {
             IssueCreation(issue.subject, issue.description, issue.attachments, createdOwnerId, community.id)
         )
 
-        expect that issueRepository().getIssue(createdIssueId) isEqualTo issue.copy(
+        expect that issueRepository().getIssue(createdIssueId) isEqualTo IssueWithOwner(
+            owner.copy(id = createdOwnerId),
+            issue.copy(
             id = createdIssueId,
             createdBy = createdOwnerId,
             communityId = community.id,
             commentCount = 0,
             status = IssueStatus.NEW
-        )
+        ))
     }
 
     @Test
@@ -128,12 +130,14 @@ class PostgresIssueRepositoryTest : DatabaseTest({ Mocks(clock.strict) }) {
 
         issueRepository().updateIssuesStatus(createdIssueId, IssueStatus.IN_PROGRESS)
 
-        expect that issueRepository().getIssue(createdIssueId) isEqualTo issue.copy(
+        expect that issueRepository().getIssue(createdIssueId) isEqualTo IssueWithOwner(
+            owner.copy(id = createdOwnerId),
+            issue.copy(
             id = createdIssueId,
             createdBy = createdOwnerId,
             communityId = community.id,
             commentCount = 0,
             status = IssueStatus.IN_PROGRESS
-        )
+        ))
     }
 }

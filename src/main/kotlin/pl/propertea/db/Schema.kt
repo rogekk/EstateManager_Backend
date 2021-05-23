@@ -185,11 +185,11 @@ object IssuesTable : Table("issues"){
     val createdAt = datetime("createdAt")
     val authorOwnerId = text("author_owner_id").references(Owners.id)
     val communityId = text("community_id").references(Communities.id)
-    val commentCount = integer("commentCount")
     val status = enumeration("status",PGIssueStatus::class)
 
     override val primaryKey = PrimaryKey(id)
 }
+
 object AnswerTable : Table("issue_comment_table"){
     val id = text("id")
     val authorOwnerId = text("author_owner_id").references(Owners.id)

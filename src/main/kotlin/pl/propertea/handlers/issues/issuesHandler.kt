@@ -26,25 +26,21 @@ val createIssueHandler: Handler<IssueRequest, GenericResponse> = {
             request[communityId]
         )
     )
+
     createdSuccessfully
 }
 
 val getIssueHandler: Handler<Nothing, IssueResponse> = {
     val issue = issueRepository().getIssue(request[issueId])
-    issue.
+    issue?.toResponse()?.ok ?: notFound()
 }
 
 val updateStatusHandler: Handler<IssueStatusRequest, GenericResponse> = {
     issueRepository().updateIssuesStatus(
         request[issueId],
-    when (body.status) {
-        StatusRequest.new -> IssueStatus.NEW
-        StatusRequest.recived -> IssueStatus.RECEIVED
-        StatusRequest.in_progress -> IssueStatus.IN_PROGRESS
-        StatusRequest.closed -> IssueStatus.CLOSED
-        StatusRequest.re_opend -> IssueStatus.RE_OPENED
-    }
+        body.status.toDomain()
     )
+
     success
 }
 
