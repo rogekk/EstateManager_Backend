@@ -29,9 +29,10 @@ val createIssueHandler: Handler<IssueRequest, GenericResponse> = {
     createdSuccessfully
 }
 
-//val getIssueHandler: Handler<Nothing, IssueResponse> = {
-//    issueRepository().getIssue(request[issueId])?.toResponse().ok ?: notFound()
-//}
+val getIssueHandler: Handler<Nothing, IssueResponse> = {
+    val issue = issueRepository().getIssue(request[issueId])
+    issue.
+}
 
 val updateStatusHandler: Handler<IssueStatusRequest, GenericResponse> = {
     issueRepository().updateIssuesStatus(
@@ -58,6 +59,20 @@ val createAnswerHandler: Handler<CreateAnswerRequest, GenericResponse> = {
     createdSuccessfully
 }
 
-//val getAnswerHandler: Handler<Nothing, AnswerResponse> = {
-//    issueRepository().getAnswers(request[issueId])?.toResponse().ok ?: notFound()
-//}
+val getAnswersHandler: Handler<Nothing, GetAnswerResponse> = {
+    val answers = issueRepository().getAnswers(request[issueId])
+        .map {
+            AnswerResponse(
+                id = it.answer.id.id,
+                createdBy = AnswerCreatorResponse(
+                    it.owner.id.id,
+                    it.owner.username,
+                    it.owner.profileImageUrl
+                ),
+                createdAt = it.answer.createdAt.toDateTimeISO().toString(),
+                issueId = it.answer.issueId.id,
+                content = it.answer.content
+            )
+        }
+    GetAnswerResponse(answers).ok
+}

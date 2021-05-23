@@ -5,7 +5,6 @@ import io.mockk.every
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import pl.propertea.common.CommonModule
 import pl.propertea.common.CommonModule.clock
 import pl.propertea.dsl.DatabaseTest
 import pl.propertea.dsl.Mocks
@@ -90,7 +89,7 @@ class PostgresIssueRepositoryTest : DatabaseTest({ Mocks(clock.strict) }) {
 
             AnswerWithOwners(owner.copy(id = createdOwnerId), answer.copy(
                 id = answerId,
-                description = "Desc $index",
+                content = "Desc $index",
                 createdBy = createdOwnerId,
                 issueId = createdIssueId,
                 createdAt = time,

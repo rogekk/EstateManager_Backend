@@ -56,4 +56,13 @@ class IssuesHttpTest: SparkTest({ Mocks(
             )
         }
     }
+    @Test
+    fun `returns a list of issues`(){
+        every { issueRepository().getIssues(any())} returns issues.id
+
+        whenPerform
+            .GET("/v1 / communities / ${communityId.id.id} / issues")
+            .authenticated(owner.id)
+            .expectBodyJson(issues.toResponse())
+    }
 }

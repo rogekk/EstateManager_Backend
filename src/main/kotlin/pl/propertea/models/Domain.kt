@@ -11,10 +11,29 @@ data class ResolutionId(val id: String)
 data class BulletinId(val id: String)
 data class IssueId(val id: String)
 data class AnswerId(val id: String)
-
 data class Shares(val value: Int)
 
+//Authentication
+data class AuthToken(val token: String, val expiresAt: DateTime, val claims: Claims, val ownerId: OwnerId?)
+data class Claims(
+    val permissions: Set<PermissionTypes>
+)
+enum class PermissionTypes {
+    Superior, Manager, Owner;
 
+    companion object {
+        fun fromString(string: String?): PermissionTypes? = when (string) {
+            Superior.name -> Superior
+            Manager.name -> Manager
+            Owner.name -> Owner
+            else -> null
+        }
+
+    }
+}
+
+
+//Bulletins
 data class Bulletin(
     val id: BulletinId,
     val subject: String,
@@ -27,6 +46,8 @@ data class BulletinCreation(
     val content: String,
     val communityId: CommunityId
 )
+
+//Issues
 data class Issue(
     val id: IssueId,
     val subject: String,
@@ -55,7 +76,7 @@ data class IssueWithOwner(
 
 data class Answer(
     val id: AnswerId,
-    val description: String,
+    val content: String,
     val createdAt: DateTime,
     val createdBy: OwnerId,
     val issueId: IssueId
@@ -71,7 +92,11 @@ data class AnswerWithOwners(
     val owner: Owner,
     val answer: Answer
 )
+enum class IssueStatus{
+    NEW, RECEIVED, IN_PROGRESS, CLOSED, RE_OPENED
+}
 
+//Topics
 data class Topic(
     val id: TopicId,
     val subject: String,
@@ -86,46 +111,6 @@ data class TopicWithOwner (
     val topic: Topic,
     val owner: Owner
 )
-
-
-data class Claims(
-    val permissions: Set<PermissionTypes>
-)
-
-data class AuthToken(val token: String, val expiresAt: DateTime, val claims: Claims, val ownerId: OwnerId?)
-
-data class Resolution(
-    val id: ResolutionId,
-    val communityId: CommunityId,
-    val number: String,
-    val subject: String,
-    val createdAt: DateTime,
-    val passingDate: DateTime?,
-    val endingDate: DateTime?,
-    val sharesPro: Int,
-    val sharesAgainst: Int,
-    val description: String,
-    val result: ResolutionResult,
-)
-
-data class ResolutionCreation(
-    val communityId: CommunityId,
-    val number: String,
-    val subject: String,
-    val description: String,
-    )
-
-enum class ResolutionResult {
-    APPROVED, REJECTED, OPEN_FOR_VOTING, CANCELED
-}
-enum class IssueStatus{
-    NEW, RECEIVED, IN_PROGRESS, CLOSED, RE_OPENED
-}
-
-enum class Vote {
-    PRO, AGAINST, ABSTAIN
-}
-
 data class TopicCreation(
     val subject: String,
     val createdBy: OwnerId,
@@ -153,6 +138,39 @@ data class CommentWithOwner(
     val owner: Owner
 )
 
+
+//Resolutions
+data class Resolution(
+    val id: ResolutionId,
+    val communityId: CommunityId,
+    val number: String,
+    val subject: String,
+    val createdAt: DateTime,
+    val passingDate: DateTime?,
+    val endingDate: DateTime?,
+    val sharesPro: Int,
+    val sharesAgainst: Int,
+    val description: String,
+    val result: ResolutionResult,
+)
+
+data class ResolutionCreation(
+    val communityId: CommunityId,
+    val number: String,
+    val subject: String,
+    val description: String,
+    )
+
+enum class ResolutionResult {
+    APPROVED, REJECTED, OPEN_FOR_VOTING, CANCELED
+}
+
+enum class Vote {
+    PRO, AGAINST, ABSTAIN
+}
+
+
+
 data class Community(
     val id: CommunityId,
     val name: String,
@@ -173,16 +191,3 @@ data class OwnerProfile(
     val communities: List<Community>
 )
 
-enum class PermissionTypes {
-    Superior, Manager, Owner;
-
-    companion object {
-        fun fromString(string: String?): PermissionTypes? = when (string) {
-            Superior.name -> Superior
-            Manager.name -> Manager
-            Owner.name -> Owner
-            else -> null
-        }
-
-    }
-}
