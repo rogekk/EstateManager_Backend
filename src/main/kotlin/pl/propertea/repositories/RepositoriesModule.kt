@@ -8,14 +8,23 @@ import pl.propertea.db.DatabaseModule
 import pl.propertea.db.DatabaseModule.readWriteDatabase
 
 object RepositoriesModule : ShankModule {
-    val ownersRepository = single { -> PostgresOwnersRepository(readWriteDatabase(),idGenerator()) }
-    val topicsRepository = single<TopicsRepository> { -> PostgresTopicsRepository(readWriteDatabase()) }
-    val communityRepository = single<CommunityRepository> { -> PostgresCommunityRepository(readWriteDatabase(), idGenerator()) }
-    val resolutionsRepository = single<ResolutionsRepository> { -> PostgresResolutionsRepository(readWriteDatabase(),
-        idGenerator(),
-        clock()) }
-    val bulletinRepository = single<BulletinsRepository> { -> PostgresBulletinsRepository(readWriteDatabase(),idGenerator(),clock())}
-    val issueRepository = single<IssuesRepository> { -> PostgresIssuesRepository(readWriteDatabase(),idGenerator(),clock())}
+    val ownersRepository = single { -> PostgresOwnersRepository(readWriteDatabase(), idGenerator()) }
+    val topicsRepository =
+        single<TopicsRepository> { -> PostgresTopicsRepository(readWriteDatabase(), idGenerator(), clock()) }
+    val communityRepository = single<CommunityRepository> { ->
+        PostgresCommunityRepository(readWriteDatabase(), idGenerator())
+    }
+    val resolutionsRepository = single<ResolutionsRepository> { ->
+        PostgresResolutionsRepository(
+            readWriteDatabase(),
+            idGenerator(),
+            clock()
+        )
+    }
+    val bulletinRepository =
+        single<BulletinsRepository> { -> PostgresBulletinsRepository(readWriteDatabase(), idGenerator(), clock()) }
+    val issueRepository =
+        single<IssuesRepository> { -> PostgresIssuesRepository(readWriteDatabase(), idGenerator(), clock()) }
 }
 
 

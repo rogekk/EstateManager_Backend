@@ -18,8 +18,8 @@ import pl.propertea.repositories.RepositoriesModule.communityRepository
 import ro.kreator.aRandom
 import ro.kreator.aRandomListOf
 
-class PostgresBulletinBoardTest : DatabaseTest({ Mocks(idGenerator.strict, clock.strict) }) {
-    val community by aRandom<Community>()
+class PostgresBulletinBoardTest : DatabaseTest({ Mocks(clock.strict) }) {
+    val community by aRandom<Community> { copy(id = communityRepository().createCommunity(this)) }
     val expectedBulletins by aRandomListOf<Bulletin>(10) {
         map {
             it.copy(communityId = community.id)
@@ -32,7 +32,6 @@ class PostgresBulletinBoardTest : DatabaseTest({ Mocks(idGenerator.strict, clock
     @Before
     fun beforeEach() {
         every { clock().getDateTime() } returns now
-        every { idGenerator().newId() } returnsMany expectedBulletins.map { it.id.id }
     }
 
     @After
@@ -50,14 +49,14 @@ class PostgresBulletinBoardTest : DatabaseTest({ Mocks(idGenerator.strict, clock
     @Test
     fun `returns a bulletin after creating one`() {
         communityRepository().createCommunity(community)
-        expectedBulletins.forEach {
-            bulletinRepository().createBulletin(
+        val exp = expectedBulletins.map {
+            it.copy(id = bulletinRepository().createBulletin(
                 BulletinCreation(it.subject, it.content, it.communityId)
-            )
+            ))
         }
         val bulletin: List<Bulletin> = bulletinRepository().getBulletins(community.id)
 
-        expect that bulletin isEqualTo expectedBulletins
+        expect that bulletin containsOnly exp
     }
 
 
@@ -65,15 +64,15 @@ class PostgresBulletinBoardTest : DatabaseTest({ Mocks(idGenerator.strict, clock
     fun `returns a board with bulletins`() {
         communityRepository().createCommunity(community)
 
-        expectedBulletins.forEach {
-            bulletinRepository().createBulletin(
+        val exp = expectedBulletins.map {
+            it.copy(id = bulletinRepository().createBulletin(
                 BulletinCreation(it.subject, it.content, it.communityId)
-            )
+            ))
         }
 
         val emptyBulletin = bulletinRepository().getBulletins(community.id)
 
-        expect that emptyBulletin isEqualTo expectedBulletins
+        expect that emptyBulletin isEqualTo exp
     }
 
     @Test

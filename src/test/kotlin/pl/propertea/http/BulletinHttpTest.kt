@@ -31,6 +31,7 @@ class BulletinHttpTest : SparkTest({ Mocks(bulletinRepository.relaxed) }) {
         POST("/v1/communities/${communityId.id}/bulletins")
             .authenticated(owner.id)
             .withBody(json { "subject" _ "subj"; "content" _ "content" })
+            .verifyPermissions(PermissionTypes.Manager)
             .expectCode(201)
 
         verify { bulletinRepository().createBulletin(BulletinCreation("subj", "content", communityId)) }

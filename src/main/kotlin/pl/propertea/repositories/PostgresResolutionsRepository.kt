@@ -6,7 +6,6 @@ import pl.propertea.common.Clock
 import pl.propertea.common.IdGenerator
 import pl.propertea.db.*
 import pl.propertea.models.*
-import java.util.*
 
 interface ResolutionsRepository {
     fun getResolutions(communityId: CommunityId): List<Resolution>
@@ -86,7 +85,7 @@ class PostgresResolutionsRepository(
         runCatching {
             ResolutionVotes
                 .insert {
-                    it[id] = UUID.randomUUID().toString()//idGenerator.newId()
+                    it[id] = idGenerator.newId()
                     it[this.ownerId] = ownerId.id
                     it[this.resolutionId] = resolutionId.id
                     it[this.vote] = when (vote) {

@@ -29,7 +29,7 @@ class ResolutionsHttpTest : SparkTest({
                 "subject" _ "burn down building every tuesday?"
                 "description" _ "expensive but fun"
             })
-            .authenticated(owner.id)
+            .verifyPermissions(PermissionTypes.Manager)
             .expectCode(201)
 
         verify {

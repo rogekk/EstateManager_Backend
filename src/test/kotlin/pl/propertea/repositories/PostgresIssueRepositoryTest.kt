@@ -17,7 +17,7 @@ import ro.kreator.aRandom
 import ro.kreator.aRandomListOf
 
 class PostgresIssueRepositoryTest : DatabaseTest({ Mocks(clock.strict) }) {
-    val community by aRandom<Community>()
+    val community by aRandom<Community> { copy(communityRepository().createCommunity(this))}
     val owner by aRandom<Owner>()
     val expectedIssues by aRandomListOf<Issue>(5) {
         map {
@@ -25,8 +25,7 @@ class PostgresIssueRepositoryTest : DatabaseTest({ Mocks(clock.strict) }) {
         }.sortedByDescending { it.createdAt }
     }
 
-    val createdCommunityId = communityRepository().createCommunity(community)
-    val createdOwnerId = owner inThis community putIn ownersRepository()
+    val createdOwnerId = owner inThis community.id putIn ownersRepository()
     val issue by aRandom<Issue>()
     val issueAnswers by aRandomListOf<Answer>(8)
     val answer by aRandom<Answer>()

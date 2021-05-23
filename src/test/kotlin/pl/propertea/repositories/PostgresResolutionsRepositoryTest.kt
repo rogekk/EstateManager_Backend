@@ -7,7 +7,6 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import pl.propertea.common.CommonModule.clock
-import pl.propertea.common.CommonModule.idGenerator
 import pl.propertea.db.Failed
 import pl.propertea.db.Success
 import pl.propertea.dsl.DatabaseTest
@@ -21,17 +20,13 @@ import ro.kreator.aRandom
 import ro.kreator.aRandomListOf
 
 
-class PostgresResolutionsRepositoryTest : DatabaseTest({
-    Mocks(
-        idGenerator.strict,
-        clock.strict
-    )
-}) {
+class PostgresResolutionsRepositoryTest : DatabaseTest({ Mocks(clock.strict) }) {
     val owner1 by aRandom<Owner>()
     val owner2 by aRandom<Owner>()
     val owner3 by aRandom<Owner>()
 
-    val community by aRandom<Community>()
+    val community by aRandom<Community> {copy(communityRepository().createCommunity(this))}
+
     val resolution by aRandom<Resolution> {
         copy(
             communityId = community.id,
@@ -58,51 +53,47 @@ class PostgresResolutionsRepositoryTest : DatabaseTest({
     @Before
     fun beforeEach() {
         every { clock().getDateTime() } returns now
-        every { idGenerator().newId() } returnsMany expectedResolutions.map { it.id.id }
     }
 
     @After
     fun after() {
         ownersRepository.override(null)
-        resolutionsRepository.override(null)
     }
 
     @Test
     fun `when there are no resolutions returns an empty list`() {
-        communityRepository().createCommunity(community)
         val emptyResolutions: List<Resolution> = resolutionsRepository().getResolutions(community.id)
         expect that emptyResolutions isEqualTo emptyList()
     }
 
     @Test
     fun `after creating some resolutions returns the resolutions`() {
-        communityRepository().createCommunity(community)
-
-        expectedResolutions putIn resolutionsRepository()
+        resolutionsRepository.override(null)
+        every { clock().getDateTime() } returns now
+        val res = expectedResolutions putIn resolutionsRepository()
 
         val resolutions: List<Resolution> = resolutionsRepository().getResolutions(community.id)
 
-        expect that resolutions isEqualTo expectedResolutions
+        expect that resolutions isEqualTo res
     }
 
     @Test
     fun `gets a single existing resolution`() {
-        communityRepository().createCommunity(community)
+        resolutionsRepository.override(null)
+        every { clock().getDateTime() } returns now
 
         val id = resolution putIn resolutionsRepository()
 
-        expect that resolutionsRepository().getResolution(id) isEqualTo resolution.copy(id = id)
+        expect that resolutionsRepository().getResolution(id) isEqualTo resolution.copy(id = id, createdAt = now)
     }
 
     @Test
     fun `adds votes to resolution`() {
-        idGenerator.override(null)
-        communityRepository().createCommunity(community)
         val id = resolution putIn resolutionsRepository()
 
-        val owner1Id = owner1 with 10.shares inThis community putIn ownersRepository()
-        val owner2Id = owner2 with 30.shares inThis community putIn ownersRepository()
-        val owner3Id = owner3 with 100.shares inThis community putIn ownersRepository()
+        val owner1Id = owner1 with 10.shares inThis community.id putIn ownersRepository()
+        val owner2Id = owner2 with 30.shares inThis community.id putIn ownersRepository()
+        val owner3Id = owner3 with 100.shares inThis community.id putIn ownersRepository()
 
         expect that resolutionsRepository().getResolution(id)?.sharesPro isEqualTo 0
 
@@ -116,11 +107,9 @@ class PostgresResolutionsRepositoryTest : DatabaseTest({
 
     @Test
     fun `it does not allow double voting`() {
-        idGenerator.override(null)
-        communityRepository().createCommunity(community)
         val id = resolution putIn resolutionsRepository()
 
-        val owner1Id = owner1 with 10.shares inThis community putIn ownersRepository()
+        val owner1Id = owner1 with 10.shares inThis community.id putIn ownersRepository()
 
         expect that resolutionsRepository().getResolution(id)?.sharesPro isEqualTo 0
 
@@ -133,9 +122,8 @@ class PostgresResolutionsRepositoryTest : DatabaseTest({
 
     @Test
     fun `sets the result of a resolution`() {
-        idGenerator.override(null)
-        communityRepository().createCommunity(community)
-
+        resolutionsRepository.override(null)
+        every { clock().getDateTime() } returns now
         val id = resolution putIn resolutionsRepository()
 
         expect that resolutionsRepository().getResolution(id) isEqualTo resolution.copy(
@@ -168,10 +156,7 @@ class PostgresResolutionsRepositoryTest : DatabaseTest({
 
     @Test
     fun `can tell if an owner has already voted in a resolution`() {
-        idGenerator.override(null)
-        communityRepository().createCommunity(community)
-
-        val ownerId = owner1 inThis community putIn ownersRepository()
+        val ownerId = owner1 inThis community.id putIn ownersRepository()
         val id = resolution putIn resolutionsRepository()
 
         expect that resolutionsRepository().hasVoted(ownerId, id) _is false
@@ -187,13 +172,13 @@ infix fun Resolution.putIn(resolutionsRepository: ResolutionsRepository) =
     resolutionsRepository.crateResolution(ResolutionCreation(communityId, number, subject, description))!!
 
 infix fun List<Resolution>.putIn(resolutionsRepository: ResolutionsRepository) =
-    forEach {
-        resolutionsRepository.crateResolution(
+    map {
+        it.copy(resolutionsRepository.crateResolution(
             ResolutionCreation(
                 it.communityId,
                 it.number,
                 it.subject,
                 it.description
             )
-        )!!
+        )!!)
     }

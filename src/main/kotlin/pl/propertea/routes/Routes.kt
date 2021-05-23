@@ -14,6 +14,7 @@ import topicsRoutes
 import ulid
 
 val topicId = path("topicId", condition = ulid("topic", ::TopicId))
+val commentId = path("commentId", condition = ulid("comment", ::CommentId))
 val communityId = path("communityId", condition = ulid("community", ::CommunityId))
 val resolutionId = path("resolutionId", condition = ulid("resolution", ::ResolutionId))
 val ownerId = path("ownerId", condition = ulid("owner", ::OwnerId))

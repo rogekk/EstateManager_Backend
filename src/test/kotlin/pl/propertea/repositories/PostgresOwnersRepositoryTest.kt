@@ -20,25 +20,21 @@ class PostgresOwnersRepositoryTest : DatabaseTest() {
     val communities by aRandomListOf<Community>(10) { mapIndexed { i, it -> it.copy(id = CommunityId("id$i")) } }
 
 
-    @Before
-    fun before() {
-        communityRepository().createCommunity(community)
-        communities.forEach { communityRepository().createCommunity(it) }
-    }
-
     @Test
     fun `allows sign up and login`() {
+        val communityId = communityRepository().createCommunity(community)
         expect that ownersRepository().checkOwnersCredentials(owner.username, "mypass") isEqualTo NotVerified
 
-        val ownerId = owner inThis community withPassword "mypass" putIn ownersRepository()
+        val ownerId = owner inThis communityId withPassword "mypass" putIn ownersRepository()
 
         expect that ownersRepository().checkOwnersCredentials(owner.username, "mypass") isEqualTo Verified(ownerId)
     }
 
     @Test
     fun `allow user to change his contact data`() {
+        val communityId = communityRepository().createCommunity(community)
 
-        val ownerId = owner inThis community putIn ownersRepository()
+        val ownerId = owner inThis communityId putIn ownersRepository()
 
         ownersRepository().updateOwnersDetails(ownerId, "newEmail", "newAddress", "newPhoneNumber")
 
@@ -52,7 +48,8 @@ class PostgresOwnersRepositoryTest : DatabaseTest() {
 
     @Test
     fun `allow user to change only email`() {
-        val ownerId = owner inThis community putIn ownersRepository()
+        val communityId = communityRepository().createCommunity(community)
+        val ownerId = owner inThis communityId putIn ownersRepository()
 
         ownersRepository().updateOwnersDetails(ownerId, email = "theemail")
 
@@ -64,7 +61,8 @@ class PostgresOwnersRepositoryTest : DatabaseTest() {
 
     @Test
     fun `allow user to change only phone number`() {
-        val ownerId = owner inThis community putIn ownersRepository()
+        val communityId = communityRepository().createCommunity(community)
+        val ownerId = owner inThis communityId putIn ownersRepository()
 
         ownersRepository().updateOwnersDetails(ownerId, phoneNumber = "222")
 
@@ -76,7 +74,8 @@ class PostgresOwnersRepositoryTest : DatabaseTest() {
 
     @Test
     fun `allow user to change only profilePicture`() {
-        val ownerId = owner inThis community putIn ownersRepository()
+        val communityId = communityRepository().createCommunity(community)
+        val ownerId = owner inThis communityId putIn ownersRepository()
 
         ownersRepository().updateOwnersDetails(ownerId, profileImageUrl = "http://cats.com/carlito.jpg")
 
@@ -88,9 +87,11 @@ class PostgresOwnersRepositoryTest : DatabaseTest() {
 
     @Test
     fun `gets the users profile`() {
-        val expectedCommunities = communities.evenlyIndexed
+        val expectedCommunities = communities.evenlyIndexed.map {
+            it.copy(id = communityRepository().createCommunity(it))
+        }
 
-        val ownerId = owner with 200.shares inThese expectedCommunities putIn ownersRepository()
+        val ownerId = owner with 200.shares inThese expectedCommunities.map { it.id } putIn ownersRepository()
 
         expect that ownersRepository().getProfile(ownerId) isEqualTo OwnerProfile(
             owner.copy(id = ownerId),
