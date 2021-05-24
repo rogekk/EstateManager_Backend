@@ -1,6 +1,7 @@
 package pl.propertea.http
 
 import com.memoizr.assertk.isEqualTo
+import pl.propertea.models.Permission.*
 import com.snitch.extensions.parseJson
 import io.mockk.every
 import io.mockk.verify
@@ -60,7 +61,7 @@ class TopicsHttpTest : SparkTest({
     @Test
     fun `deletes a topic`() {
         DELETE("/v1/communities/${community.id.id}/topics/${topic.id.id}")
-            .verifyPermissions(PermissionTypes.Manager)
+            .verifyPermissions(CanDeleteTopic)
             .expectCode(200)
 
         verify { topicsRepository().delete(topic.id) }
@@ -69,7 +70,7 @@ class TopicsHttpTest : SparkTest({
     @Test
     fun `deletes a comment`() {
         DELETE("/v1/communities/${community.id.id}/topics/${topic.id.id}/comments/${comment.id.id}")
-            .verifyPermissions(PermissionTypes.Manager)
+            .verifyPermissions(CanDeleteComment)
             .expectCode(200)
 
         verify { topicsRepository().deleteComment(comment.id) }

@@ -15,6 +15,7 @@ import pl.propertea.models.*
 import pl.propertea.repositories.OwnerCreated
 import pl.propertea.repositories.RepositoriesModule.usersRepository
 import pl.propertea.tools.json
+import pl.propertea.models.Permission.*
 import ro.kreator.aRandom
 
 class AuthHttpTest : SparkTest({ Mocks(clock.strict, usersRepository.relaxed) }) {
@@ -28,7 +29,7 @@ class AuthHttpTest : SparkTest({ Mocks(clock.strict, usersRepository.relaxed) })
 
         POST("/v1/owners")
             .withBody(createOwnerRequest)
-            .verifyPermissions(PermissionTypes.Superior)
+            .verifyPermissions(CanCreateOwner)
             .expectCode(201)
 
         verify { usersRepository().createOwner(
@@ -44,7 +45,7 @@ class AuthHttpTest : SparkTest({ Mocks(clock.strict, usersRepository.relaxed) })
 
     @Test
     fun `returns success for successful login`() {
-        every { usersRepository().checkCredentials("foo", "pass") } returns owner.id
+        every { usersRepository().checkCredentials("foo", "pass") } returns Authorization(owner.id.id, UserTypes.OWNER, emptyList())
         every { clock().getDateTime() } returns now
 
         POST("/v1/login")
@@ -65,7 +66,7 @@ class AuthHttpTest : SparkTest({ Mocks(clock.strict, usersRepository.relaxed) })
     @Test
     fun `after successful login sets a valid JWT for owner`() {
         every { usersRepository().getProfile(owner.id) } returns OwnerProfile(owner, emptyList())
-        every { usersRepository().checkCredentials(owner.username, "b") } returns owner.id
+        every { usersRepository().checkCredentials(owner.username, "b") } returns Authorization(owner.id.id, UserTypes.OWNER, emptyList())
         every { clock().getDateTime() } returns now
 
         POST("/v1/login")
@@ -90,7 +91,7 @@ class AuthHttpTest : SparkTest({ Mocks(clock.strict, usersRepository.relaxed) })
     @Test
     fun `after successful login sets a valid JWT for admin`() {
 //        every { usersRepository().getProfile(admin.id) } returns OwnerProfile(owner, emptyList())
-        every { usersRepository().checkCredentials(admin.username, "b") } returns admin.id
+        every { usersRepository().checkCredentials(admin.username, "b") } returns Authorization(admin.id.id, UserTypes.ADMIN, emptyList())
         every { clock().getDateTime() } returns now
 
         POST("/v1/login")

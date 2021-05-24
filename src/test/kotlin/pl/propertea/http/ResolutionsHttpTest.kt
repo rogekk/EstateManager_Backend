@@ -6,6 +6,7 @@ import org.junit.Test
 import pl.propertea.dsl.Mocks
 import pl.propertea.dsl.SparkTest
 import pl.propertea.dsl.relaxed
+import pl.propertea.models.Permission.*
 import pl.propertea.models.*
 import pl.propertea.repositories.RepositoriesModule.resolutionsRepository
 import pl.propertea.tools.json
@@ -30,7 +31,7 @@ class ResolutionsHttpTest : SparkTest({
                 "subject" _ "burn down building every tuesday?"
                 "description" _ "expensive but fun"
             })
-            .verifyPermissions(PermissionTypes.Manager)
+            .verifyPermissions(CanCreateResolution)
             .expectCode(201)
 
         verify {
@@ -122,7 +123,7 @@ class ResolutionsHttpTest : SparkTest({
 
         PATCH("/v1/communities/${communityId.id}/resolutions/${resolutionId.id}")
             .withBody(updateRequest)
-            .verifyPermissions(PermissionTypes.Manager)
+            .verifyPermissions(CanUpdateResolutionStatus)
             .expectCode(200)
 
         verify { resolutionsRepository().updateResolutionResult(resolutionId, updateRequest.result.toDomain()) }

@@ -2,33 +2,37 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.interfaces.DecodedJWT
+import com.snitch.extensions.json
+import com.snitch.extensions.parseJson
+import com.snitch.extensions.print
 import pl.propertea.common.CommonModule.clock
-import pl.propertea.models.AuthToken
-import pl.propertea.models.OwnerId
-import pl.propertea.models.PermissionTypes
-import pl.propertea.models.UserId
+import pl.propertea.models.*
 
 interface Authenticator {
-    fun getPermissionType(authToken: AuthToken): PermissionTypes?
+    fun getAuthorization(authToken: String): Authorization?
     fun verify(authToken: String): DecodedJWT
-    fun getTokenWithPermission(userId: UserId, permission: PermissionTypes?): String
-    fun checkPermission(authToken: AuthToken, permission: PermissionTypes)
+    fun getToken(userId: UserId, authorization: Authorization): String
+    fun checkPermission(authToken: String, permission: Permission)
 }
 
+private val auth = "authorization"
 class JWTAuthenticator : Authenticator {
     private val algorithm = Algorithm.HMAC256("secret")
     private val verifier: JWTVerifier = JWT.require(algorithm)
         .withIssuer("auth0")
         .build() //Reusable verifier instance
 
-    override fun getPermissionType(authToken: AuthToken): PermissionTypes? {
-        return PermissionTypes.Owner
+    override fun getAuthorization(authToken: String): Authorization? {
+        val jwt = verifier.verify(authToken)
+        return jwt.claims[auth]
+            ?.asString()
+            ?.parseJson()
     }
 
     override fun verify(authToken: String): DecodedJWT = verifier.verify(authToken)
 
-    override fun checkPermission(authToken: AuthToken, permission: PermissionTypes) {
-        val jwt = verifier.verify(authToken.token)
+    override fun checkPermission(authToken: String, permission: Permission) {
+        val jwt = verifier.verify(authToken)
         val claimedPermission = jwt.claims["permission"]?.asString()
 
         if (claimedPermission != null && claimedPermission == permission.toString()) {
@@ -38,16 +42,21 @@ class JWTAuthenticator : Authenticator {
         }
     }
 
-    override fun getTokenWithPermission(userId: UserId, permission: PermissionTypes?): String = JWT
-        .create()
-        .withIssuer("auth0")
-        .withClaim("permission", permission.toString())
-        .apply {
-            if (permission == PermissionTypes.Owner) withClaim("ownerId", userId.id)
-            else withClaim("adminId", userId.id)
-        }
-        .withExpiresAt(clock().getDateTime().plusWeeks(1).toDate())
-        .sign(algorithm)
+    override fun getToken(userId: UserId, authorization: Authorization): String {
+        return JWT
+            .create()
+            .withIssuer("auth0")
+            .withClaim(auth, authorization.json)
+            .apply {
+                when (authorization.userType) {
+                    UserTypes.OWNER -> withClaim("ownerId", userId.id)
+                    UserTypes.MANAGER -> withClaim("managerId", userId.id)
+                    UserTypes.ADMIN -> withClaim("adminId", userId.id)
+                }
+            }
+            .withExpiresAt(clock().getDateTime().plusWeeks(1).toDate())
+            .sign(algorithm)
+    }
 }
 
 class ForbiddenException : Exception()

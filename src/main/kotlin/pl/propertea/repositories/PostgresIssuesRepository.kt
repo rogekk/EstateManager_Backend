@@ -33,7 +33,7 @@ class PostgresIssuesRepository(
                 .groupBy(IssuesTable.id, Users.id)
                 .orderBy(IssuesTable.createdAt, SortOrder.DESC)
                 .map { IssueWithOwner(it.readOwner(), it.readIssue()) }
-            is AdminId -> {
+            is ManagerId -> {
                 val communities = AdminCommunities
                     .select { AdminCommunities.adminId eq userId.id }
                     .map { it[AdminCommunities.communityId] }
@@ -46,6 +46,7 @@ class PostgresIssuesRepository(
                     .orderBy(IssuesTable.createdAt, SortOrder.DESC)
                     .map { IssueWithOwner(it.readOwner(), it.readIssue()) }
             }
+            else -> TODO()
         }
     }
 

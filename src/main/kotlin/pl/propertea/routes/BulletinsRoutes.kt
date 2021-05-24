@@ -4,17 +4,15 @@ import pl.propertea.handlers.`bulletins `.createBulletinHandler
 import pl.propertea.handlers.`bulletins `.getBulletinHandler
 import pl.propertea.handlers.`bulletins `.getBulletinsHandler
 import pl.propertea.models.BulletinRequest
-import pl.propertea.models.PermissionTypes
-import pl.propertea.routes.authenticated
-import pl.propertea.routes.bulletinId
-import pl.propertea.routes.communityId
-import pl.propertea.routes.restrictTo
+import pl.propertea.models.Permission.CanCreateBulletin
+import pl.propertea.routes.*
 
 fun Router.bulletinsRoutes() {
-//    "bulletins" {
+    "bulletins" {
         POST("/communities" / communityId / "bulletins")
             .inSummary("Creates a new bulletin")
-            .restrictTo(PermissionTypes.Manager)
+//            .restrictTo(PermissionTypes.Manager)
+            .withPermission(CanCreateBulletin)
             .with(body<BulletinRequest>())
             .isHandledBy(createBulletinHandler)
 
@@ -28,4 +26,4 @@ fun Router.bulletinsRoutes() {
             .authenticated()
             .isHandledBy(getBulletinHandler)
     }
-//}
+}

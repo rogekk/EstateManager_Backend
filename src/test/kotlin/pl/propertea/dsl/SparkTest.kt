@@ -38,16 +38,30 @@ abstract class SparkTest(mockBlock: () -> Mocks = { Mocks() }) :
     fun Expectation.authenticated(userId: UserId): Expectation {
         withHeaders(hashMapOf(authTokenHeader to null)).expectCode(401)
         withHeaders(hashMapOf(authTokenHeader to "foo")).expectCode(401)
-        return when (userId) {
-            is OwnerId -> withHeaders(hashMapOf(authTokenHeader to authenticator().getTokenWithPermission(userId, PermissionTypes.Owner)))
-            is AdminId -> withHeaders(hashMapOf(authTokenHeader to authenticator().getTokenWithPermission(userId, PermissionTypes.Manager)))
+        val userType = when (userId) {
+            is OwnerId -> UserTypes.OWNER
+            is ManagerId -> UserTypes.MANAGER
+            is AdminId -> UserTypes.ADMIN
         }
+        return withHeaders(
+            hashMapOf(
+                authTokenHeader to authenticator().getToken(
+                    userId,
+                    Authorization(userId.id, userType, emptyList())
+                )
+            ))
     }
 
-    fun Expectation.verifyPermissions(permissionType: PermissionTypes): Expectation {
+    fun Expectation.verifyPermissions(permission: Permission): Expectation {
+        val noPermission = authenticator().getToken(
+                OwnerId(""),
+                Authorization("", UserTypes.OWNER, emptyList())
+            )
 
-        val noPermission = authenticator().getTokenWithPermission(OwnerId(""), PermissionTypes.values().filterNot { it == permissionType }.first())
-        val withRightPermission = authenticator().getTokenWithPermission(OwnerId(""), permissionType)
+        val withRightPermission = authenticator().getToken(
+                OwnerId(""),
+                Authorization("", UserTypes.OWNER, listOf(permission))
+            )
 
         withHeaders(hashMapOf(authTokenHeader to noPermission)).expectCode(403)
 

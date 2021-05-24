@@ -29,7 +29,7 @@ class PostgresIssueRepositoryTest : DatabaseTest({ Mocks(clock.strict) }) {
     val community by aRandom<Community> { copy(communityRepository().createCommunity(this)) }
     val community2 by aRandom<Community> { copy(communityRepository().createCommunity(this)) }
 
-    val admin by aRandom<Admin>()
+    val manager by aRandom<Manager>()
 
     val owner by aRandom<Owner>()
     val owner2 by aRandom<Owner>()
@@ -172,17 +172,17 @@ class PostgresIssueRepositoryTest : DatabaseTest({ Mocks(clock.strict) }) {
         )
 
         // assign community to admin
-        val adminId = usersRepository().createAdmin(listOf(community.id),
-            admin.username,
+        val managerId = usersRepository().createManager(listOf(community.id),
+            manager.username,
             "pass",
-            admin.email,
-            admin.phoneNumber,
-            admin.address,
-            admin.profileImageUrl
+            manager.email,
+            manager.phoneNumber,
+            manager.address,
+            manager.profileImageUrl
         )!!
 
         // Get issues
-        expect that issueRepository().getIssues(adminId) isEqualTo listOf(IssueWithOwner(
+        expect that issueRepository().getIssues(managerId) isEqualTo listOf(IssueWithOwner(
             owner.copy(id = createdOwnerId),
             issue.copy(
                     id = issueInMyCommunity,

@@ -24,7 +24,7 @@ class PostgresUsersRepositoryTest : DatabaseTest() {
 
         val ownerId = owner inThis communityId withPassword "mypass" putIn usersRepository()
 
-        expect that usersRepository().checkCredentials(owner.username, "mypass") isEqualTo ownerId
+        expect that usersRepository().checkCredentials(owner.username, "mypass") isEqualTo Authorization(ownerId.id, UserTypes.OWNER, emptyList())
     }
 
     @Test
@@ -42,7 +42,7 @@ class PostgresUsersRepositoryTest : DatabaseTest() {
             admin.profileImageUrl,
         )
 
-        expect that usersRepository().checkCredentials(admin.username, "mypass") isEqualTo adminId
+        expect that usersRepository().checkCredentials(admin.username, "mypass") isEqualTo Authorization(adminId!!.id, UserTypes.ADMIN, emptyList())
     }
 
     @Test
@@ -112,5 +112,17 @@ class PostgresUsersRepositoryTest : DatabaseTest() {
             owner.copy(id = ownerId),
             expectedCommunities
         )
+    }
+
+    @Test
+    fun `adds permissions to user`() {
+        val communityId = communityRepository().createCommunity(community)
+
+        val ownerId = owner inThis communityId putIn usersRepository()
+
+        usersRepository().addPermission(ownerId, Permission.CanDeleteComment)
+
+        expect that usersRepository().checkCredentials(owner.username, "password") isEqualTo Authorization(ownerId.id, UserTypes.OWNER, listOf(Permission.CanDeleteComment))
+
     }
 }

@@ -26,8 +26,14 @@ val createOwnerHandler: Handler<CreateOwnerRequest, GenericResponse> = {
 val loginHandler: Handler<LoginRequest, LoginResponse> = {
     usersRepository().checkCredentials(body.username, body.password)
         ?.let {
-            val token = authenticator().getTokenWithPermission(it, PermissionTypes.Owner)
+            val userId = when (it.userType) {
+                UserTypes.ADMIN -> AdminId(it.userId)
+                UserTypes.MANAGER -> ManagerId(it.userId)
+                UserTypes.OWNER -> OwnerId(it.userId)
+            }
+
+            val token = authenticator().getToken(userId, it)
             setHeader("Token", token)
-            LoginResponse(id = it.id, token = token).ok
+            LoginResponse(id = userId.id, token = token).ok
         } ?: forbidden("invalid login credentials")
 }

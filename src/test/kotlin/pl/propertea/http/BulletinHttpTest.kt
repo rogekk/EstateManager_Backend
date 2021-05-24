@@ -1,6 +1,9 @@
 package pl.propertea.http
 
+import com.snitch.extensions.json
+import com.snitch.extensions.parseJson
 import io.mockk.every
+import pl.propertea.models.Permission.*
 import io.mockk.verify
 import org.junit.Test
 import pl.propertea.dsl.Mocks
@@ -31,7 +34,7 @@ class BulletinHttpTest : SparkTest({ Mocks(bulletinRepository.relaxed) }) {
         POST("/v1/communities/${communityId.id}/bulletins")
             .authenticated(owner.id)
             .withBody(json { "subject" _ "subj"; "content" _ "content" })
-            .verifyPermissions(PermissionTypes.Manager)
+            .verifyPermissions(CanCreateBulletin)
             .expectCode(201)
 
         verify { bulletinRepository().createBulletin(BulletinCreation("subj", "content", communityId)) }
