@@ -50,5 +50,4 @@ class JWTAuthenticator : Authenticator {
         .sign(algorithm)
 }
 
-
 class ForbiddenException : Exception()

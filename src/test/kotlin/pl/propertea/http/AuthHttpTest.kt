@@ -48,7 +48,7 @@ class AuthHttpTest : SparkTest({ Mocks(clock.strict, ownersRepository.relaxed) }
 
     @Test
     fun `returns success for successful login`() {
-        every { ownersRepository().checkOwnersCredentials("foo", "pass") } returns Verified(owner.id)
+        every { ownersRepository().checkOwnersCredentials("foo", "pass") } returns owner.id
         every { clock().getDateTime() } returns now
 
         POST("/v1/login")
@@ -61,7 +61,7 @@ class AuthHttpTest : SparkTest({ Mocks(clock.strict, ownersRepository.relaxed) }
 
     @Test
     fun `returns failure for unsuccessful login`() {
-        every { ownersRepository().checkOwnersCredentials("a", "b") } returns NotVerified
+        every { ownersRepository().checkOwnersCredentials("a", "b") } returns null
 
         POST("/v1/login").withBody(json { "username" _ "a"; "password" _ "b" }).expectCode(403)
     }
@@ -69,7 +69,7 @@ class AuthHttpTest : SparkTest({ Mocks(clock.strict, ownersRepository.relaxed) }
     @Test
     fun `after successful login sets a valid JWT`() {
         every { ownersRepository().getProfile(owner.id) } returns OwnerProfile(owner, emptyList())
-        every { ownersRepository().checkOwnersCredentials(owner.username, "b") } returns Verified(owner.id)
+        every { ownersRepository().checkOwnersCredentials(owner.username, "b") } returns owner.id
         every { clock().getDateTime() } returns now
 
         POST("/v1/login")

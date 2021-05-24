@@ -35,7 +35,7 @@ interface OwnersRepository {
         profileImageUrl: String? = null,
     ): AdminId?
 
-    fun checkOwnersCredentials(username: String, password: String): OwnerCredentials
+    fun checkOwnersCredentials(username: String, password: String): UserId?
 
     fun updateOwnersDetails(
         ownerId: UserId,
@@ -146,17 +146,18 @@ class PostgresOwnersRepository(private val database: Database, private val idGen
         AdminId(userId)
     }
 
-    override fun checkOwnersCredentials(username: String, password: String) = transaction(database) {
-        val hashedPassword =
+    override fun checkOwnersCredentials(username: String, password: String): UserId? = transaction(database) {
             Users
                 .select { (Users.username eq username) }
                 .map { it[Users.id] to it[Users.password] }
                 .firstOrNull()
-
-        if (hashedPassword != null && verify(password, hashedPassword.second))
-            Verified(OwnerId(hashedPassword.first))
-        else
-            NotVerified
+                ?.let {
+                    if (verify(password, it.second)) {
+                        OwnerId(it.first)
+                    } else {
+                        null
+                    }
+                }
     }
 
     override fun updateOwnersDetails(

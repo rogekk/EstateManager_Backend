@@ -24,13 +24,10 @@ val createOwnerHandler: Handler<CreateOwnerRequest, GenericResponse> = {
 }
 
 val loginHandler: Handler<LoginRequest, LoginResponse> = {
-    val checkOwnersCredentials = ownersRepository().checkOwnersCredentials(body.username, body.password)
-    when (checkOwnersCredentials) {
-        is Verified -> {
-            val token = authenticator().getTokenWithPermission(checkOwnersCredentials.id, PermissionTypes.Owner)
+    ownersRepository().checkOwnersCredentials(body.username, body.password)
+        ?.let {
+            val token = authenticator().getTokenWithPermission(it, PermissionTypes.Owner)
             setHeader("Token", token)
-            LoginResponse(id = checkOwnersCredentials.id.id, token = token).ok
-        }
-        NotVerified -> forbidden("invalid login credentials")
-    }
+            LoginResponse(id = it.id, token = token).ok
+        } ?: forbidden("invalid login credentials")
 }
