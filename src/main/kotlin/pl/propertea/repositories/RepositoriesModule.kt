@@ -4,11 +4,10 @@ import life.shank.ShankModule
 import life.shank.single
 import pl.propertea.common.CommonModule.clock
 import pl.propertea.common.CommonModule.idGenerator
-import pl.propertea.db.DatabaseModule
 import pl.propertea.db.DatabaseModule.readWriteDatabase
 
 object RepositoriesModule : ShankModule {
-    val ownersRepository = single { -> PostgresOwnersRepository(readWriteDatabase(), idGenerator()) }
+    val usersRepository = single { -> PostgresUsersRepository(readWriteDatabase(), idGenerator()) }
     val topicsRepository =
         single<TopicsRepository> { -> PostgresTopicsRepository(readWriteDatabase(), idGenerator(), clock()) }
     val communityRepository = single<CommunityRepository> { ->

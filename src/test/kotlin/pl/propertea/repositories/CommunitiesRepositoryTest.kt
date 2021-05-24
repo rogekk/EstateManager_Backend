@@ -6,7 +6,7 @@ import pl.propertea.dsl.DatabaseTest
 import pl.propertea.models.Community
 import pl.propertea.models.Owner
 import pl.propertea.repositories.RepositoriesModule.communityRepository
-import pl.propertea.repositories.RepositoriesModule.ownersRepository
+import pl.propertea.repositories.RepositoriesModule.usersRepository
 import ro.kreator.aRandom
 import ro.kreator.aRandomListOf
 
@@ -27,23 +27,23 @@ class CommunitiesRepositoryTest : DatabaseTest() {
         val id = communityRepository().createCommunity(community)
         val ids = communities.map { communityRepository().createCommunity(it) }
 
-        val ownerId = owner inThis id putIn ownersRepository()
+        val ownerId = owner inThis id putIn usersRepository()
 
         ids.forEach {
             communityRepository().setMembership(ownerId, it, 100.shares)
         }
 
-        expect that ownersRepository().getProfile(ownerId).communities.map { it.id } containsOnly ids + id
+        expect that usersRepository().getProfile(ownerId).communities.map { it.id } containsOnly ids + id
     }
 
     @Test
     fun `deletes a user membership`() {
         val commId = communityRepository().createCommunity(community)
         val ids = communities.map { it.copy(id = communityRepository().createCommunity(it)) }
-        val ownerId = owner inThese ids.map { it.id } putIn ownersRepository()
+        val ownerId = owner inThese ids.map { it.id } putIn usersRepository()
 
         communityRepository().removeMembership(ownerId, commId)
 
-        expect that ownersRepository().getProfile(ownerId).communities isEqualTo ids
+        expect that usersRepository().getProfile(ownerId).communities isEqualTo ids
     }
 }
