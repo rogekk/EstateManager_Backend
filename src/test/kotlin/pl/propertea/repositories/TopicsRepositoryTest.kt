@@ -5,7 +5,7 @@ import org.junit.Test
 import pl.propertea.dsl.DatabaseTest
 import pl.propertea.models.*
 import pl.propertea.repositories.RepositoriesModule.communityRepository
-import pl.propertea.repositories.RepositoriesModule.ownersRepository
+import pl.propertea.repositories.RepositoriesModule.usersRepository
 import pl.propertea.repositories.RepositoriesModule.topicsRepository
 import ro.kreator.aRandom
 import ro.kreator.aRandomListOf
@@ -28,7 +28,7 @@ class TopicsRepositoryTest : DatabaseTest() {
 
     @Test
     fun `returns a forum with topics`() {
-        val ownerId = owner inThis community.id putIn ownersRepository()
+        val ownerId = owner inThis community.id putIn usersRepository()
 
         val emptyTopics = topicsRepository().getTopics(community.id)
 
@@ -53,7 +53,7 @@ class TopicsRepositoryTest : DatabaseTest() {
 
     @Test
     fun `deletes a topic`() {
-        val ownerId = owner inThis community.id putIn ownersRepository()
+        val ownerId = owner inThis community.id putIn usersRepository()
 
         val topics = expectedTopics.map {
             topicsRepository().crateTopic(
@@ -77,7 +77,7 @@ class TopicsRepositoryTest : DatabaseTest() {
 
     @Test
     fun `adds a comment to a topic`() {
-        val ownerId = owner inThis community.id putIn ownersRepository()
+        val ownerId = owner inThis community.id putIn usersRepository()
 
         val topic = TopicCreation("subj", ownerId, now, community.id, "desc")
         val topicId = topicsRepository().crateTopic(topic)
@@ -91,7 +91,7 @@ class TopicsRepositoryTest : DatabaseTest() {
 
     @Test
     fun `deletes a comment in a topic`() {
-        val ownerId = owner inThis community.id putIn ownersRepository()
+        val ownerId = owner inThis community.id putIn usersRepository()
         val topic = TopicCreation("subj", ownerId, now, community.id, "desc")
         val topicId = topicsRepository().crateTopic(topic)
         val commentCreation = CommentCreation(ownerId, topicId, "hello everyone")
@@ -104,7 +104,7 @@ class TopicsRepositoryTest : DatabaseTest() {
 
     @Test
     fun `returns the comment count with the result`() {
-        val ownerId = owner inThis community.id putIn ownersRepository()
+        val ownerId = owner inThis community.id putIn usersRepository()
         val topic = TopicCreation("subj", ownerId, now, community.id, "desc")
         val topicId = topicsRepository().crateTopic(topic)
 

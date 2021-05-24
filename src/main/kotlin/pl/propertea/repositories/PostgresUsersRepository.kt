@@ -12,10 +12,10 @@ import pl.propertea.tools.hash
 import pl.propertea.tools.verify
 
 
-interface OwnersRepository {
+interface UsersRepository {
     fun getById(ownerId: OwnerId): Owner?
 
-    fun createUser(
+    fun createOwner(
         communities: List<Pair<CommunityId, Shares>>,
         username: String,
         password: String,
@@ -35,10 +35,10 @@ interface OwnersRepository {
         profileImageUrl: String? = null,
     ): AdminId?
 
-    fun checkOwnersCredentials(username: String, password: String): UserId?
+    fun checkCredentials(username: String, password: String): UserId?
 
-    fun updateOwnersDetails(
-        ownerId: UserId,
+    fun updateUserDetails(
+        userId: UserId,
         email: String? = null,
         address: String? = null,
         phoneNumber: String? = null,
@@ -48,8 +48,8 @@ interface OwnersRepository {
     fun getProfile(id: UserId): OwnerProfile
 }
 
-class PostgresOwnersRepository(private val database: Database, private val idGenerator: IdGenerator) :
-    OwnersRepository {
+class PostgresUsersRepository(private val database: Database, private val idGenerator: IdGenerator) :
+    UsersRepository {
 
     override fun getProfile(id: UserId): OwnerProfile = transaction(database) {
         OwnerMembership
@@ -76,7 +76,7 @@ class PostgresOwnersRepository(private val database: Database, private val idGen
             .firstOrNull()
     }
 
-    override fun createUser(
+    override fun createOwner(
         communities: List<Pair<CommunityId, Shares>>,
         username: String,
         password: String,
@@ -146,29 +146,31 @@ class PostgresOwnersRepository(private val database: Database, private val idGen
         AdminId(userId)
     }
 
-    override fun checkOwnersCredentials(username: String, password: String): UserId? = transaction(database) {
+    override fun checkCredentials(username: String, password: String): UserId? = transaction(database) {
+        data class Result(val userId: String, val hashedPassword: String, val adminCommunity: String?)
             Users
+                .leftJoin(AdminCommunities)
                 .select { (Users.username eq username) }
-                .map { it[Users.id] to it[Users.password] }
+                .map { Result(it[Users.id], it[Users.password],it.getOrNull(AdminCommunities.communityId)) }
                 .firstOrNull()
                 ?.let {
-                    if (verify(password, it.second)) {
-                        OwnerId(it.first)
+                    if (verify(password, it.hashedPassword)) {
+                        if (it.adminCommunity != null) AdminId(it.userId) else OwnerId(it.userId)
                     } else {
                         null
                     }
                 }
     }
 
-    override fun updateOwnersDetails(
-        ownerId: UserId,
+    override fun updateUserDetails(
+        userId: UserId,
         email: String?,
         address: String?,
         phoneNumber: String?,
         profileImageUrl: String?,
     ) {
         transaction(database) {
-            Users.update({ Users.id eq ownerId.id }) {
+            Users.update({ Users.id eq userId.id }) {
                 if (address != null)
                     it[Users.address] = address
                 if (email != null)

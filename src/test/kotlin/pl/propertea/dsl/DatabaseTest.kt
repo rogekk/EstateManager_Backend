@@ -8,7 +8,7 @@ import pl.propertea.models.Owner
 import pl.propertea.models.Shares
 import pl.propertea.repositories.OwnerCreated
 import pl.propertea.repositories.OwnerInsertion
-import pl.propertea.repositories.OwnersRepository
+import pl.propertea.repositories.UsersRepository
 
 abstract class DatabaseTest(
     mockBlock: () -> Mocks = { Mocks() }
@@ -35,8 +35,8 @@ abstract class DatabaseTest(
     val Int.shares get() = Shares(this)
     val <T> List<T>.evenlyIndexed get() =  this.filterIndexed { index, _ -> index % 2 == 0 }
 
-    infix fun OwnerInsertion.putIn(rep: OwnersRepository) =
-        (rep.createUser(
+    infix fun OwnerInsertion.putIn(rep: UsersRepository) =
+        (rep.createOwner(
             communities = communities,
             username = owner.username,
             password = password,

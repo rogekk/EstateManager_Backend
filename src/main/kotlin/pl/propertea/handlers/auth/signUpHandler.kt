@@ -4,12 +4,12 @@ import com.snitch.*
 import pl.propertea.common.CommonModule.authenticator
 import pl.propertea.models.*
 import pl.propertea.repositories.*
-import pl.propertea.repositories.RepositoriesModule.ownersRepository
+import pl.propertea.repositories.RepositoriesModule.usersRepository
 import pl.propertea.routes.setHeader
 
 
 val createOwnerHandler: Handler<CreateOwnerRequest, GenericResponse> = {
-    when (ownersRepository().createUser(
+    when (usersRepository().createOwner(
         body.memberships.map { CommunityId(it.communityId) to Shares(it.shares) },
         body.username,
         body.password,
@@ -24,7 +24,7 @@ val createOwnerHandler: Handler<CreateOwnerRequest, GenericResponse> = {
 }
 
 val loginHandler: Handler<LoginRequest, LoginResponse> = {
-    ownersRepository().checkOwnersCredentials(body.username, body.password)
+    usersRepository().checkCredentials(body.username, body.password)
         ?.let {
             val token = authenticator().getTokenWithPermission(it, PermissionTypes.Owner)
             setHeader("Token", token)

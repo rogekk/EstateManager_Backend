@@ -12,10 +12,9 @@ import pl.propertea.dsl.strict
 import pl.propertea.models.*
 import pl.propertea.repositories.RepositoriesModule.communityRepository
 import pl.propertea.repositories.RepositoriesModule.issueRepository
-import pl.propertea.repositories.RepositoriesModule.ownersRepository
+import pl.propertea.repositories.RepositoriesModule.usersRepository
 import ro.kreator.aRandom
 import ro.kreator.aRandomListOf
-import java.util.concurrent.CountDownLatch
 
 class PostgresIssueRepositoryTest : DatabaseTest({ Mocks(clock.strict) }) {
 
@@ -40,8 +39,8 @@ class PostgresIssueRepositoryTest : DatabaseTest({ Mocks(clock.strict) }) {
         }.sortedByDescending { it.createdAt }
     }
 
-    val createdOwnerId = owner inThis community.id putIn ownersRepository()
-    val createdOwnerId2 = owner2 inThis community.id putIn ownersRepository()
+    val createdOwnerId = owner inThis community.id putIn usersRepository()
+    val createdOwnerId2 = owner2 inThis community.id putIn usersRepository()
     val issue by aRandom<Issue>()
     val issueAnswers by aRandomListOf<Answer>(8)
     val answer by aRandom<Answer>()
@@ -173,7 +172,7 @@ class PostgresIssueRepositoryTest : DatabaseTest({ Mocks(clock.strict) }) {
         )
 
         // assign community to admin
-        val adminId = ownersRepository().createAdmin(listOf(community.id),
+        val adminId = usersRepository().createAdmin(listOf(community.id),
             admin.username,
             "pass",
             admin.email,
