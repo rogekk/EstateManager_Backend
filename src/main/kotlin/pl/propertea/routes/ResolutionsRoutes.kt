@@ -1,11 +1,9 @@
 import com.snitch.Router
 import com.snitch.body
-import pl.propertea.handlers.resolutions.createResolutionVoteHandler
-import pl.propertea.handlers.resolutions.createResolutionsHandler
-import pl.propertea.handlers.resolutions.getResolution
-import pl.propertea.handlers.resolutions.getResolutions
+import pl.propertea.handlers.resolutions.*
 import pl.propertea.models.PermissionTypes
 import pl.propertea.models.ResolutionRequest
+import pl.propertea.models.ResolutionResultRequest
 import pl.propertea.models.ResolutionVoteRequest
 import pl.propertea.routes.authenticated
 import pl.propertea.routes.communityId
@@ -13,7 +11,7 @@ import pl.propertea.routes.resolutionId
 import pl.propertea.routes.restrictTo
 
 fun Router.resolutionsRoutes() {
-    "resolutions" {
+//    "resolutions" {
         POST("/communities" / communityId / "resolutions")
             .with(body<ResolutionRequest>())
             .inSummary("Creates a new resolution")
@@ -35,5 +33,11 @@ fun Router.resolutionsRoutes() {
             .with(body<ResolutionVoteRequest>())
             .authenticated()
             .isHandledBy(createResolutionVoteHandler)
+
+        PATCH("/communities" / communityId / "resolutions" / resolutionId )
+            .inSummary("Updates result of of a resolution")
+            .with(body<ResolutionResultRequest>())
+            .restrictTo(PermissionTypes.Manager)
+            .isHandledBy(updateResolutionsResultHandler)
     }
-}
+//}

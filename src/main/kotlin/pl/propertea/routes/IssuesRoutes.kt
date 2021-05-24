@@ -10,7 +10,7 @@ import pl.propertea.models.PermissionTypes
 
 
 fun Router.issuesRoutes() {
-    "issues" {
+//    "issues" {
 //        GET("/communities" / communityId / "issues" / issueId / "answers")
 
         GET("/communities" / communityId / "issues")
@@ -20,6 +20,10 @@ fun Router.issuesRoutes() {
         GET("/communities" / communityId / "issues" / issueId)
             .authenticated()
             .isHandledBy(getIssueHandler)
+
+        GET("/communities" / communityId / "issues" / issueId / "answers")
+            .authenticated()
+            .isHandledBy(getAnswersHandler)
 
         PATCH("/communities" / communityId / "issues" / issueId)
             .with(body<IssueStatusRequest>())
@@ -36,4 +40,4 @@ fun Router.issuesRoutes() {
             .authenticated()
             .isHandledBy(createIssueHandler)
     }
-}
+//}

@@ -47,3 +47,11 @@ val createResolutionVoteHandler: Handler<ResolutionVoteRequest, GenericResponse>
 
     createdSuccessfully
 }
+
+val updateResolutionsResultHandler: Handler<ResolutionResultRequest, GenericResponse> = {
+    resolutionsRepository().updateResolutionResult(
+        request[resolutionId],
+        body.result.toDomain()
+    )
+    success
+}

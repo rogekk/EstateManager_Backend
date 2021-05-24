@@ -60,3 +60,18 @@ enum class StatusRequest{
 }
 
 data class CreateAnswerRequest(val description: String)
+
+data class ResolutionResultRequest(
+    val result: ResultRequest,
+)
+
+fun ResultRequest.toDomain() = when(this){
+    ResultRequest.approved -> ResolutionResult.APPROVED
+    ResultRequest.rejected -> ResolutionResult.REJECTED
+    ResultRequest.open_for_voting -> ResolutionResult.OPEN_FOR_VOTING
+    ResultRequest.cancaled -> ResolutionResult.CANCELED
+}
+
+enum class ResultRequest{
+    approved, rejected, open_for_voting, cancaled
+}

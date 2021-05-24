@@ -14,7 +14,7 @@ import pl.propertea.routes.ownerId
 import pl.propertea.routes.restrictTo
 
 fun Router.communitiesRoutes() {
-    "communities" {
+//    "communities" {
         POST("/communities")
             .with(body<CommunityRequest>())
             .inSummary("Creates a new community")
@@ -37,4 +37,4 @@ fun Router.communitiesRoutes() {
             .restrictTo(Superior)
             .isHandledBy(deleteMembershipHandler)
     }
-}
+//}

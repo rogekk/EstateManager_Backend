@@ -37,7 +37,6 @@ enum class PermissionTypes {
     }
 }
 
-
 //Bulletins
 data class Bulletin(
     val id: BulletinId,

@@ -11,7 +11,7 @@ import pl.propertea.routes.communityId
 import pl.propertea.routes.restrictTo
 
 fun Router.bulletinsRoutes() {
-    "bulletins" {
+//    "bulletins" {
         POST("/communities" / communityId / "bulletins")
             .inSummary("Creates a new bulletin")
             .restrictTo(PermissionTypes.Manager)
@@ -28,4 +28,4 @@ fun Router.bulletinsRoutes() {
             .authenticated()
             .isHandledBy(getBulletinHandler)
     }
-}
+//}

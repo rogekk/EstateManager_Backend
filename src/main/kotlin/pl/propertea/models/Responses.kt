@@ -192,7 +192,7 @@ data class IssueResponse(
     val commentCount: Int
     )
 data class GetAnswerResponse(
-    val comments: List<AnswerResponse>
+    val answers: List<AnswerResponse>
 )
 
 data class AnswerResponse(

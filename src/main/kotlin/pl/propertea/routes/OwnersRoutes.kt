@@ -7,7 +7,7 @@ import pl.propertea.routes.authenticated
 import pl.propertea.routes.ownerId
 
 fun Router.ownersRoutes() {
-    "owners" {
+//    "owners" {
         GET("/owners" / ownerId)
             .inSummary("Gets the owner's profile")
             .authenticated()
@@ -19,4 +19,4 @@ fun Router.ownersRoutes() {
             .authenticated()
             .isHandledBy(updateOwnersHandler)
     }
-}
+//}

@@ -1,5 +1,7 @@
 package pl.propertea.http
 
+import com.memoizr.assertk.isEqualTo
+import com.snitch.extensions.parseJson
 import io.mockk.every
 import io.mockk.verify
 import org.junit.Before
@@ -29,6 +31,7 @@ class IssuesHttpTest : SparkTest({
     val issueId by aRandom<IssueId>()
     val nonExistentIssueId by aRandom<IssueId>()
     val updateRequest by aRandom<IssueStatusRequest>()
+    val expectedAnswers by aRandomListOf<AnswerWithOwners>{ map{ it.copy(owner = owner)}}
 
     val admin by aRandom<Admin>()
 
@@ -106,7 +109,7 @@ class IssuesHttpTest : SparkTest({
     }
 
     @Test
-    fun `updates the status of an exisitng issue`() {
+    fun `updates the status of an existing issue`() {
         every { issueRepository().updateIssuesStatus(issueId, updateRequest.status.toDomain()) } returns Unit
 
         PATCH("/v1/communities/${communityId.id}/issues/${issueId.id}")
@@ -115,6 +118,20 @@ class IssuesHttpTest : SparkTest({
             .expectCode(200)
 
         verify { issueRepository().updateIssuesStatus(issueId, updateRequest.status.toDomain()) }
+    }
+
+    @Test
+    fun `gets all answers for an issue`() {
+        every { issueRepository().getAnswers(issueId) } returns expectedAnswers
+
+        GET("/v1/communities/${communityId.id}/issues/${issueId.id}/answers")
+            .authenticated(owner.id)
+            .expectCode(200)
+            .expect {
+                it.text.parseJson<GetAnswerResponse>()
+                    .answers
+                    .map { it.content } isEqualTo expectedAnswers.map { it.answer.content }
+            }
     }
 
 }
