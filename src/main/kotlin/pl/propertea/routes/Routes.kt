@@ -4,6 +4,7 @@ import AuthTokenValidator
 import authenticationRoutes
 import bulletinsRoutes
 import com.snitch.*
+import com.snitch.Enum
 import com.snitch.spark.SparkResponseWrapper
 import communitiesRoutes
 import ownersRoutes
@@ -20,6 +21,8 @@ val resolutionId = path("resolutionId", condition = ulid("resolution", ::Resolut
 val ownerId = path("ownerId", condition = ulid("owner", ::OwnerId))
 val authTokenHeader = header("X-Auth-Token", condition = AuthTokenValidator)
 val bulletinId = path("bulletinId", condition = ulid("bulletin", ::BulletinId))
+val issueId = path("issueId", condition = ulid("issue", ::IssueId))
+
 
 fun routes(http: Service): Router.() -> Unit = {
     "v1" / {
@@ -34,6 +37,8 @@ fun routes(http: Service): Router.() -> Unit = {
         resolutionsRoutes()
 
         bulletinsRoutes()
+
+        issuesRoutes()
     }
 
     setAccessControlHeaders(http)

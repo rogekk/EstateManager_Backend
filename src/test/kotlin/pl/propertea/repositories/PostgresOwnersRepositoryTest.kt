@@ -1,7 +1,6 @@
 package pl.propertea.repositories
 
 import com.memoizr.assertk.expect
-import org.junit.Before
 import org.junit.Test
 import pl.propertea.dsl.DatabaseTest
 import pl.propertea.models.Community
@@ -23,11 +22,11 @@ class PostgresOwnersRepositoryTest : DatabaseTest() {
     @Test
     fun `allows sign up and login`() {
         val communityId = communityRepository().createCommunity(community)
-        expect that ownersRepository().checkOwnersCredentials(owner.username, "mypass") isEqualTo NotVerified
+        expect that ownersRepository().checkOwnersCredentials(owner.username, "mypass") isEqualTo null
 
         val ownerId = owner inThis communityId withPassword "mypass" putIn ownersRepository()
 
-        expect that ownersRepository().checkOwnersCredentials(owner.username, "mypass") isEqualTo Verified(ownerId)
+        expect that ownersRepository().checkOwnersCredentials(owner.username, "mypass") isEqualTo ownerId
     }
 
     @Test

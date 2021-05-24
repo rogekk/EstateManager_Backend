@@ -20,6 +20,7 @@ class ResolutionsHttpTest : SparkTest({
     val resolutions by aRandomListOf<Resolution>()
     val communityId by aRandom<CommunityId>()
     val resolutionId by aRandom<ResolutionId>()
+    val updateRequest by aRandom<ResolutionResultRequest>()
 
     @Test
     fun `creates a resolution`() {
@@ -114,5 +115,16 @@ class ResolutionsHttpTest : SparkTest({
             })
             .authenticated(owner.id)
             .expectCode(400)
+    }
+    @Test
+    fun `update resolution result of an existing issue`(){
+        every { resolutionsRepository().updateResolutionResult(resolutionId,updateRequest.result.toDomain())} returns Unit
+
+        PATCH("/v1/communities/${communityId.id}/resolutions/${resolutionId.id}")
+            .withBody(updateRequest)
+            .verifyPermissions(PermissionTypes.Manager)
+            .expectCode(200)
+
+        verify { resolutionsRepository().updateResolutionResult(resolutionId, updateRequest.result.toDomain()) }
     }
 }

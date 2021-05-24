@@ -5,7 +5,7 @@ import com.snitch.notFound
 import com.snitch.ok
 import pl.propertea.models.*
 import pl.propertea.repositories.RepositoriesModule.resolutionsRepository
-import pl.propertea.routes.authenticatedOwner
+import pl.propertea.routes.authenticatedUser
 import pl.propertea.routes.communityId
 import pl.propertea.routes.resolutionId
 
@@ -16,7 +16,7 @@ val getResolutions: Handler<Nothing, ResolutionsResponse> = {
 
 val getResolution: Handler<Nothing, ResolutionResponse> = {
     val resolution = resolutionsRepository().getResolution(request[resolutionId])
-    val hasVoted = resolutionsRepository().hasVoted(authenticatedOwner(), request[resolutionId])
+    val hasVoted = resolutionsRepository().hasVoted(authenticatedUser() as OwnerId, request[resolutionId])
     resolution?.toResponse()?.copy(votedByOwner = hasVoted)?.ok ?: notFound()
 }
 
@@ -37,7 +37,7 @@ val createResolutionVoteHandler: Handler<ResolutionVoteRequest, GenericResponse>
     resolutionsRepository().vote(
         request[communityId],
         request[resolutionId],
-        authenticatedOwner(),
+        authenticatedUser() as OwnerId,
         when (body.vote) {
             VoteRequest.pro -> Vote.PRO
             VoteRequest.against -> Vote.AGAINST
@@ -46,4 +46,12 @@ val createResolutionVoteHandler: Handler<ResolutionVoteRequest, GenericResponse>
     )
 
     createdSuccessfully
+}
+
+val updateResolutionsResultHandler: Handler<ResolutionResultRequest, GenericResponse> = {
+    resolutionsRepository().updateResolutionResult(
+        request[resolutionId],
+        body.result.toDomain()
+    )
+    success
 }

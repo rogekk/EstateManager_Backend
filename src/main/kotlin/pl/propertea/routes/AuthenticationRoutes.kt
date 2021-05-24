@@ -8,7 +8,7 @@ import pl.propertea.models.PermissionTypes
 import pl.propertea.routes.restrictTo
 
 fun Router.authenticationRoutes() {
-    "auth" {
+//    "auth" {
         POST("/owners")
             .inSummary("Creates a new owner")
             .restrictTo(PermissionTypes.Superior)
@@ -20,4 +20,4 @@ fun Router.authenticationRoutes() {
             .with(body<LoginRequest>())
             .isHandledBy(loginHandler)
     }
-}
+//}

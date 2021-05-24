@@ -2,12 +2,11 @@ package pl.propertea.db
 
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.jodatime.datetime
-import pl.propertea.db.CommentsTable.references
 import pl.propertea.models.IssueStatus
 import pl.propertea.models.ResolutionResult
 
 val schema = arrayOf(
-    Owners,
+    Users,
     OwnerMembership,
     ResolutionVotes,
     ResolutionsTable,
@@ -17,9 +16,18 @@ val schema = arrayOf(
     BulletinTable,
     IssuesTable,
     AnswerTable,
+    AdminCommunities,
 )
 
-object Owners : Table() {
+object AdminCommunities: Table("admin_communities") {
+    val id = text("id")
+    val adminId = text("admin_id").references(Users.id)
+    val communityId = text("community_id").references(Communities.id)
+
+    override val primaryKey = PrimaryKey(id)
+}
+
+object Users : Table() {
     val id = text("id")
     val username = text("username").uniqueIndex()
     val password = text("password")
@@ -71,7 +79,7 @@ object Owners : Table() {
 
 object OwnerMembership : Table("owner_membership") {
     val id = text("id")
-    val ownerId = text("owner_id").references(Owners.id)
+    val ownerId = text("owner_id").references(Users.id)
     val communityId = text("community_id").references(Communities.id)
     val shares = integer("shares")
 
@@ -115,7 +123,7 @@ enum class PGResolutionResult {
 
 object ResolutionVotes : Table() {
     val id = text("id")
-    val ownerId= text("owner_id").references(Owners.id)
+    val ownerId= text("owner_id").references(Users.id)
     val resolutionId = text("resolution_id").references(ResolutionsTable.id)
     val vote = enumeration("vote", PGVote::class)
     val shares = integer("shares")
@@ -159,7 +167,7 @@ object BulletinTable : Table("bulletins"){
 object TopicsTable : Table("topics") {
     val id = text("id")
     val communityId = text("community_id").references(Communities.id)
-    val authorOwnerId = text("author_owner_id").references(Owners.id)
+    val authorOwnerId = text("author_owner_id").references(Users.id)
     val createdAt = datetime("createdAt")
     val subject = text("subject")
     val description = text("description")
@@ -167,9 +175,10 @@ object TopicsTable : Table("topics") {
     override val primaryKey = PrimaryKey(id)
 }
 
+
 object CommentsTable : Table("comments") {
     val id = text("id")
-    val authorOwnerId = text("author_owner_id").references(Owners.id)
+    val authorOwnerId = text("author_owner_id").references(Users.id)
     val topicId = text("topic_id").references(TopicsTable.id)
     val createdAt = datetime("createdAt")
     val content = text("content")
@@ -183,15 +192,16 @@ object IssuesTable : Table("issues"){
     val description = text("description")
     val attachments = text("attachments")
     val createdAt = datetime("createdAt")
-    val authorOwnerId = text("author_owner_id").references(Owners.id)
+    val authorOwnerId = text("author_owner_id").references(Users.id)
     val communityId = text("community_id").references(Communities.id)
     val status = enumeration("status",PGIssueStatus::class)
 
     override val primaryKey = PrimaryKey(id)
 }
+
 object AnswerTable : Table("issue_comment_table"){
     val id = text("id")
-    val authorOwnerId = text("author_owner_id").references(Owners.id)
+    val authorOwnerId = text("author_owner_id").references(Users.id)
     val issueId = text("issue_id").references(IssuesTable.id)
     val createdAt = datetime("createdAt")
     val description = text("description")

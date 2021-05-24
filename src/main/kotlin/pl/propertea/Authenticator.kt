@@ -6,11 +6,12 @@ import pl.propertea.common.CommonModule.clock
 import pl.propertea.models.AuthToken
 import pl.propertea.models.OwnerId
 import pl.propertea.models.PermissionTypes
+import pl.propertea.models.UserId
 
 interface Authenticator {
     fun getPermissionType(authToken: AuthToken): PermissionTypes?
     fun verify(authToken: String): DecodedJWT
-    fun getTokenWithPermission(ownerId: OwnerId, permission: PermissionTypes?): String
+    fun getTokenWithPermission(userId: UserId, permission: PermissionTypes?): String
     fun checkPermission(authToken: AuthToken, permission: PermissionTypes)
 }
 
@@ -37,14 +38,16 @@ class JWTAuthenticator : Authenticator {
         }
     }
 
-    override fun getTokenWithPermission(ownerId: OwnerId, permission: PermissionTypes?): String = JWT
+    override fun getTokenWithPermission(userId: UserId, permission: PermissionTypes?): String = JWT
         .create()
         .withIssuer("auth0")
         .withClaim("permission", permission.toString())
-        .apply { if (permission == PermissionTypes.Owner) withClaim("ownerId", ownerId.id) }
+        .apply {
+            if (permission == PermissionTypes.Owner) withClaim("ownerId", userId.id)
+            else withClaim("adminId", userId.id)
+        }
         .withExpiresAt(clock().getDateTime().plusWeeks(1).toDate())
         .sign(algorithm)
 }
-
 
 class ForbiddenException : Exception()

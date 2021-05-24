@@ -9,8 +9,8 @@ import pl.propertea.models.*
 
 interface IssuesRepository {
 
-    fun getIssues(id: CommunityId): List<IssueWithOwner>
-    fun getIssue(id: IssueId): Issue?
+    fun getIssues(userId: UserId): List<IssueWithOwner>
+    fun getIssue(id: IssueId): IssueWithOwner?
     fun createIssue(issueCreation: IssueCreation): IssueId
     fun createAnswer(answerCreation: AnswerCreation): AnswerId
     fun getAnswers(id: IssueId): List<AnswerWithOwners>
@@ -23,21 +23,37 @@ class PostgresIssuesRepository(
     private val clock: Clock
 ) : IssuesRepository {
 
-    override fun getIssues(communityId: CommunityId): List<IssueWithOwner> = transaction(database) {
-        IssuesTable
-            .leftJoin(Owners)
-            .leftJoin(AnswerTable)
-            .slice(IssuesTable.columns + Owners.columns + AnswerTable.issueId.count())
-            .select { IssuesTable.communityId eq communityId.id }
-            .groupBy(IssuesTable.id, Owners.id)
-            .orderBy(IssuesTable.createdAt, SortOrder.DESC)
-            .map { IssueWithOwner(it.readOwner(), it.readIssue()) }
+    override fun getIssues(userId: UserId): List<IssueWithOwner> = transaction(database) {
+        when (userId) {
+            is OwnerId -> IssuesTable
+                .leftJoin(Users)
+                .leftJoin(AnswerTable)
+                .slice(IssuesTable.columns + Users.columns + AnswerTable.issueId.count())
+                .select { IssuesTable.authorOwnerId eq userId.id }
+                .groupBy(IssuesTable.id, Users.id)
+                .orderBy(IssuesTable.createdAt, SortOrder.DESC)
+                .map { IssueWithOwner(it.readOwner(), it.readIssue()) }
+            is AdminId -> {
+                val communities = AdminCommunities
+                    .select { AdminCommunities.adminId eq userId.id }
+                    .map { it[AdminCommunities.communityId] }
+                IssuesTable
+                    .leftJoin(Users)
+                    .leftJoin(AnswerTable)
+                    .slice(IssuesTable.columns + Users.columns + AnswerTable.issueId.count())
+                    .select { IssuesTable.communityId inList communities  }
+                    .groupBy(IssuesTable.id, Users.id)
+                    .orderBy(IssuesTable.createdAt, SortOrder.DESC)
+                    .map { IssueWithOwner(it.readOwner(), it.readIssue()) }
+            }
+        }
     }
 
-    override fun getIssue(id: IssueId): Issue? = transaction(database) {
+    override fun getIssue(id: IssueId): IssueWithOwner? = transaction(database) {
         IssuesTable
+            .leftJoin(Users)
             .select { IssuesTable.id eq id.id }
-            .map { it.readIssue() }
+            .map { IssueWithOwner(it.readOwner(), it.readIssue()) }
             .firstOrNull()
     }
 
@@ -74,8 +90,8 @@ class PostgresIssuesRepository(
 
     override fun getAnswers(id: IssueId): List<AnswerWithOwners> = transaction(database) {
         AnswerTable
-            .leftJoin(Owners)
-            .slice(Owners.columns + AnswerTable.columns)
+            .leftJoin(Users)
+            .slice(Users.columns + AnswerTable.columns)
             .select { AnswerTable.issueId eq id.id }
             .orderBy(AnswerTable.createdAt, SortOrder.DESC)
             .map { AnswerWithOwners(it.readOwner(), it.readAnswer()) }

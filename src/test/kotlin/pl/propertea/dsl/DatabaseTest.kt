@@ -36,7 +36,7 @@ abstract class DatabaseTest(
     val <T> List<T>.evenlyIndexed get() =  this.filterIndexed { index, _ -> index % 2 == 0 }
 
     infix fun OwnerInsertion.putIn(rep: OwnersRepository) =
-        (rep.createOwner(
+        (rep.createUser(
             communities = communities,
             username = owner.username,
             password = password,

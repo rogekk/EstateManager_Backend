@@ -38,3 +38,40 @@ data class CreateCommunityMembershipRequest(val shares: Int)
 
 
 data class CreateCommentRequest(val content: String)
+
+data class IssueRequest(val subject: String,
+                        val description: String,
+                        val attachments: String
+                        )
+data class IssueStatusRequest(
+    val status: StatusRequest,
+)
+
+fun StatusRequest.toDomain() = when(this) {
+    StatusRequest.new -> IssueStatus.NEW
+    StatusRequest.recived -> IssueStatus.RECEIVED
+    StatusRequest.in_progress -> IssueStatus.IN_PROGRESS
+    StatusRequest.closed -> IssueStatus.CLOSED
+    StatusRequest.re_opend -> IssueStatus.RE_OPENED
+}
+
+enum class StatusRequest{
+    new, recived, in_progress, closed, re_opend
+}
+
+data class CreateAnswerRequest(val description: String)
+
+data class ResolutionResultRequest(
+    val result: ResultRequest,
+)
+
+fun ResultRequest.toDomain() = when(this){
+    ResultRequest.approved -> ResolutionResult.APPROVED
+    ResultRequest.rejected -> ResolutionResult.REJECTED
+    ResultRequest.open_for_voting -> ResolutionResult.OPEN_FOR_VOTING
+    ResultRequest.cancaled -> ResolutionResult.CANCELED
+}
+
+enum class ResultRequest{
+    approved, rejected, open_for_voting, cancaled
+}
