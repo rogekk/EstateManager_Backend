@@ -7,10 +7,9 @@ import io.mockk.verify
 import org.junit.Test
 import pl.propertea.dsl.Mocks
 import pl.propertea.dsl.SparkTest
+import pl.propertea.models.Permission.*
 import pl.propertea.dsl.relaxed
 import pl.propertea.models.*
-import pl.propertea.models.PermissionTypes.Manager
-import pl.propertea.models.PermissionTypes.Superior
 import pl.propertea.repositories.RepositoriesModule.communityRepository
 import pl.propertea.tools.json
 import ro.kreator.aRandom
@@ -29,7 +28,7 @@ class CommunitiesHttpTest : SparkTest({ Mocks(communityRepository.relaxed) }) {
                 "name" _ "name"
                 "totalShares" _ 50
             })
-            .verifyPermissions(Manager)
+            .verifyPermissions(CanCreateCommunity)
             .expectCode(201)
 
         verify { communityRepository().createCommunity(Community(CommunityId("id"), "name", 50)) }
@@ -38,7 +37,7 @@ class CommunitiesHttpTest : SparkTest({ Mocks(communityRepository.relaxed) }) {
     @Test
     fun `creates a community membership`() {
         PUT("/v1/communities/${community.id.id}/members/${ownerId.id}")
-            .verifyPermissions(Manager)
+            .verifyPermissions(CanCreateCommunityMemberships)
             .withBody(json { "shares" _ 100 })
             .expectCode(201)
 
@@ -48,7 +47,7 @@ class CommunitiesHttpTest : SparkTest({ Mocks(communityRepository.relaxed) }) {
     @Test
     fun `removes an owner from a community`() {
         DELETE("/v1/communities/${community.id.id}/members/${ownerId.id}")
-            .verifyPermissions(Superior)
+            .verifyPermissions(CanRemoveCommunityMemberships)
             .withBody(json { "shares" _ 100 })
             .expectCode(200)
 
@@ -61,7 +60,7 @@ class CommunitiesHttpTest : SparkTest({ Mocks(communityRepository.relaxed) }) {
 
         GET("/v1/communities")
             .authenticated(owner.id)
-            .verifyPermissions(Manager)
+            .verifyPermissions(CanSeeAllCommunities)
             .expect {
                 it.text.parseJson<CommunitiesResponse>().communities.map {
                     it.id

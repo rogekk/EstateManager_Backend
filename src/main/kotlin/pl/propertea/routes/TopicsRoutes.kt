@@ -1,9 +1,8 @@
 import com.snitch.Router
 import com.snitch.body
 import pl.propertea.handlers.topics.*
+import pl.propertea.models.Permission.*
 import pl.propertea.models.CreateCommentRequest
-import pl.propertea.models.PermissionTypes
-import pl.propertea.models.PermissionTypes.Manager
 import pl.propertea.models.TopicRequest
 import pl.propertea.routes.*
 
@@ -33,12 +32,12 @@ fun Router.topicsRoutes() {
 
         DELETE("/communities" / communityId / "topics" / topicId)
             .inSummary("Deletes a Topic")
-            .restrictTo(Manager)
+            .withPermission(CanDeleteTopic)
             .isHandledBy(deleteTopicHandler)
 
         DELETE("/communities" / communityId / "topics" / topicId / "comments" / commentId)
             .inSummary("Deletes a Comment")
-            .restrictTo(Manager)
+            .withPermission(CanDeleteComment)
             .isHandledBy(deleteCommentHandler)
     }
 //}

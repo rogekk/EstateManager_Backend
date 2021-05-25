@@ -12,29 +12,27 @@ import pl.propertea.dsl.SparkTest
 import pl.propertea.dsl.relaxed
 import pl.propertea.dsl.strict
 import pl.propertea.models.*
-import pl.propertea.repositories.NotVerified
 import pl.propertea.repositories.OwnerCreated
-import pl.propertea.repositories.RepositoriesModule.ownersRepository
-import pl.propertea.repositories.Verified
+import pl.propertea.repositories.RepositoriesModule.usersRepository
 import pl.propertea.tools.json
+import pl.propertea.models.Permission.*
 import ro.kreator.aRandom
 
-class AuthHttpTest : SparkTest({ Mocks(clock.strict, ownersRepository.relaxed) }) {
+class AuthHttpTest : SparkTest({ Mocks(clock.strict, usersRepository.relaxed) }) {
     val createOwnerRequest by aRandom <CreateOwnerRequest>()
+    val admin by aRandom<Admin>()
 
     @Test
     fun `creates an owner`() {
         every { clock().getDateTime() } returns now
-        every { ownersRepository().createUser(any(), any(), any(), any(), any(), any(), any()) } returns OwnerCreated(
-            OwnerId("hey")
-        )
+        every { usersRepository().createOwner(any(), any(), any(), any(), any(), any(), any()) } returns OwnerCreated( OwnerId("hey") )
 
         POST("/v1/owners")
             .withBody(createOwnerRequest)
-            .verifyPermissions(PermissionTypes.Superior)
+            .verifyPermissions(CanCreateOwner)
             .expectCode(201)
 
-        verify { ownersRepository().createUser(
+        verify { usersRepository().createOwner(
             createOwnerRequest.memberships.map { CommunityId(it.communityId) to Shares(it.shares) },
             createOwnerRequest.username,
             createOwnerRequest.password,
@@ -45,10 +43,9 @@ class AuthHttpTest : SparkTest({ Mocks(clock.strict, ownersRepository.relaxed) }
         ) }
     }
 
-
     @Test
     fun `returns success for successful login`() {
-        every { ownersRepository().checkOwnersCredentials("foo", "pass") } returns owner.id
+        every { usersRepository().checkCredentials("foo", "pass") } returns Authorization(owner.id.id, UserTypes.OWNER, emptyList())
         every { clock().getDateTime() } returns now
 
         POST("/v1/login")
@@ -61,15 +58,15 @@ class AuthHttpTest : SparkTest({ Mocks(clock.strict, ownersRepository.relaxed) }
 
     @Test
     fun `returns failure for unsuccessful login`() {
-        every { ownersRepository().checkOwnersCredentials("a", "b") } returns null
+        every { usersRepository().checkCredentials("a", "b") } returns null
 
         POST("/v1/login").withBody(json { "username" _ "a"; "password" _ "b" }).expectCode(403)
     }
 
     @Test
-    fun `after successful login sets a valid JWT`() {
-        every { ownersRepository().getProfile(owner.id) } returns OwnerProfile(owner, emptyList())
-        every { ownersRepository().checkOwnersCredentials(owner.username, "b") } returns owner.id
+    fun `after successful login sets a valid JWT for owner`() {
+        every { usersRepository().getProfile(owner.id) } returns OwnerProfile(owner, emptyList())
+        every { usersRepository().checkCredentials(owner.username, "b") } returns Authorization(owner.id.id, UserTypes.OWNER, emptyList())
         every { clock().getDateTime() } returns now
 
         POST("/v1/login")
@@ -86,6 +83,19 @@ class AuthHttpTest : SparkTest({ Mocks(clock.strict, ownersRepository.relaxed) }
                         "communities" _ emptyList<String>()
                     })
             }
+            .expect {
+                expect that DateTime(authenticator().verify(it.headers["token"]!!).expiresAt) isEqualTo now.plusWeeks(1).roundedToSecond()
+            }
+    }
+
+    @Test
+    fun `after successful login sets a valid JWT for admin`() {
+//        every { usersRepository().getProfile(admin.id) } returns OwnerProfile(owner, emptyList())
+        every { usersRepository().checkCredentials(admin.username, "b") } returns Authorization(admin.id.id, UserTypes.ADMIN, emptyList())
+        every { clock().getDateTime() } returns now
+
+        POST("/v1/login")
+            .withBody(json { "username" _ admin.username; "password" _ "b" })
             .expect {
                 expect that DateTime(authenticator().verify(it.headers["token"]!!).expiresAt) isEqualTo now.plusWeeks(1).roundedToSecond()
             }

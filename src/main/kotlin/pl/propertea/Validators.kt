@@ -1,4 +1,6 @@
 import com.snitch.Validator
+import com.snitch.extensions.json
+import com.snitch.extensions.parseJson
 import org.joda.time.DateTime
 import pl.propertea.common.CommonModule.authenticator
 import pl.propertea.models.*
@@ -18,22 +20,28 @@ object AuthTokenValidator : Validator<String, AuthToken> {
     override val description = "The auth token"
     override val regex = ".*".toRegex()
     override val parse = { value: String ->
-        val jwt = authenticator().verify(value)
-        val p = PermissionTypes.fromString(jwt.claims["permission"]?.asString())?.let { setOf(it) } ?: emptySet()
 
-        val type = jwt.claims["permission"]?.asString()
-        val userId: UserId? = when (type) {
-            "Owner" -> jwt.claims["ownerId"]?.asString()?.let { OwnerId(it) }
-            "Manager" -> jwt.claims["adminId"]?.asString()?.let { AdminId(it) }
-            "Superior" -> jwt.claims["adminId"]?.asString()?.let { AdminId(it) }
+        val authorization = authenticator().getAuthorization(value)
+
+        val userId: UserId? = when (authorization?.userType) {
+            UserTypes.OWNER -> OwnerId(authorization.userId)
+            UserTypes.MANAGER -> ManagerId(authorization.userId)
+            UserTypes.ADMIN -> AdminId(authorization.userId)
             else -> null
         }
 
+        if (authorization == null || userId == null) throw ForbiddenException()
+
         AuthToken(
             token = value,
-            expiresAt = DateTime(jwt.expiresAt),
-            claims = Claims(p),
-            userId = userId!!,
+            expiresAt = DateTime(authenticator().verify(value).expiresAt),
+            authorization = authorization.copy(userId = userId.id)
         )
     }
+}
+
+fun main() {
+    Authorization("foobar", UserTypes.OWNER, listOf())
+        .json
+        .parseJson<Authorization>()
 }

@@ -5,19 +5,17 @@ import com.snitch.extensions.json
 import io.mockk.every
 import io.mockk.verify
 import org.junit.Test
-import pl.propertea.common.CommonModule.authenticator
 import pl.propertea.dsl.Mocks
 import pl.propertea.dsl.SparkTest
 import pl.propertea.dsl.relaxed
-import pl.propertea.models.AuthToken
 import pl.propertea.models.Community
 import pl.propertea.models.OwnerProfile
-import pl.propertea.repositories.RepositoriesModule.ownersRepository
+import pl.propertea.repositories.RepositoriesModule.usersRepository
 import pl.propertea.tools.json
 import pl.propertea.tools.l
 import ro.kreator.aRandomListOf
 
-class ProfileHttpTest : SparkTest({ Mocks(ownersRepository.relaxed) }) {
+class ProfileHttpTest : SparkTest({ Mocks(usersRepository.relaxed) }) {
     val communities by aRandomListOf<Community>(2)
 
     @Test
@@ -30,12 +28,12 @@ class ProfileHttpTest : SparkTest({ Mocks(ownersRepository.relaxed) }) {
             })
             .authenticated(owner.id)
             .expectCode(200)
-        verify { ownersRepository().updateOwnersDetails(owner.id, "email", "address", "phoneNumber") }
+        verify { usersRepository().updateUserDetails(owner.id, "email", "address", "phoneNumber") }
     }
 
     @Test
     fun `gets user profile`() {
-        every { ownersRepository().getProfile(owner.id) } returns OwnerProfile(owner, communities)
+        every { usersRepository().getProfile(owner.id) } returns OwnerProfile(owner, communities)
 
         GET("/v1/owners/${owner.id.id}")
             .authenticated(owner.id)

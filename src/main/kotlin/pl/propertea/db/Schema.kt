@@ -1,8 +1,10 @@
 package pl.propertea.db
 
+import com.snitch.enum
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.jodatime.datetime
 import pl.propertea.models.IssueStatus
+import pl.propertea.models.Permission
 import pl.propertea.models.ResolutionResult
 
 val schema = arrayOf(
@@ -17,6 +19,7 @@ val schema = arrayOf(
     IssuesTable,
     AnswerTable,
     AdminCommunities,
+    UserPermissions,
 )
 
 object AdminCommunities: Table("admin_communities") {
@@ -35,8 +38,67 @@ object Users : Table() {
     val phoneNumber = text("phone_number")
     val profileImageUrl = text("profile_image_url").nullable()
     val address = text("address")
+    val userType = enumeration("user_type", PGUserType::class)
 
     override val primaryKey = PrimaryKey(id)
+}
+
+enum class PGUserType {
+    ADMIN, MANAGER, OWNER
+}
+
+object UserPermissions: Table("user_permissions") {
+    val id = text("id")
+    val userId = text("user_id").references(Users.id)
+    val permission = enumeration("permission", PGPermission::class)
+
+    override val primaryKey = PrimaryKey(id)
+}
+
+enum class PGPermission {
+    CanCreateCommunity,
+    CanSeeCommunity,
+    CanCreateCommunityMemberships,
+    CanRemoveCommunityMemberships,
+    CanSeeAllCommunities,
+    CanCreateOwner,
+    CanCreateBulletin,
+    CanUpdateIssueStatus,
+    CanCreateResolution,
+    CanUpdateResolutionStatus,
+    CanDeleteTopic,
+    CanDeleteComment;
+
+    fun toDomain() =
+        when (this) {
+            CanCreateCommunity -> Permission.CanCreateCommunity
+            CanSeeCommunity -> Permission.CanSeeCommunity
+            CanCreateCommunityMemberships -> Permission.CanCreateCommunityMemberships
+            CanRemoveCommunityMemberships -> Permission.CanRemoveCommunityMemberships
+            CanSeeAllCommunities -> Permission.CanSeeAllCommunities
+            CanCreateOwner -> Permission.CanCreateOwner
+            CanCreateBulletin -> Permission.CanCreateBulletin
+            CanUpdateIssueStatus -> Permission.CanUpdateIssueStatus
+            CanCreateResolution -> Permission.CanCreateResolution
+            CanUpdateResolutionStatus -> Permission.CanUpdateResolutionStatus
+            CanDeleteTopic -> Permission.CanDeleteTopic
+            CanDeleteComment -> Permission.CanDeleteComment
+        }
+}
+
+fun Permission.toDb() = when (this) {
+    is Permission.CanCreateCommunity -> PGPermission.CanCreateCommunity
+    is Permission.CanSeeCommunity -> PGPermission.CanSeeCommunity
+    is Permission.CanCreateCommunityMemberships -> PGPermission.CanCreateCommunityMemberships
+    is Permission.CanRemoveCommunityMemberships -> PGPermission.CanRemoveCommunityMemberships
+    is Permission.CanSeeAllCommunities -> PGPermission.CanSeeAllCommunities
+    is Permission.CanCreateOwner -> PGPermission.CanCreateOwner
+    is Permission.CanCreateBulletin -> PGPermission.CanCreateBulletin
+    is Permission.CanUpdateIssueStatus -> PGPermission.CanUpdateIssueStatus
+    is Permission.CanCreateResolution -> PGPermission.CanCreateResolution
+    is Permission.CanUpdateResolutionStatus -> PGPermission.CanUpdateResolutionStatus
+    is Permission.CanDeleteTopic -> PGPermission.CanDeleteTopic
+    is Permission.CanDeleteComment -> PGPermission.CanDeleteComment
 }
 
 //object Apartment : Table() {

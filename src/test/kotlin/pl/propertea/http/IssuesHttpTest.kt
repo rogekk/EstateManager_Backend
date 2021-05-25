@@ -1,6 +1,7 @@
 package pl.propertea.http
 
 import com.memoizr.assertk.isEqualTo
+import pl.propertea.models.Permission.*
 import com.snitch.extensions.parseJson
 import io.mockk.every
 import io.mockk.verify
@@ -33,9 +34,7 @@ class IssuesHttpTest : SparkTest({
     val updateRequest by aRandom<IssueStatusRequest>()
     val expectedAnswers by aRandomListOf<AnswerWithOwners>{ map{ it.copy(owner = owner)}}
 
-    val admin by aRandom<Admin>()
-
-
+    val manager by aRandom<Manager>()
 
     @Before
     fun before() {
@@ -55,15 +54,15 @@ class IssuesHttpTest : SparkTest({
     }
 
     @Test
-    fun `returns a list of issues for the admin`() {
-        every { issueRepository().getIssues(admin.id) } returns issues
+    fun `returns a list of issues for the manager`() {
+        every { issueRepository().getIssues(manager.id) } returns issues
 
         whenPerform
             .GET("/v1/communities/${communityId.id}/issues")
-            .authenticated(admin.id)
+            .authenticated(manager.id)
             .expectBodyJson(issues.toResponse())
 
-        verify { issueRepository().getIssues(admin.id) }
+        verify { issueRepository().getIssues(manager.id) }
     }
 
     @Test
@@ -114,7 +113,7 @@ class IssuesHttpTest : SparkTest({
 
         PATCH("/v1/communities/${communityId.id}/issues/${issueId.id}")
             .withBody(updateRequest)
-            .verifyPermissions(PermissionTypes.Manager)
+            .verifyPermissions(CanUpdateIssueStatus)
             .expectCode(200)
 
         verify { issueRepository().updateIssuesStatus(issueId, updateRequest.status.toDomain()) }

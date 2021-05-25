@@ -4,12 +4,12 @@ import com.snitch.*
 import pl.propertea.common.CommonModule.authenticator
 import pl.propertea.models.*
 import pl.propertea.repositories.*
-import pl.propertea.repositories.RepositoriesModule.ownersRepository
+import pl.propertea.repositories.RepositoriesModule.usersRepository
 import pl.propertea.routes.setHeader
 
 
 val createOwnerHandler: Handler<CreateOwnerRequest, GenericResponse> = {
-    when (ownersRepository().createUser(
+    when (usersRepository().createOwner(
         body.memberships.map { CommunityId(it.communityId) to Shares(it.shares) },
         body.username,
         body.password,
@@ -24,10 +24,16 @@ val createOwnerHandler: Handler<CreateOwnerRequest, GenericResponse> = {
 }
 
 val loginHandler: Handler<LoginRequest, LoginResponse> = {
-    ownersRepository().checkOwnersCredentials(body.username, body.password)
+    usersRepository().checkCredentials(body.username, body.password)
         ?.let {
-            val token = authenticator().getTokenWithPermission(it, PermissionTypes.Owner)
+            val userId = when (it.userType) {
+                UserTypes.ADMIN -> AdminId(it.userId)
+                UserTypes.MANAGER -> ManagerId(it.userId)
+                UserTypes.OWNER -> OwnerId(it.userId)
+            }
+
+            val token = authenticator().getToken(userId, it)
             setHeader("Token", token)
-            LoginResponse(id = it.id, token = token).ok
+            LoginResponse(id = userId.id, token = token).ok
         } ?: forbidden("invalid login credentials")
 }

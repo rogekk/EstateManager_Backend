@@ -2,16 +2,16 @@ import com.snitch.Router
 import com.snitch.body
 import pl.propertea.handlers.auth.createOwnerHandler
 import pl.propertea.handlers.auth.loginHandler
-import pl.propertea.models.CreateOwnerRequest
-import pl.propertea.models.LoginRequest
-import pl.propertea.models.PermissionTypes
+import pl.propertea.models.*
 import pl.propertea.routes.restrictTo
+import pl.propertea.routes.withPermission
 
 fun Router.authenticationRoutes() {
 //    "auth" {
         POST("/owners")
             .inSummary("Creates a new owner")
-            .restrictTo(PermissionTypes.Superior)
+//            .restrictTo(UserTypes.M.Superior)
+            .withPermission(Permission.CanCreateOwner)
             .with(body<CreateOwnerRequest>())
             .isHandledBy(createOwnerHandler)
 

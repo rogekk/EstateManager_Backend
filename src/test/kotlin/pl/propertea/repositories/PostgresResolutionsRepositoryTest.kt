@@ -14,7 +14,7 @@ import pl.propertea.dsl.Mocks
 import pl.propertea.dsl.strict
 import pl.propertea.models.*
 import pl.propertea.repositories.RepositoriesModule.communityRepository
-import pl.propertea.repositories.RepositoriesModule.ownersRepository
+import pl.propertea.repositories.RepositoriesModule.usersRepository
 import pl.propertea.repositories.RepositoriesModule.resolutionsRepository
 import ro.kreator.aRandom
 import ro.kreator.aRandomListOf
@@ -57,7 +57,7 @@ class PostgresResolutionsRepositoryTest : DatabaseTest({ Mocks(clock.strict) }) 
 
     @After
     fun after() {
-        ownersRepository.override(null)
+        usersRepository.override(null)
     }
 
     @Test
@@ -91,9 +91,9 @@ class PostgresResolutionsRepositoryTest : DatabaseTest({ Mocks(clock.strict) }) 
     fun `adds votes to resolution`() {
         val id = resolution putIn resolutionsRepository()
 
-        val owner1Id = owner1 with 10.shares inThis community.id putIn ownersRepository()
-        val owner2Id = owner2 with 30.shares inThis community.id putIn ownersRepository()
-        val owner3Id = owner3 with 100.shares inThis community.id putIn ownersRepository()
+        val owner1Id = owner1 with 10.shares inThis community.id putIn usersRepository()
+        val owner2Id = owner2 with 30.shares inThis community.id putIn usersRepository()
+        val owner3Id = owner3 with 100.shares inThis community.id putIn usersRepository()
 
         expect that resolutionsRepository().getResolution(id)?.sharesPro isEqualTo 0
 
@@ -109,7 +109,7 @@ class PostgresResolutionsRepositoryTest : DatabaseTest({ Mocks(clock.strict) }) 
     fun `it does not allow double voting`() {
         val id = resolution putIn resolutionsRepository()
 
-        val owner1Id = owner1 with 10.shares inThis community.id putIn ownersRepository()
+        val owner1Id = owner1 with 10.shares inThis community.id putIn usersRepository()
 
         expect that resolutionsRepository().getResolution(id)?.sharesPro isEqualTo 0
 
@@ -156,7 +156,7 @@ class PostgresResolutionsRepositoryTest : DatabaseTest({ Mocks(clock.strict) }) 
 
     @Test
     fun `can tell if an owner has already voted in a resolution`() {
-        val ownerId = owner1 inThis community.id putIn ownersRepository()
+        val ownerId = owner1 inThis community.id putIn usersRepository()
         val id = resolution putIn resolutionsRepository()
 
         expect that resolutionsRepository().hasVoted(ownerId, id) _is false

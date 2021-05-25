@@ -1,11 +1,10 @@
 package pl.propertea.models
 
+import com.snitch.Sealed
 import org.joda.time.DateTime
 
 
 data class TopicId(val id: String)
-data class OwnerId(override val id: String): UserId()
-data class AdminId(override val id: String): UserId()
 data class CommunityId(val id: String)
 data class CommentId(val id: String)
 data class ResolutionId(val id: String)
@@ -14,28 +13,43 @@ data class IssueId(val id: String)
 data class AnswerId(val id: String)
 data class Shares(val value: Int)
 
-sealed class UserId {
+
+data class OwnerId(override val id: String): UserId()
+data class ManagerId(override val id: String): UserId()
+data class AdminId(override val id: String): UserId()
+
+sealed class UserId: Sealed() {
     abstract val id: String
 }
 
 //Authentication
-data class AuthToken(val token: String, val expiresAt: DateTime, val claims: Claims, val userId: UserId)
-data class Claims(
-    val permissions: Set<PermissionTypes>
+data class AuthToken(val token: String, val expiresAt: DateTime, val authorization: Authorization)
+
+data class Authorization(
+    val userId: String,
+    val userType: UserTypes,
+    val permissions: List<Permission>
 )
-enum class PermissionTypes {
-    Superior, Manager, Owner;
 
-    companion object {
-        fun fromString(string: String?): PermissionTypes? = when (string) {
-            Superior.name -> Superior
-            Manager.name -> Manager
-            Owner.name -> Owner
-            else -> null
-        }
-
-    }
+enum class UserTypes {
+    ADMIN, MANAGER, OWNER
 }
+
+sealed class Permission: Sealed() {
+    object CanCreateCommunity : Permission()
+    object CanSeeCommunity : Permission()
+    object CanCreateCommunityMemberships : Permission()
+    object CanRemoveCommunityMemberships : Permission()
+    object CanSeeAllCommunities : Permission()
+    object CanCreateOwner : Permission()
+    object CanCreateBulletin : Permission()
+    object CanUpdateIssueStatus : Permission()
+    object CanCreateResolution : Permission()
+    object CanUpdateResolutionStatus : Permission()
+    object CanDeleteTopic : Permission()
+    object CanDeleteComment : Permission()
+}
+
 
 //Bulletins
 data class Bulletin(
@@ -188,6 +202,14 @@ sealed class User {
     abstract val address: String
     abstract val profileImageUrl: String?
 }
+data class Manager(
+    override val id: AdminId,
+    override val username: String,
+    override val email: String,
+    override val phoneNumber: String,
+    override val address: String,
+    override val profileImageUrl: String?,
+): User()
 
 data class Admin(
     override val id: AdminId,
