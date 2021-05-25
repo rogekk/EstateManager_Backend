@@ -19,7 +19,7 @@ fun <T : Any> Endpoint<T>.restrictTo(userType: UserTypes) =
 fun <T : Any> Endpoint<T>.withPermission(permission: Permission) =
     withHeader(authTokenHeader)
         .copy(
-            summary = "${summary.orEmpty()} | With Permission: $permission",
+            summary = "${summary.orEmpty()} | With Permission: ${permission::class.simpleName}",
             before = { if (permission !in it[authTokenHeader].authorization.permissions) throw ForbiddenException() })
 
 fun RequestHandler<*>.authenticatedUser(): UserId {

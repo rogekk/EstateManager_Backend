@@ -11,9 +11,8 @@ fun Router.bulletinsRoutes() {
     "bulletins" {
         POST("/communities" / communityId / "bulletins")
             .inSummary("Creates a new bulletin")
-//            .restrictTo(PermissionTypes.Manager)
-            .withPermission(CanCreateBulletin)
             .with(body<BulletinRequest>())
+            .withPermission(CanCreateBulletin)
             .isHandledBy(createBulletinHandler)
 
         GET("/communities" / communityId / "bulletins")

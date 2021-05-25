@@ -9,7 +9,7 @@ import pl.propertea.models.Permission.*
 import pl.propertea.routes.*
 
 fun Router.communitiesRoutes() {
-//    "communities" {
+    "communities" {
         POST("/communities")
             .with(body<CommunityRequest>())
             .inSummary("Creates a new community")
@@ -32,4 +32,4 @@ fun Router.communitiesRoutes() {
             .withPermission(CanRemoveCommunityMemberships)
             .isHandledBy(deleteMembershipHandler)
     }
-//}
+}

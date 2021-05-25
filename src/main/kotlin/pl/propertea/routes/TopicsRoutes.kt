@@ -7,7 +7,7 @@ import pl.propertea.models.TopicRequest
 import pl.propertea.routes.*
 
 fun Router.topicsRoutes() {
-//    "topics" {
+    "topics" {
         GET("/communities" / communityId / "topics")
             .inSummary("Gets all the topics in the community")
             .authenticated()
@@ -40,4 +40,4 @@ fun Router.topicsRoutes() {
             .withPermission(CanDeleteComment)
             .isHandledBy(deleteCommentHandler)
     }
-//}
+}
