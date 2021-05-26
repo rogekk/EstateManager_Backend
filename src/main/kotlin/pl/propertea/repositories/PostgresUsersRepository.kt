@@ -62,15 +62,15 @@ class PostgresUsersRepository(private val database: Database, private val idGene
 
     override fun getProfile(id: UserId): OwnerProfile = transaction(database) {
         OwnerMembership
-            .leftJoin(Communities)
+            .leftJoin(CommunitiesTable)
             .leftJoin(Users)
-            .slice(Communities.columns + Users.columns + OwnerMembership.shares)
+            .slice(CommunitiesTable.columns + Users.columns + OwnerMembership.shares)
             .selectAll()
             .map {
                 it.readOwner() to Community(
-                    CommunityId(it[Communities.id]),
-                    it[Communities.name],
-                    it[Communities.totalShares]
+                    CommunityId(it[CommunitiesTable.id]),
+                    it[CommunitiesTable.name],
+                    it[CommunitiesTable.totalShares]
                 )
             }
             .groupBy { it.first }

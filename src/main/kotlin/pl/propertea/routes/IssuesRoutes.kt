@@ -11,7 +11,7 @@ import pl.propertea.models.IssueStatusRequest
 
 
 fun Router.issuesRoutes() {
-    "issues" {
+//    "issues" {
 //        GET("/communities" / communityId / "issues" / issueId / "answers")
 
         GET("/communities" / communityId / "issues")
@@ -42,4 +42,4 @@ fun Router.issuesRoutes() {
             .authenticated()
             .isHandledBy(createIssueHandler)
     }
-}
+//}

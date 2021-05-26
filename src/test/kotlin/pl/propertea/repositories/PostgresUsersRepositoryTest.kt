@@ -125,4 +125,6 @@ class PostgresUsersRepositoryTest : DatabaseTest() {
         expect that usersRepository().checkCredentials(owner.username, "password") isEqualTo Authorization(ownerId.id, UserTypes.OWNER, listOf(Permission.CanDeleteComment))
 
     }
+
+
 }

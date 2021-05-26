@@ -6,7 +6,7 @@ import pl.propertea.routes.*
 import pl.propertea.models.Permission.*
 
 fun Router.resolutionsRoutes() {
-    "resolutions" {
+//    "resolutions" {
         POST("/communities" / communityId / "resolutions")
             .with(body<ResolutionRequest>())
             .inSummary("Creates a new resolution")
@@ -35,4 +35,4 @@ fun Router.resolutionsRoutes() {
             .withPermission(CanUpdateResolutionStatus)
             .isHandledBy(updateResolutionsResultHandler)
     }
-}
+//}

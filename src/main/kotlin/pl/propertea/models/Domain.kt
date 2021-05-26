@@ -12,7 +12,8 @@ data class BulletinId(val id: String)
 data class IssueId(val id: String)
 data class AnswerId(val id: String)
 data class Shares(val value: Int)
-
+data class BuildingId(val id: String)
+data class UsableArea(val value: Int)
 
 data class OwnerId(override val id: String): UserId()
 data class ManagerId(override val id: String): UserId()
@@ -232,5 +233,18 @@ data class Owner(
 data class OwnerProfile(
     val owner: Owner,
     val communities: List<Community>
+)
+
+// Buildings
+
+data class Building(
+    val id: BuildingId,
+    val name: String,
+    val usableArea: Int
+)
+
+data class BuildingProfile(
+    val building: Building,
+    val community: List<Community>
 )
 

@@ -24,6 +24,9 @@ object RepositoriesModule : ShankModule {
         single<BulletinsRepository> { -> PostgresBulletinsRepository(readWriteDatabase(), idGenerator(), clock()) }
     val issueRepository =
         single<IssuesRepository> { -> PostgresIssuesRepository(readWriteDatabase(), idGenerator(), clock()) }
+
+    val buildingRepository =
+        single<BuildingRepository> { -> PostgresBuildingRepository(readWriteDatabase(), idGenerator()) }
 }
 
 

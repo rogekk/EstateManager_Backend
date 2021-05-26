@@ -8,7 +8,7 @@ import pl.propertea.models.Permission.CanCreateBulletin
 import pl.propertea.routes.*
 
 fun Router.bulletinsRoutes() {
-    "bulletins" {
+//    "bulletins" {
         POST("/communities" / communityId / "bulletins")
             .inSummary("Creates a new bulletin")
 //            .restrictTo(PermissionTypes.Manager)
@@ -26,4 +26,4 @@ fun Router.bulletinsRoutes() {
             .authenticated()
             .isHandledBy(getBulletinHandler)
     }
-}
+//}
