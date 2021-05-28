@@ -1,10 +1,9 @@
 package pl.propertea.routes
 
-import AuthTokenValidator
+import pl.propertea.AuthTokenValidator
 import authenticationRoutes
 import bulletinsRoutes
 import com.snitch.*
-import com.snitch.Enum
 import com.snitch.spark.SparkResponseWrapper
 import communitiesRoutes
 import ownersRoutes
@@ -12,7 +11,7 @@ import pl.propertea.models.*
 import resolutionsRoutes
 import spark.Service
 import topicsRoutes
-import ulid
+import pl.propertea.ulid
 
 val topicId = path("topicId", condition = ulid("topic", ::TopicId))
 val commentId = path("commentId", condition = ulid("comment", ::CommentId))

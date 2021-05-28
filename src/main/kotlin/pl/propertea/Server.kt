@@ -1,3 +1,5 @@
+package pl.propertea
+
 import com.snitch.*
 import com.snitch.documentation.generateDocs
 import com.snitch.spark.SparkSnitchService

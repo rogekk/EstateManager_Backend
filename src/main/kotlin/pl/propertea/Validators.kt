@@ -1,15 +1,17 @@
+package pl.propertea
+
+import ForbiddenException
 import com.snitch.Validator
 import com.snitch.extensions.json
 import com.snitch.extensions.parseJson
 import org.joda.time.DateTime
 import pl.propertea.common.CommonModule.authenticator
 import pl.propertea.models.*
-import java.lang.IllegalArgumentException
 
 val ulidRegex = """^[0-9a-zA-Z=_]{26}$""".toRegex(RegexOption.DOT_MATCHES_ALL)
 
 abstract class IdValidator<R>(val name: String, fn: (String) -> R) : Validator<String, R> {
-    override val description = "The Id of the $name, in ulid format"
+    override val description = "The Id of the $name, in pl.propertea.ulid format"
     override val regex = ulidRegex
     override val parse = fn
 }

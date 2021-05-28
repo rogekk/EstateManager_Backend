@@ -9,18 +9,58 @@ fun main() {
 
     // insertCommunities
 
-    runCatching {
-        communityRepository().createCommunity(Community(CommunityId("id1"), "Bankowa", (100)))
-        communityRepository().createCommunity(Community(CommunityId("id2"), "Kolejowa",(100)))
-    }
+    val cid = communityRepository().createCommunity(Community(CommunityId("id1"), "Bankowa", (100)))
+    val cid2 = communityRepository().createCommunity(Community(CommunityId("id2"), "Kolejowa", (100)))
 
     // create Owners
-    usersRepository().createOwner(listOf(CommunityId("id1") to Shares(10)), "KRojek", "krojek12", "krojek@gmail.com", "111111111", "Bankowa")
-    usersRepository().createOwner(listOf(CommunityId("id1") to Shares(10)), "JKowalski", "jkowalski12", "jkowalski@gmail.com", "222222222", "Bankowa")
-    usersRepository().createOwner(listOf(CommunityId("id1") to Shares(10)), "JSmith", "jsmith12", "jsmith@gmail.com", "333333333", "Bankowa")
-    usersRepository().createOwner(listOf(CommunityId("id1") to Shares(10)), "TNowak", "tnowak12", "tnowak@gmail.com", "444444444", "Kolejowa")
-    usersRepository().createOwner(listOf(CommunityId("id1") to Shares(10)), "LWojcik", "lwojcik12", "lwojcik@gmail.com", "555555555", "Kolejowa")
-    usersRepository().createOwner(listOf(CommunityId("id1") to Shares(10)), "RKowalczyk", "rkowalczyk12", "rkowalczyk@gmail.com", "666666666", "Kolejowa")
+    usersRepository().createOwner(
+        listOf(cid to Shares(10)),
+        "rojek",
+        "password",
+        "krojek@gmail.com",
+        "111111111",
+        "Bankowa"
+    )
+    usersRepository().createOwner(
+        listOf(cid to Shares(10)),
+        "JKowalski",
+        "jkowalski12",
+        "jkowalski@gmail.com",
+        "222222222",
+        "Bankowa"
+    )
+    usersRepository().createOwner(
+        listOf(cid to Shares(10)),
+        "JSmith",
+        "jsmith12",
+        "jsmith@gmail.com",
+        "333333333",
+        "Bankowa"
+    )
+    usersRepository().createOwner(
+        listOf(cid to Shares(10)),
+        "TNowak",
+        "tnowak12",
+        "tnowak@gmail.com",
+        "444444444",
+        "Kolejowa"
+    )
+    usersRepository().createOwner(
+        listOf(cid to Shares(10)),
+        "LWojcik",
+        "lwojcik12",
+        "lwojcik@gmail.com",
+        "555555555",
+        "Kolejowa"
+    )
+    usersRepository().createOwner(
+        listOf(cid to Shares(10)),
+        "RKowalczyk",
+        "rkowalczyk12",
+        "rkowalczyk@gmail.com",
+        "666666666",
+        "Kolejowa"
+    )
 
     // insertTopic
 //    val owner1 = ownersRepository().getByUsername("KRojek")!!.id
@@ -67,7 +107,7 @@ fun main() {
     runCatching {
         resolutionsRepository().crateResolution(
             ResolutionCreation(
-                CommunityId("id1"),
+                cid,
                 "1/2021",
                 "That what she said",
                 "I don't know"
