@@ -208,3 +208,12 @@ data class AnswerCreatorResponse(
     val username: String,
     val profileImageUrl: String? = null,
 )
+
+data class BuildingsResponse(val buildings: List<BuildingResponse>)
+
+data class BuildingResponse(
+    val id: String,
+    val name: String,
+    val usableArea: Int
+)
+

@@ -67,4 +67,13 @@ class CommunitiesTableHttpTest : SparkTest({ Mocks(communityRepository.relaxed) 
                 } isEqualTo communities.map { it.id.id }
             }
     }
+    @Test
+    fun `adds a building to community`() {
+        PUT("/v1/communities/${community.id.id}/members/${ownerId.id}")
+            .verifyPermissions(CanCreateCommunityMemberships)
+            .withBody(json { "shares" _ 100 })
+            .expectCode(201)
+
+        verify { communityRepository().setMembership(ownerId, community.id, Shares(100)) }
+    }
 }

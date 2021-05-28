@@ -71,7 +71,10 @@ enum class PGPermission {
     CanCreateResolution,
     CanUpdateResolutionStatus,
     CanDeleteTopic,
-    CanDeleteComment;
+    CanDeleteComment,
+    CanCreateBuilding,
+    CanAddBuildingToCommunity,
+    CanSeeAllBuildings;
 
     fun toDomain() =
         when (this) {
@@ -87,6 +90,9 @@ enum class PGPermission {
             CanUpdateResolutionStatus -> Permission.CanUpdateResolutionStatus
             CanDeleteTopic -> Permission.CanDeleteTopic
             CanDeleteComment -> Permission.CanDeleteComment
+            CanCreateBuilding -> Permission.CanCreateBuilding
+            CanAddBuildingToCommunity -> Permission.CanAddBuildingToCommunity
+            CanSeeAllBuildings -> Permission.CanSeeAllBuildings
         }
 }
 
@@ -103,24 +109,24 @@ fun Permission.toDb() = when (this) {
     is Permission.CanUpdateResolutionStatus -> PGPermission.CanUpdateResolutionStatus
     is Permission.CanDeleteTopic -> PGPermission.CanDeleteTopic
     is Permission.CanDeleteComment -> PGPermission.CanDeleteComment
+    is Permission.CanCreateBuilding -> PGPermission.CanCreateBuilding
+    is Permission.CanAddBuildingToCommunity -> PGPermission.CanAddBuildingToCommunity
+    is Permission.CanSeeAllBuildings -> PGPermission.CanSeeAllBuildings
 }
 
 object Apartment : Table() {
     val id = text("id")
     val number = text("number")
     val usableArea = integer("usable_area")
-    val apartmentsShares = integer("apartments_shares")
-    val buildingsId = text("buildings_id").references(BuildingsTable.id)
 
     override val primaryKey = PrimaryKey(id)
 }
-
+//
 //object ParkingSpot : Table() {
 //    val id = text("id")
 //    val number = text("number")
 //    val parkingShares = integer("parking_shares")
 //    val buildingsId = text("buildings_id").references(BuildingsTable.id)
-//    val ownerid = text("owner").references(Users.id)
 //
 //    override val primaryKey = PrimaryKey(id)
 //}
@@ -130,11 +136,10 @@ object Apartment : Table() {
 //    val number = text("number")
 //    val storageShares = integer("storage_shares")
 //    val buildingsId = text("buildings_id").references(BuildingsTable.id)
-//    val ownerid = text("owner").references(Users.id)
 //
 //    override val primaryKey = PrimaryKey(id)
 //}
-
+//
 //object Ownership : Table("ownership") {
 //    val id = text("id")
 //    val apartmentId = text("apartment_id").references(Apartment.id)
@@ -143,7 +148,7 @@ object Apartment : Table() {
 //    val shares = integer("shares")
 //
 //    override val primaryKey = PrimaryKey(id)
-//}
+
 
 object OwnerMembership : Table("owner_membership") {
     val id = text("id")
@@ -248,7 +253,6 @@ object TopicsTable : Table("topics") {
 
     override val primaryKey = PrimaryKey(id)
 }
-
 
 object CommentsTable : Table("comments") {
     val id = text("id")

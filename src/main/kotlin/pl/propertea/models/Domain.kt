@@ -49,6 +49,10 @@ sealed class Permission: Sealed() {
     object CanUpdateResolutionStatus : Permission()
     object CanDeleteTopic : Permission()
     object CanDeleteComment : Permission()
+    object CanCreateBuilding: Permission()
+    object CanAddBuildingToCommunity: Permission()
+    object CanSeeAllBuildings: Permission()
+
 }
 
 

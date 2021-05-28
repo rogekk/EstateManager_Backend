@@ -2,8 +2,11 @@ package pl.propertea.handlers.communities
 
 import com.snitch.Handler
 import com.snitch.ok
+import io.reactivex.rxjava3.internal.util.QueueDrainHelper.request
 import pl.propertea.models.*
+import pl.propertea.repositories.RepositoriesModule.buildingRepository
 import pl.propertea.repositories.RepositoriesModule.communityRepository
+import pl.propertea.routes.buildingId
 import pl.propertea.routes.communityId
 import pl.propertea.routes.ownerId
 
@@ -36,4 +39,13 @@ val deleteMembershipHandler: Handler<Nothing, GenericResponse> = {
     communityRepository().removeMembership(request[ownerId], request[communityId])
 
     success
+}
+
+val addBuildingHandler: Handler<AddBuildingToCommunityRequest, GenericResponse> = {
+communityRepository().addBuilding(
+    request[buildingId],
+    request[communityId],
+    UsableArea(body.usableArea)
+)
+    createdSuccessfully
 }

@@ -51,13 +51,12 @@ abstract class DatabaseTest(
 
 
     infix fun Pair<Building, UsableArea>.inThis(community: CommunityId) =
-        BuildingInsertion(first, "pass", listOf(community to second))
+        BuildingInsertion(first, listOf(community to second))
 
 
     infix fun Pair<Building, UsableArea>.inThese(communities: List<CommunityId>) =
-        BuildingInsertion(first, "pass", communities.map { it to second})
+        BuildingInsertion(first, communities.map { it to second})
 
-    infix fun BuildingInsertion.withPass(pass: String) = copy(pass = pass)
 
     val Int.usableArea get() = UsableArea(this)
     val <T> List<T>.evenIndexed get() =  this.filterIndexed { index, _ -> index % 2 == 0 }
