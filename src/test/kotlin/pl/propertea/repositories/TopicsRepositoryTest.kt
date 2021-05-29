@@ -3,7 +3,8 @@ package pl.propertea.repositories
 import com.memoizr.assertk.expect
 import org.junit.Test
 import pl.propertea.dsl.DatabaseTest
-import pl.propertea.models.*
+import pl.propertea.models.domain.Owner
+import pl.propertea.models.domain.domains.*
 import pl.propertea.repositories.RepositoriesModule.communityRepository
 import pl.propertea.repositories.RepositoriesModule.usersRepository
 import pl.propertea.repositories.RepositoriesModule.topicsRepository

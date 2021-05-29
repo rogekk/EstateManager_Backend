@@ -10,6 +10,9 @@ import pl.propertea.dsl.SparkTest
 import pl.propertea.models.domain.Permission.*
 import pl.propertea.dsl.relaxed
 import pl.propertea.models.*
+import pl.propertea.models.domain.domains.Community
+import pl.propertea.models.domain.domains.Shares
+import pl.propertea.models.responses.CommunitiesResponse
 import pl.propertea.repositories.RepositoriesModule.communityRepository
 import pl.propertea.tools.json
 import ro.kreator.aRandom

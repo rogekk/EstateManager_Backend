@@ -3,6 +3,9 @@ package pl.propertea.handlers.auth
 import com.snitch.*
 import pl.propertea.common.CommonModule.authenticator
 import pl.propertea.models.*
+import pl.propertea.models.domain.domains.Shares
+import pl.propertea.models.domain.domains.UserTypes
+import pl.propertea.models.responses.LoginResponse
 import pl.propertea.repositories.*
 import pl.propertea.repositories.RepositoriesModule.usersRepository
 import pl.propertea.routes.setHeader

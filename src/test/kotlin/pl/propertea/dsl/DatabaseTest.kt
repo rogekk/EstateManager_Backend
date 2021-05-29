@@ -4,6 +4,10 @@ import org.junit.Rule
 import org.junit.rules.RuleChain
 import org.junit.rules.TestRule
 import pl.propertea.models.*
+import pl.propertea.models.domain.Building
+import pl.propertea.models.domain.Owner
+import pl.propertea.models.domain.UsableArea
+import pl.propertea.models.domain.domains.Shares
 import pl.propertea.repositories.*
 
 abstract class DatabaseTest(

@@ -12,7 +12,8 @@ import pl.propertea.db.Success
 import pl.propertea.dsl.DatabaseTest
 import pl.propertea.dsl.Mocks
 import pl.propertea.dsl.strict
-import pl.propertea.models.*
+import pl.propertea.models.domain.Owner
+import pl.propertea.models.domain.domains.*
 import pl.propertea.repositories.RepositoriesModule.communityRepository
 import pl.propertea.repositories.RepositoriesModule.usersRepository
 import pl.propertea.repositories.RepositoriesModule.resolutionsRepository

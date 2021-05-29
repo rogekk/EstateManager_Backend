@@ -4,10 +4,14 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import pl.propertea.common.Clock
 import pl.propertea.common.IdGenerator
-import pl.propertea.db.CommentsTable
-import pl.propertea.db.UsersTable
-import pl.propertea.db.TopicsTable
+import pl.propertea.db.schema.CommentsTable
+import pl.propertea.db.schema.UsersTable
+import pl.propertea.db.schema.TopicsTable
 import pl.propertea.models.*
+import pl.propertea.models.domain.domains.CommentCreation
+import pl.propertea.models.domain.domains.CommentWithOwner
+import pl.propertea.models.domain.domains.TopicCreation
+import pl.propertea.models.domain.domains.TopicWithOwner
 
 interface TopicsRepository {
     fun getTopics(communityId: CommunityId): List<TopicWithOwner>

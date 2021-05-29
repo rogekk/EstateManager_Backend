@@ -3,9 +3,15 @@ package pl.propertea.repositories
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import pl.propertea.common.IdGenerator
-import pl.propertea.db.*
+import pl.propertea.db.schema.*
 import pl.propertea.models.*
+import pl.propertea.models.domain.Owner
+import pl.propertea.models.domain.OwnerProfile
 import pl.propertea.models.domain.Permission
+import pl.propertea.models.domain.domains.Authorization
+import pl.propertea.models.domain.domains.Community
+import pl.propertea.models.domain.domains.Shares
+import pl.propertea.models.domain.domains.UserTypes
 import pl.propertea.tools.hash
 import pl.propertea.tools.verify
 
@@ -198,7 +204,8 @@ class PostgresUsersRepository(private val database: Database, private val idGene
         UsersTable
             .leftJoin(UserPermissionsTable)
             .select { (UsersTable.username eq username) }
-            .map { Result(it[UsersTable.id], it[UsersTable.password], it[UsersTable.userType], it.getOrNull(UserPermissionsTable.permission)?.toDomain()?.let { listOf(it) }.orEmpty()) }
+            .map { Result(it[UsersTable.id], it[UsersTable.password], it[UsersTable.userType], it.getOrNull(
+                UserPermissionsTable.permission)?.toDomain()?.let { listOf(it) }.orEmpty()) }
             .reduceRightOrNull { acc, result -> acc.copy(permissions = acc.permissions + result.permissions)}
             ?.let {
                 if (verify(password, it.hashedPassword)) {

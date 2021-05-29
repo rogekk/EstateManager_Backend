@@ -4,6 +4,8 @@ import com.snitch.Handler
 import com.snitch.ok
 import pl.propertea.models.*
 import pl.propertea.models.db.Insert
+import pl.propertea.models.domain.UsableArea
+import pl.propertea.models.responses.*
 import pl.propertea.repositories.RepositoriesModule.buildingsRepository
 import pl.propertea.routes.buildingId
 import pl.propertea.routes.communityId

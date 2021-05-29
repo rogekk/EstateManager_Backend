@@ -8,6 +8,11 @@ import pl.propertea.dsl.SparkTest
 import pl.propertea.dsl.relaxed
 import pl.propertea.models.domain.Permission.*
 import pl.propertea.models.*
+import pl.propertea.models.domain.domains.Resolution
+import pl.propertea.models.domain.domains.ResolutionCreation
+import pl.propertea.models.domain.domains.Vote
+import pl.propertea.models.responses.ResolutionsResponse
+import pl.propertea.models.responses.toResponse
 import pl.propertea.repositories.RepositoriesModule.resolutionsRepository
 import pl.propertea.tools.json
 import ro.kreator.aRandom

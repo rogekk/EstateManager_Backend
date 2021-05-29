@@ -4,7 +4,13 @@ import com.memoizr.assertk.expect
 import org.junit.Test
 import pl.propertea.dsl.DatabaseTest
 import pl.propertea.models.*
+import pl.propertea.models.domain.Admin
+import pl.propertea.models.domain.Owner
+import pl.propertea.models.domain.OwnerProfile
 import pl.propertea.models.domain.Permission
+import pl.propertea.models.domain.domains.Authorization
+import pl.propertea.models.domain.domains.Community
+import pl.propertea.models.domain.domains.UserTypes
 import pl.propertea.repositories.RepositoriesModule.communityRepository
 import pl.propertea.repositories.RepositoriesModule.usersRepository
 import ro.kreator.aRandom

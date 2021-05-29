@@ -4,6 +4,10 @@ import com.snitch.notFound
 import com.snitch.ok
 import com.snitch.Handler
 import pl.propertea.models.*
+import pl.propertea.models.domain.domains.BulletinCreation
+import pl.propertea.models.responses.BulletinResponse
+import pl.propertea.models.responses.BulletinsResponse
+import pl.propertea.models.responses.toResponse
 import pl.propertea.repositories.RepositoriesModule.bulletinRepository
 import pl.propertea.routes.bulletinId
 import pl.propertea.routes.communityId

@@ -13,6 +13,7 @@ data class BuildingId(val id: String)
 data class ApartmentId(val id: String)
 data class ParkingId(val id: String)
 data class StorageRoomId(val id: String)
+data class SurveyId(val id: String)
 
 sealed class UserId: Sealed() {
     abstract val id: String

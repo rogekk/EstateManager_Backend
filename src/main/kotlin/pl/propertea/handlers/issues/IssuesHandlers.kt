@@ -2,10 +2,12 @@ package pl.propertea.handlers.issues
 
 
 import com.snitch.Handler
-import com.snitch.extensions.print
 import com.snitch.notFound
 import com.snitch.ok
 import pl.propertea.models.*
+import pl.propertea.models.domain.domains.AnswerCreation
+import pl.propertea.models.domain.domains.IssueCreation
+import pl.propertea.models.responses.*
 import pl.propertea.repositories.RepositoriesModule.issueRepository
 import pl.propertea.routes.authenticatedUser
 import pl.propertea.routes.communityId

@@ -2,8 +2,10 @@ package pl.propertea.repositories
 
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.count
-import pl.propertea.db.*
+import pl.propertea.db.schema.*
 import pl.propertea.models.*
+import pl.propertea.models.domain.Owner
+import pl.propertea.models.domain.domains.*
 
 fun ResultRow.readOwner() = Owner(
     OwnerId(this[UsersTable.id]),

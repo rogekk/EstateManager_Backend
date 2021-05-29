@@ -1,5 +1,8 @@
 package pl.propertea.models
 
+import pl.propertea.models.domain.domains.IssueStatus
+import pl.propertea.models.domain.domains.ResolutionResult
+
 data class CreateOwnerRequest(
     val username: String,
     val password: String,

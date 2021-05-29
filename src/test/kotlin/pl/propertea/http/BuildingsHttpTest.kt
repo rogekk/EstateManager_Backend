@@ -8,8 +8,9 @@ import pl.propertea.dsl.SparkTest
 import pl.propertea.dsl.relaxed
 import pl.propertea.models.*
 import pl.propertea.models.db.Insert
-import pl.propertea.models.domain.Permission
+import pl.propertea.models.domain.*
 import pl.propertea.models.domain.Permission.CanCreateBuilding
+import pl.propertea.models.responses.*
 import pl.propertea.repositories.RepositoriesModule.buildingsRepository
 import ro.kreator.aRandom
 import ro.kreator.aRandomListOf

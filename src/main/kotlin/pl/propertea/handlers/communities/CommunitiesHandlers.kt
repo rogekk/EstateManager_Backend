@@ -3,6 +3,11 @@ package pl.propertea.handlers.communities
 import com.snitch.Handler
 import com.snitch.ok
 import pl.propertea.models.*
+import pl.propertea.models.domain.UsableArea
+import pl.propertea.models.domain.domains.Community
+import pl.propertea.models.domain.domains.Shares
+import pl.propertea.models.responses.CommunitiesResponse
+import pl.propertea.models.responses.CommunityResponse
 import pl.propertea.repositories.RepositoriesModule.communityRepository
 import pl.propertea.routes.buildingId
 import pl.propertea.routes.communityId

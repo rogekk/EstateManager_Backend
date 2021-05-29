@@ -11,7 +11,10 @@ import org.junit.Rule
 import org.junit.rules.RuleChain
 import pl.propertea.common.CommonModule.authenticator
 import pl.propertea.models.*
+import pl.propertea.models.domain.Owner
 import pl.propertea.models.domain.Permission
+import pl.propertea.models.domain.domains.Authorization
+import pl.propertea.models.domain.domains.UserTypes
 import pl.propertea.routes.authTokenHeader
 import ro.kreator.aRandom
 

@@ -14,6 +14,12 @@ import pl.propertea.dsl.SparkTest
 import pl.propertea.dsl.relaxed
 import pl.propertea.dsl.strict
 import pl.propertea.models.*
+import pl.propertea.models.domain.Manager
+import pl.propertea.models.domain.domains.AnswerWithOwners
+import pl.propertea.models.domain.domains.IssueCreation
+import pl.propertea.models.domain.domains.IssueWithOwner
+import pl.propertea.models.responses.GetAnswerResponse
+import pl.propertea.models.responses.toResponse
 import pl.propertea.repositories.RepositoriesModule.issueRepository
 import pl.propertea.tools.json
 import ro.kreator.aRandom

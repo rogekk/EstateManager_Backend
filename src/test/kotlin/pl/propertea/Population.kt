@@ -1,6 +1,9 @@
 package pl.propertea.db
 
 import pl.propertea.models.*
+import pl.propertea.models.domain.domains.Community
+import pl.propertea.models.domain.domains.ResolutionCreation
+import pl.propertea.models.domain.domains.Shares
 import pl.propertea.repositories.RepositoriesModule.communityRepository
 import pl.propertea.repositories.RepositoriesModule.usersRepository
 import pl.propertea.repositories.RepositoriesModule.resolutionsRepository

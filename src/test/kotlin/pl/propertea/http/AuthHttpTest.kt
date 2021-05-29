@@ -12,10 +12,15 @@ import pl.propertea.dsl.SparkTest
 import pl.propertea.dsl.relaxed
 import pl.propertea.dsl.strict
 import pl.propertea.models.*
+import pl.propertea.models.domain.Admin
+import pl.propertea.models.domain.OwnerProfile
 import pl.propertea.repositories.OwnerCreated
 import pl.propertea.repositories.RepositoriesModule.usersRepository
 import pl.propertea.tools.json
 import pl.propertea.models.domain.Permission.*
+import pl.propertea.models.domain.domains.Authorization
+import pl.propertea.models.domain.domains.Shares
+import pl.propertea.models.domain.domains.UserTypes
 import ro.kreator.aRandom
 
 class AuthHttpTest : SparkTest({ Mocks(clock.strict, usersRepository.relaxed) }) {

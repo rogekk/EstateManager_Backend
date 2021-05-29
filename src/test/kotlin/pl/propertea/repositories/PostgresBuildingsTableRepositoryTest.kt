@@ -3,9 +3,9 @@ package pl.propertea.repositories
 import com.memoizr.assertk.expect
 import org.junit.Test
 import pl.propertea.dsl.DatabaseTest
-import pl.propertea.models.Building
-import pl.propertea.models.Community
-import pl.propertea.models.UsableArea
+import pl.propertea.models.domain.Building
+import pl.propertea.models.domain.domains.Community
+import pl.propertea.models.domain.UsableArea
 import pl.propertea.models.db.Insert
 import pl.propertea.repositories.RepositoriesModule.buildingsRepository
 import pl.propertea.repositories.RepositoriesModule.communityRepository

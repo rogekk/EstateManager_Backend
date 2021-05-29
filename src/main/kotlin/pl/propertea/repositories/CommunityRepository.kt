@@ -3,11 +3,14 @@ package pl.propertea.repositories
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import pl.propertea.common.IdGenerator
-import pl.propertea.db.BuildingsTable
-import pl.propertea.db.CommunitiesTable
-import pl.propertea.db.OwnerMembershipTable
-import pl.propertea.db.OwnerMembershipTable.communityId
+import pl.propertea.db.schema.BuildingsTable
+import pl.propertea.db.schema.CommunitiesTable
+import pl.propertea.db.schema.OwnerMembershipTable
+import pl.propertea.db.schema.OwnerMembershipTable.communityId
 import pl.propertea.models.*
+import pl.propertea.models.domain.UsableArea
+import pl.propertea.models.domain.domains.Community
+import pl.propertea.models.domain.domains.Shares
 
 interface CommunityRepository {
     fun createCommunity(community: Community): CommunityId

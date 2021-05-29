@@ -8,8 +8,8 @@ import org.junit.Test
 import pl.propertea.dsl.Mocks
 import pl.propertea.dsl.SparkTest
 import pl.propertea.dsl.relaxed
-import pl.propertea.models.Community
-import pl.propertea.models.OwnerProfile
+import pl.propertea.models.domain.domains.Community
+import pl.propertea.models.domain.OwnerProfile
 import pl.propertea.repositories.RepositoriesModule.usersRepository
 import pl.propertea.tools.json
 import pl.propertea.tools.l

@@ -5,7 +5,12 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import pl.propertea.common.Clock
 import pl.propertea.common.IdGenerator
 import pl.propertea.db.*
+import pl.propertea.db.schema.*
 import pl.propertea.models.*
+import pl.propertea.models.domain.domains.Resolution
+import pl.propertea.models.domain.domains.ResolutionCreation
+import pl.propertea.models.domain.domains.ResolutionResult
+import pl.propertea.models.domain.domains.Vote
 
 interface ResolutionsRepository {
     fun getResolutions(communityId: CommunityId): List<Resolution>

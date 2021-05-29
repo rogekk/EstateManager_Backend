@@ -4,6 +4,9 @@ import com.snitch.Handler
 import com.snitch.ok
 import pl.propertea.common.CommonModule.clock
 import pl.propertea.models.*
+import pl.propertea.models.domain.domains.CommentCreation
+import pl.propertea.models.domain.domains.TopicCreation
+import pl.propertea.models.responses.*
 import pl.propertea.repositories.RepositoriesModule.topicsRepository
 import pl.propertea.routes.authenticatedUser
 import pl.propertea.routes.commentId

@@ -4,7 +4,9 @@ import com.snitch.extensions.parseJson
 import org.joda.time.DateTime
 import pl.propertea.common.CommonModule.authenticator
 import pl.propertea.models.*
-import java.lang.IllegalArgumentException
+import pl.propertea.models.domain.domains.AuthToken
+import pl.propertea.models.domain.domains.Authorization
+import pl.propertea.models.domain.domains.UserTypes
 
 val ulidRegex = """^[0-9a-zA-Z=_]{26}$""".toRegex(RegexOption.DOT_MATCHES_ALL)
 

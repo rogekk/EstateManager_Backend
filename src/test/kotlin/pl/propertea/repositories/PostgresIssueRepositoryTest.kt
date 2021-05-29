@@ -10,6 +10,9 @@ import pl.propertea.dsl.DatabaseTest
 import pl.propertea.dsl.Mocks
 import pl.propertea.dsl.strict
 import pl.propertea.models.*
+import pl.propertea.models.domain.Manager
+import pl.propertea.models.domain.Owner
+import pl.propertea.models.domain.domains.*
 import pl.propertea.repositories.RepositoriesModule.communityRepository
 import pl.propertea.repositories.RepositoriesModule.issueRepository
 import pl.propertea.repositories.RepositoriesModule.usersRepository
@@ -182,7 +185,8 @@ class PostgresIssueRepositoryTest : DatabaseTest({ Mocks(clock.strict) }) {
         )!!
 
         // Get issues
-        expect that issueRepository().getIssues(managerId) isEqualTo listOf(IssueWithOwner(
+        expect that issueRepository().getIssues(managerId) isEqualTo listOf(
+            IssueWithOwner(
             owner.copy(id = createdOwnerId),
             issue.copy(
                     id = issueInMyCommunity,
@@ -191,6 +195,7 @@ class PostgresIssueRepositoryTest : DatabaseTest({ Mocks(clock.strict) }) {
                     commentCount = 0,
                     status = IssueStatus.NEW
                 )
-        ))
+        )
+        )
     }
 }

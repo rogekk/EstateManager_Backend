@@ -3,6 +3,8 @@ package pl.propertea.handlers.profile
 import com.snitch.Handler
 import com.snitch.ok
 import pl.propertea.models.*
+import pl.propertea.models.responses.CommunityMembershipResponse
+import pl.propertea.models.responses.ProfileResponse
 import pl.propertea.repositories.RepositoriesModule.usersRepository
 import pl.propertea.routes.authenticatedUser
 

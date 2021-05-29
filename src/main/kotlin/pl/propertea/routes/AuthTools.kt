@@ -7,6 +7,7 @@ import com.snitch.get
 import pl.propertea.common.CommonModule.authenticator
 import pl.propertea.models.*
 import pl.propertea.models.domain.Permission
+import pl.propertea.models.domain.domains.UserTypes
 
 fun <T : Any> Endpoint<T>.authenticated() = withHeader(authTokenHeader)
     .copy(before = { authenticator().verify(it[authTokenHeader].token) })

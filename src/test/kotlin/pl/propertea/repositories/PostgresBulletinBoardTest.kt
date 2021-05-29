@@ -6,13 +6,12 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import pl.propertea.common.CommonModule.clock
-import pl.propertea.common.CommonModule.idGenerator
 import pl.propertea.dsl.DatabaseTest
 import pl.propertea.dsl.Mocks
 import pl.propertea.dsl.strict
-import pl.propertea.models.Bulletin
-import pl.propertea.models.BulletinCreation
-import pl.propertea.models.Community
+import pl.propertea.models.domain.domains.Bulletin
+import pl.propertea.models.domain.domains.BulletinCreation
+import pl.propertea.models.domain.domains.Community
 import pl.propertea.repositories.RepositoriesModule.bulletinRepository
 import pl.propertea.repositories.RepositoriesModule.communityRepository
 import ro.kreator.aRandom

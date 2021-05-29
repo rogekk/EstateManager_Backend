@@ -25,6 +25,7 @@ val authTokenHeader = header("X-Auth-Token", condition = AuthTokenValidator)
 val bulletinId = path("bulletinId", condition = ulid("bulletin", ::BulletinId))
 val issueId = path("issueId", condition = ulid("issue", ::IssueId))
 val buildingId = path("buildingId", condition = ulid("building", ::BuildingId))
+val surveyId = path("surveyId", condition = ulid("survey", ::SurveyId))
 
 
 fun routes(http: Service): Router.() -> Unit = {

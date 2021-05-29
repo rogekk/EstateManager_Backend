@@ -7,6 +7,8 @@ import com.snitch.extensions.parseJson
 import pl.propertea.common.CommonModule.clock
 import pl.propertea.models.*
 import pl.propertea.models.domain.Permission
+import pl.propertea.models.domain.domains.Authorization
+import pl.propertea.models.domain.domains.UserTypes
 
 interface Authenticator {
     fun getAuthorization(authToken: String): Authorization?

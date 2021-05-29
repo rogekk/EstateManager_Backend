@@ -8,6 +8,9 @@ import pl.propertea.dsl.Mocks
 import pl.propertea.dsl.SparkTest
 import pl.propertea.dsl.relaxed
 import pl.propertea.models.*
+import pl.propertea.models.domain.domains.Bulletin
+import pl.propertea.models.domain.domains.BulletinCreation
+import pl.propertea.models.responses.toResponse
 import pl.propertea.repositories.RepositoriesModule.bulletinRepository
 import pl.propertea.tools.json
 import ro.kreator.aRandom

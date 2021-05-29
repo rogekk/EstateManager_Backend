@@ -4,6 +4,11 @@ import com.snitch.Handler
 import com.snitch.notFound
 import com.snitch.ok
 import pl.propertea.models.*
+import pl.propertea.models.domain.domains.ResolutionCreation
+import pl.propertea.models.domain.domains.Vote
+import pl.propertea.models.responses.ResolutionResponse
+import pl.propertea.models.responses.ResolutionsResponse
+import pl.propertea.models.responses.toResponse
 import pl.propertea.repositories.RepositoriesModule.resolutionsRepository
 import pl.propertea.routes.authenticatedUser
 import pl.propertea.routes.communityId

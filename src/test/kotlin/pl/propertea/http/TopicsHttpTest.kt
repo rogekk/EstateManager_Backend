@@ -13,6 +13,9 @@ import pl.propertea.dsl.SparkTest
 import pl.propertea.dsl.relaxed
 import pl.propertea.dsl.strict
 import pl.propertea.models.*
+import pl.propertea.models.domain.domains.*
+import pl.propertea.models.responses.GetCommentsResponse
+import pl.propertea.models.responses.toResponse
 import pl.propertea.repositories.RepositoriesModule.topicsRepository
 import pl.propertea.tools.json
 import ro.kreator.aRandom
