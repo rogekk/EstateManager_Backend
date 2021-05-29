@@ -55,10 +55,10 @@ abstract class DatabaseTest(
     val <T> List<T>.evenIndexed get() = filterIndexed { index, _ -> index % 2 == 0 }
 
     infix fun BuildingInsertion.putIn(rep: BuildingRepository) =
-        (rep.createBuilding(
+        rep.createBuilding(
             communityId = communityId,
             usableArea = usableArea,
             name = building.name,
-        ) as BuildingCreated).buildingId
+        )!!
 }
 

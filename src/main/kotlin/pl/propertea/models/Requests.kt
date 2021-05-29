@@ -11,7 +11,7 @@ data class CreateOwnerRequest(
 )
 
 data class CommunityMembershipRequest(val communityId: String, val shares: Int)
-data class AddBuildingToCommunityRequest (val communityId: String, val usableArea: Int)
+data class AddBuildingToCommunityRequest (val communityId: String, val usableArea: Int, val name: String)
 data class LoginRequest(val username: String, val password: String)
 data class TopicRequest(val subject: String, val communityId: String, val description: String)
 data class BulletinRequest(val subject: String,val content: String)

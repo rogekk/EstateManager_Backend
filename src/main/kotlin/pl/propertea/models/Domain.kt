@@ -13,6 +13,9 @@ data class IssueId(val id: String)
 data class AnswerId(val id: String)
 data class Shares(val value: Int)
 data class BuildingId(val id: String)
+data class ApartmentId(val id: String)
+data class ParkingId(val id: String)
+
 data class UsableArea(val value: Int)
 
 data class OwnerId(override val id: String): UserId()
@@ -247,8 +250,15 @@ data class Building(
     val usableArea: Int
 )
 
+data class Apartment(
+    val id: ApartmentId,
+    val number: String,
+    val usableArea: UsableArea,
+    val buildingId: BuildingId,
+)
+
 data class BuildingProfile(
     val building: Building,
-    val community: Community
+    val community: Community,
 )
 

@@ -23,8 +23,8 @@ class PostgresResolutionsRepository(
 ) : ResolutionsRepository {
 
     override fun hasVoted(owner: OwnerId, id: ResolutionId): Boolean = transaction(database) {
-        ResolutionVotes
-            .select { (ResolutionVotes.resolutionId eq id.id) and (ResolutionVotes.ownerId eq owner.id) }
+        ResolutionVotesTable
+            .select { (ResolutionVotesTable.resolutionId eq id.id) and (ResolutionVotesTable.ownerId eq owner.id) }
             .map { true }
             .firstOrNull() ?: false
     }
@@ -41,10 +41,10 @@ class PostgresResolutionsRepository(
             .map { it.readResolution() }
             .firstOrNull()
             .let {
-                val totalVotes = ResolutionVotes.select {
-                    ResolutionVotes.resolutionId eq id.id
+                val totalVotes = ResolutionVotesTable.select {
+                    ResolutionVotesTable.resolutionId eq id.id
                 }.map {
-                    it[ResolutionVotes.vote] to it[ResolutionVotes.shares]
+                    it[ResolutionVotesTable.vote] to it[ResolutionVotesTable.shares]
                 }
                 it?.copy(
                     sharesPro = totalVotes.filter { it.first == PGVote.PRO }.sumBy { it.second },
@@ -77,13 +77,13 @@ class PostgresResolutionsRepository(
         vote: Vote
     ): UpdateResult<Boolean> = transaction(database) {
         // TODO check logic makes sense make it configurable
-        val sharesInCommunity = OwnerMembership
-            .select { (OwnerMembership.communityId eq communityId.id) and (OwnerMembership.ownerId eq ownerId.id) }
-            .sumOf { it[OwnerMembership.shares] }
+        val sharesInCommunity = OwnerMembershipTable
+            .select { (OwnerMembershipTable.communityId eq communityId.id) and (OwnerMembershipTable.ownerId eq ownerId.id) }
+            .sumOf { it[OwnerMembershipTable.shares] }
 
 
         runCatching {
-            ResolutionVotes
+            ResolutionVotesTable
                 .insert {
                     it[id] = idGenerator.newId()
                     it[this.ownerId] = ownerId.id

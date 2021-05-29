@@ -36,6 +36,8 @@ abstract class BaseTest(val mockBlock: () -> Mocks = { Mocks() }) {
     private val customCommentId by customize { CommentId(ulid()) }
     private val customIssueId by customize { IssueId(ulid()) }
     private val buildingId by customize { BuildingId(ulid()) }
+    private val apartmentId by customize {ApartmentId(ulid()) }
+    private val parkingId by customize {ParkingId(ulid()) }
 
     fun ulid() = UlidCreator.getMonotonicUlid(now.millis).toString()
 
@@ -59,6 +61,8 @@ abstract class BaseTest(val mockBlock: () -> Mocks = { Mocks() }) {
             customCommentId,
             customIssueId,
             buildingId,
+            apartmentId,
+            parkingId,
         )
 
         val root =

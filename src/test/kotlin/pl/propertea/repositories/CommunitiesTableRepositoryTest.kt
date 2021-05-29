@@ -4,7 +4,7 @@ import com.memoizr.assertk.expect
 import org.junit.Test
 import pl.propertea.dsl.DatabaseTest
 import pl.propertea.models.*
-import pl.propertea.repositories.RepositoriesModule.buildingRepository
+import pl.propertea.repositories.RepositoriesModule.buildingsRepository
 import pl.propertea.repositories.RepositoriesModule.communityRepository
 import pl.propertea.repositories.RepositoriesModule.usersRepository
 import ro.kreator.aRandom
@@ -54,8 +54,8 @@ class CommunitiesTableRepositoryTest : DatabaseTest() {
     fun `add a building to community`() {
         val id = communityRepository().createCommunity(community)
 
-        val buildingId = building inThis id putIn buildingRepository()
+        val buildingId = building inThis id putIn buildingsRepository()
 
-        expect that buildingRepository().getBuildingsProfile(buildingId)?.community?.id isEqualTo id
+        expect that buildingsRepository().getBuildingsProfile(buildingId)?.community?.id isEqualTo id
     }
 }
