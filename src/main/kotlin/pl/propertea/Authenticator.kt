@@ -4,9 +4,9 @@ import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.interfaces.DecodedJWT
 import com.snitch.extensions.json
 import com.snitch.extensions.parseJson
-import com.snitch.extensions.print
 import pl.propertea.common.CommonModule.clock
 import pl.propertea.models.*
+import pl.propertea.models.domain.Permission
 
 interface Authenticator {
     fun getAuthorization(authToken: String): Authorization?

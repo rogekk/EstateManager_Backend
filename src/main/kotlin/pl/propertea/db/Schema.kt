@@ -3,8 +3,8 @@ package pl.propertea.db
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.jodatime.datetime
 import pl.propertea.models.IssueStatus
-import pl.propertea.models.Permission
 import pl.propertea.models.ResolutionResult
+import pl.propertea.models.domain.Permission
 
 val schema = arrayOf(
     UsersTable,
@@ -73,7 +73,10 @@ enum class PGPermission {
     CanDeleteComment,
     CanCreateBuilding,
     CanAddBuildingToCommunity,
-    CanSeeAllBuildings;
+    CanSeeAllBuildings,
+    CanSeeAllApartments,
+    CanSeeAllParkingSpots,
+    CanSeeAllStorageRooms;
 
     fun toDomain() =
         when (this) {
@@ -92,6 +95,9 @@ enum class PGPermission {
             CanCreateBuilding -> Permission.CanCreateBuilding
             CanAddBuildingToCommunity -> Permission.CanAddBuildingToCommunity
             CanSeeAllBuildings -> Permission.CanSeeAllBuildings
+            CanSeeAllApartments -> Permission.CanSeeAllApartments
+            CanSeeAllStorageRooms -> Permission.CanSeeAllStorageRooms
+            CanSeeAllParkingSpots -> Permission.CanSeeAllParkingSpots
         }
 }
 
@@ -111,6 +117,9 @@ fun Permission.toDb() = when (this) {
     is Permission.CanCreateBuilding -> PGPermission.CanCreateBuilding
     is Permission.CanAddBuildingToCommunity -> PGPermission.CanAddBuildingToCommunity
     is Permission.CanSeeAllBuildings -> PGPermission.CanSeeAllBuildings
+    is Permission.CanSeeAllApartments -> PGPermission.CanSeeAllApartments
+    is Permission.CanSeeAllParkingSpots -> PGPermission.CanSeeAllParkingSpots
+    is Permission.CanSeeAllStorageRooms -> PGPermission.CanSeeAllStorageRooms
 }
 
 object ApartmentsTable : Table("apartments") {

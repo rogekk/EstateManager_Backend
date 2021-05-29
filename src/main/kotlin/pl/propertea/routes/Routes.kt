@@ -3,8 +3,10 @@ package pl.propertea.routes
 import AuthTokenValidator
 import authenticationRoutes
 import bulletinsRoutes
-import com.snitch.*
-import com.snitch.Enum
+import com.snitch.RequestHandler
+import com.snitch.Router
+import com.snitch.header
+import com.snitch.path
 import com.snitch.spark.SparkResponseWrapper
 import communitiesRoutes
 import ownersRoutes
@@ -40,6 +42,8 @@ fun routes(http: Service): Router.() -> Unit = {
         bulletinsRoutes()
 
         issuesRoutes()
+
+        buildingRoutes()
     }
 
     setAccessControlHeaders(http)

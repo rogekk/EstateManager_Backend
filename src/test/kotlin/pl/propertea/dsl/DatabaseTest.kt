@@ -47,6 +47,8 @@ abstract class DatabaseTest(
     infix fun Building.with(usableArea: UsableArea) = Pair(this, usableArea)
     infix fun Building.inThis(community: CommunityId) = this with 100.usableArea inThis community
 
+    data class BuildingInsertion(val building: Building, val communityId: CommunityId, val usableArea: UsableArea)
+
     infix fun Pair<Building, UsableArea>.inThis(community: CommunityId) =
         BuildingInsertion(first, community, second)
 

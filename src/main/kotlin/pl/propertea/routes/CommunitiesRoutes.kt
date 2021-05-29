@@ -1,12 +1,19 @@
+
 import com.snitch.Router
 import com.snitch.body
 import pl.propertea.handlers.communities.*
-import pl.propertea.models.*
-import pl.propertea.models.Permission.*
-import pl.propertea.routes.*
+import pl.propertea.models.AddBuildingToCommunityRequest
+import pl.propertea.models.CommunityRequest
+import pl.propertea.models.CreateCommunityMembershipRequest
+import pl.propertea.models.domain.Permission
+import pl.propertea.models.domain.Permission.*
+import pl.propertea.routes.buildingId
+import pl.propertea.routes.communityId
+import pl.propertea.routes.ownerId
+import pl.propertea.routes.withPermission
 
 fun Router.communitiesRoutes() {
-//    "communities" {
+    "communities" {
         POST("/communities")
             .with(body<CommunityRequest>())
             .inSummary("Creates a new community")
@@ -35,4 +42,4 @@ fun Router.communitiesRoutes() {
             .withPermission(CanRemoveCommunityMemberships)
             .isHandledBy(deleteMembershipHandler)
     }
-//}
+}

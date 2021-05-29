@@ -15,7 +15,7 @@ import pl.propertea.models.*
 import pl.propertea.repositories.OwnerCreated
 import pl.propertea.repositories.RepositoriesModule.usersRepository
 import pl.propertea.tools.json
-import pl.propertea.models.Permission.*
+import pl.propertea.models.domain.Permission.*
 import ro.kreator.aRandom
 
 class AuthHttpTest : SparkTest({ Mocks(clock.strict, usersRepository.relaxed) }) {

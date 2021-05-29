@@ -1,13 +1,15 @@
+
 import com.snitch.Router
 import com.snitch.body
 import pl.propertea.handlers.topics.*
-import pl.propertea.models.Permission.*
 import pl.propertea.models.CreateCommentRequest
 import pl.propertea.models.TopicRequest
+import pl.propertea.models.domain.Permission.CanDeleteComment
+import pl.propertea.models.domain.Permission.CanDeleteTopic
 import pl.propertea.routes.*
 
 fun Router.topicsRoutes() {
-//    "topics" {
+    "topics" {
         GET("/communities" / communityId / "topics")
             .inSummary("Gets all the topics in the community")
             .authenticated()
@@ -40,4 +42,4 @@ fun Router.topicsRoutes() {
             .withPermission(CanDeleteComment)
             .isHandledBy(deleteCommentHandler)
     }
-//}
+}

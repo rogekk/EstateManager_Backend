@@ -1,19 +1,25 @@
 package pl.propertea.repositories
 
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.batchInsert
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import pl.propertea.common.IdGenerator
 import pl.propertea.db.*
 import pl.propertea.models.*
+import pl.propertea.models.db.Insert
 
 interface BuildingRepository {
 
-    fun getBuildings(): List<Building>
-    fun createBuilding(communityId: CommunityId, usableArea: UsableArea,
-                       name: String,
-                       apartments: List<Apartment> = emptyList(),
-                       parkingSpots: List<ParkingSpot> = emptyList(),
-                       storageRooms: List<StorageRoom> = emptyList(),
+    fun getBuildings(communityId: CommunityId): List<Building>
+    fun createBuilding(
+        communityId: CommunityId,
+        usableArea: UsableArea,
+        name: String,
+        apartments: List<Insert.Apartment> = emptyList(),
+        parkingSpots: List<Insert.ParkingSpot> = emptyList(),
+        storageRooms: List<Insert.StorageRoom> = emptyList(),
     ): BuildingId?
 
     fun getBuildingsProfile(id: BuildingId): BuildingProfile?
@@ -23,7 +29,6 @@ interface BuildingRepository {
     fun getStorageRooms(buildingId: BuildingId): List<StorageRoom>
 }
 
-
 class PostgresBuildingRepository(private val database: Database, private val idGenerator: IdGenerator) :
     BuildingRepository {
 
@@ -31,16 +36,15 @@ class PostgresBuildingRepository(private val database: Database, private val idG
         communityId: CommunityId,
         usableArea: UsableArea,
         name: String,
-        apartments: List<Apartment>,
-        parkingSpots: List<ParkingSpot>,
-        storageRooms: List<StorageRoom>,
+        apartments: List<Insert.Apartment>,
+        parkingSpots: List<Insert.ParkingSpot>,
+        storageRooms: List<Insert.StorageRoom>,
     ): BuildingId? = transaction(database) {
         val building = BuildingsTable
             .select { BuildingsTable.name eq name }
             .firstOrNull()
 
         val buildingId = idGenerator.newId()
-
 
         if (building == null) {
             BuildingsTable
@@ -51,7 +55,6 @@ class PostgresBuildingRepository(private val database: Database, private val idG
                     buildingTable[this.communityId] = communityId.id
                 }
 
-
             ApartmentsTable
                 .batchInsert(apartments) {
                     this[ApartmentsTable.id] = idGenerator.newId()
@@ -59,6 +62,7 @@ class PostgresBuildingRepository(private val database: Database, private val idG
                     this[ApartmentsTable.usableArea] = it.usableArea.value
                     this[ApartmentsTable.buildingId] = buildingId
                 }
+
             ParkingSpotsTable
                 .batchInsert(apartments) {
                     this[ParkingSpotsTable.id] = idGenerator.newId()
@@ -70,9 +74,9 @@ class PostgresBuildingRepository(private val database: Database, private val idG
         BuildingId(buildingId)
     }
 
-    override fun getBuildings(): List<Building> = transaction(database) {
+    override fun getBuildings(communityId: CommunityId): List<Building> = transaction(database) {
         BuildingsTable
-            .selectAll()
+            .select { BuildingsTable.communityId eq communityId.id }
             .map { Building(BuildingId(it[BuildingsTable.id]), it[BuildingsTable.name], it[BuildingsTable.usableArea]) }
     }
 
@@ -138,10 +142,3 @@ class PostgresBuildingRepository(private val database: Database, private val idG
     }
 }
 
-data class BuildingInsertion(val building: Building, val communityId: CommunityId, val usableArea: UsableArea)
-
-sealed class CreateApartmentResult
-
-//data class ApartmentCreated(val apartmentId: ApartmentId): CreateApartmentResult()
-
-data class ApartmentInsertion(val apartment: ApartmentsTable, val buildings: List<Pair<BuildingId, UsableArea>>)

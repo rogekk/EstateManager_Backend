@@ -3,15 +3,14 @@ package pl.propertea.routes
 import com.snitch.Router
 import com.snitch.body
 import pl.propertea.handlers.issues.*
-
-import pl.propertea.models.Permission.*
 import pl.propertea.models.CreateAnswerRequest
 import pl.propertea.models.IssueRequest
 import pl.propertea.models.IssueStatusRequest
+import pl.propertea.models.domain.Permission.CanUpdateIssueStatus
 
 
 fun Router.issuesRoutes() {
-//    "issues" {
+    "issues" {
 //        GET("/communities" / communityId / "issues" / issueId / "answers")
 
         GET("/communities" / communityId / "issues")
@@ -42,4 +41,4 @@ fun Router.issuesRoutes() {
             .authenticated()
             .isHandledBy(createIssueHandler)
     }
-//}
+}

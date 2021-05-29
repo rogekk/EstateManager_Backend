@@ -1,31 +1,12 @@
 package pl.propertea.models
 
-import com.snitch.Sealed
 import org.joda.time.DateTime
+import pl.propertea.models.domain.Permission
 
 
-data class TopicId(val id: String)
-data class CommunityId(val id: String)
-data class CommentId(val id: String)
-data class ResolutionId(val id: String)
-data class BulletinId(val id: String)
-data class IssueId(val id: String)
-data class AnswerId(val id: String)
 data class Shares(val value: Int)
-data class BuildingId(val id: String)
-data class ApartmentId(val id: String)
-data class ParkingId(val id: String)
-data class StorageRoomId(val id: String)
 
 data class UsableArea(val value: Int)
-
-data class OwnerId(override val id: String): UserId()
-data class ManagerId(override val id: String): UserId()
-data class AdminId(override val id: String): UserId()
-
-sealed class UserId: Sealed() {
-    abstract val id: String
-}
 
 //Authentication
 data class AuthToken(val token: String, val expiresAt: DateTime, val authorization: Authorization)
@@ -39,26 +20,6 @@ data class Authorization(
 enum class UserTypes {
     ADMIN, MANAGER, OWNER
 }
-
-sealed class Permission: Sealed() {
-    object CanCreateCommunity : Permission()
-    object CanSeeCommunity : Permission()
-    object CanCreateCommunityMemberships : Permission()
-    object CanRemoveCommunityMemberships : Permission()
-    object CanSeeAllCommunities : Permission()
-    object CanCreateOwner : Permission()
-    object CanCreateBulletin : Permission()
-    object CanUpdateIssueStatus : Permission()
-    object CanCreateResolution : Permission()
-    object CanUpdateResolutionStatus : Permission()
-    object CanDeleteTopic : Permission()
-    object CanDeleteComment : Permission()
-    object CanCreateBuilding: Permission()
-    object CanAddBuildingToCommunity: Permission()
-    object CanSeeAllBuildings: Permission()
-
-}
-
 
 //Bulletins
 data class Bulletin(
@@ -163,7 +124,6 @@ data class CommentWithOwner(
     val comment: Comment,
     val owner: Owner
 )
-
 
 //Resolutions
 data class Resolution(

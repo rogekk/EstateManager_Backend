@@ -5,6 +5,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import pl.propertea.common.IdGenerator
 import pl.propertea.db.*
 import pl.propertea.models.*
+import pl.propertea.models.domain.Permission
 import pl.propertea.tools.hash
 import pl.propertea.tools.verify
 

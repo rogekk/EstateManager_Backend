@@ -4,6 +4,7 @@ import com.memoizr.assertk.expect
 import org.junit.Test
 import pl.propertea.dsl.DatabaseTest
 import pl.propertea.models.*
+import pl.propertea.models.domain.Permission
 import pl.propertea.repositories.RepositoriesModule.communityRepository
 import pl.propertea.repositories.RepositoriesModule.usersRepository
 import ro.kreator.aRandom
@@ -122,7 +123,8 @@ class PostgresUsersRepositoryTest : DatabaseTest() {
 
         usersRepository().addPermission(ownerId, Permission.CanDeleteComment)
 
-        expect that usersRepository().checkCredentials(owner.username, "password") isEqualTo Authorization(ownerId.id, UserTypes.OWNER, listOf(Permission.CanDeleteComment))
+        expect that usersRepository().checkCredentials(owner.username, "password") isEqualTo Authorization(ownerId.id, UserTypes.OWNER, listOf(
+            Permission.CanDeleteComment))
 
     }
 
