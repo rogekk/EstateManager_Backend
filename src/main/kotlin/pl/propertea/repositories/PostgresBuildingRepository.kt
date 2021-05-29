@@ -11,11 +11,16 @@ interface BuildingRepository {
     fun getBuildings(): List<Building>
     fun createBuilding(communityId: CommunityId, usableArea: UsableArea,
                        name: String,
-                       apartments: List<Apartment> = emptyList()): BuildingId?
+                       apartments: List<Apartment> = emptyList(),
+                       parkingSpots: List<ParkingSpot> = emptyList(),
+                       storageRooms: List<StorageRoom> = emptyList(),
+    ): BuildingId?
 
     fun getBuildingsProfile(id: BuildingId): BuildingProfile?
     fun createApartment(buildingId: BuildingId)
     fun getApartments(buildingId: BuildingId): List<Apartment>
+    fun getParkingSpots(buildingId: BuildingId): List<ParkingSpot>
+    fun getStorageRooms(buildingId: BuildingId): List<StorageRoom>
 }
 
 
@@ -27,6 +32,8 @@ class PostgresBuildingRepository(private val database: Database, private val idG
         usableArea: UsableArea,
         name: String,
         apartments: List<Apartment>,
+        parkingSpots: List<ParkingSpot>,
+        storageRooms: List<StorageRoom>,
     ): BuildingId? = transaction(database) {
         val building = BuildingsTable
             .select { BuildingsTable.name eq name }
@@ -51,6 +58,12 @@ class PostgresBuildingRepository(private val database: Database, private val idG
                     this[ApartmentsTable.number] = it.number
                     this[ApartmentsTable.usableArea] = it.usableArea.value
                     this[ApartmentsTable.buildingId] = buildingId
+                }
+            ParkingSpotsTable
+                .batchInsert(apartments) {
+                    this[ParkingSpotsTable.id] = idGenerator.newId()
+                    this[ParkingSpotsTable.number] = it.number
+                    this[ParkingSpotsTable.buildingId] = buildingId
                 }
         }
 
@@ -96,6 +109,30 @@ class PostgresBuildingRepository(private val database: Database, private val idG
                     it[ApartmentsTable.number],
                     UsableArea(it[ApartmentsTable.usableArea]),
                     BuildingId(it[ApartmentsTable.buildingId])
+                )
+            }
+    }
+
+    override fun getParkingSpots(buildingId: BuildingId): List<ParkingSpot> = transaction(database) {
+        ParkingSpotsTable
+            .select { ParkingSpotsTable.buildingId eq buildingId.id }
+            .map {
+                ParkingSpot(
+                    ParkingId(it[ParkingSpotsTable.id]),
+                    it[ParkingSpotsTable.number],
+                    BuildingId(it[ParkingSpotsTable.buildingId])
+                )
+            }
+    }
+
+    override fun getStorageRooms(buildingId: BuildingId): List<StorageRoom> = transaction(database) {
+        StorageRoomsTable
+            .select { StorageRoomsTable.buildingId eq buildingId.id }
+            .map {
+                StorageRoom(
+                    StorageRoomId(it[StorageRoomsTable.id]),
+                    it[StorageRoomsTable.number],
+                    BuildingId(it[StorageRoomsTable.buildingId])
                 )
             }
     }

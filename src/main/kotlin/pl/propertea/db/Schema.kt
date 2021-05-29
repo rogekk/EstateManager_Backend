@@ -21,7 +21,8 @@ val schema = arrayOf(
     UserPermissionsTable,
     BuildingsTable,
     ApartmentsTable,
-//    ApartmentToBuilding
+    ParkingSpotsTable,
+    StorageRoomsTable,
 )
 
 object AdminCommunitiesTable: Table("admin_communities") {
@@ -120,24 +121,22 @@ object ApartmentsTable : Table("apartments") {
 
     override val primaryKey = PrimaryKey(id)
 }
-//
-//object ParkingSpot : Table() {
-//    val id = text("id")
-//    val number = text("number")
-//    val parkingShares = integer("parking_shares")
-//    val buildingsId = text("buildings_id").references(BuildingsTable.id)
-//
-//    override val primaryKey = PrimaryKey(id)
-//}
-//
-//object StorageRoom : Table() {
-//    val id = text("id")
-//    val number = text("number")
-//    val storageShares = integer("storage_shares")
-//    val buildingsId = text("buildings_id").references(BuildingsTable.id)
-//
-//    override val primaryKey = PrimaryKey(id)
-//}
+
+object ParkingSpotsTable : Table("parking_spots") {
+    val id = text("id")
+    val number = text("number")
+    val buildingId = text("buildings_id").references(BuildingsTable.id)
+
+    override val primaryKey = PrimaryKey(id)
+}
+
+object StorageRoomsTable : Table("storage_rooms") {
+    val id = text("id")
+    val number = text("number")
+    val buildingId = text("buildings_id").references(BuildingsTable.id)
+
+    override val primaryKey = PrimaryKey(id)
+}
 //
 //object Ownership : Table("ownership") {
 //    val id = text("id")

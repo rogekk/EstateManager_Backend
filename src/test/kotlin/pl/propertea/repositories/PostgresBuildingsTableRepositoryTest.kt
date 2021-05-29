@@ -1,7 +1,6 @@
 package pl.propertea.repositories
 
 import com.memoizr.assertk.expect
-import com.snitch.extensions.print
 import org.junit.Test
 import pl.propertea.dsl.DatabaseTest
 import pl.propertea.models.*
@@ -9,12 +8,13 @@ import pl.propertea.repositories.RepositoriesModule.buildingsRepository
 import pl.propertea.repositories.RepositoriesModule.communityRepository
 import ro.kreator.aRandom
 import ro.kreator.aRandomListOf
-import kotlin.math.exp
 
 class BuildingsRepositoryTest: DatabaseTest() {
     val community by aRandom<Community>()
     val building by aRandom<Building>()
     val apartments by aRandomListOf<Apartment>()
+    val parkings by aRandomListOf<ParkingSpot>()
+    val storageRooms by aRandomListOf<StorageRoom>()
 
     @Test
     fun `gets all buildings`(){
@@ -40,11 +40,27 @@ class BuildingsRepositoryTest: DatabaseTest() {
 
     @Test
     fun `gets all parking spots`() {
+        val communityId = communityRepository().createCommunity(community)
 
+        val buildingId = buildingsRepository().createBuilding(communityId, UsableArea(100), "My community", parkingSpots = parkings)!!
+
+        buildingsRepository().getParkingSpots(buildingId)
+            .zip(parkings).forEach {
+                expect that it.first.buildingId isEqualTo buildingId
+                expect that it.first.number isEqualTo it.second.number
+            }
     }
 
     @Test
     fun `gets all storage rooms`() {
+        val communityId = communityRepository().createCommunity(community)
 
+        val buildingId = buildingsRepository().createBuilding(communityId, UsableArea(100), "My community", storageRooms = storageRooms)!!
+
+        buildingsRepository().getStorageRooms(buildingId)
+            .zip(storageRooms).forEach {
+                expect that it.first.buildingId isEqualTo buildingId
+                expect that it.first.number isEqualTo it.second.number
+            }
     }
 }

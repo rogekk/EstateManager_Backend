@@ -15,6 +15,7 @@ data class Shares(val value: Int)
 data class BuildingId(val id: String)
 data class ApartmentId(val id: String)
 data class ParkingId(val id: String)
+data class StorageRoomId(val id: String)
 
 data class UsableArea(val value: Int)
 
@@ -254,6 +255,18 @@ data class Apartment(
     val id: ApartmentId,
     val number: String,
     val usableArea: UsableArea,
+    val buildingId: BuildingId,
+)
+
+data class ParkingSpot(
+    val id: ParkingId,
+    val number: String,
+    val buildingId: BuildingId,
+)
+
+data class StorageRoom(
+    val id: StorageRoomId,
+    val number: String,
     val buildingId: BuildingId,
 )
 
