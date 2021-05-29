@@ -5,6 +5,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import pl.propertea.common.IdGenerator
 import pl.propertea.db.*
 import pl.propertea.models.*
+import pl.propertea.models.domain.Permission
 import pl.propertea.tools.hash
 import pl.propertea.tools.verify
 
@@ -61,16 +62,16 @@ class PostgresUsersRepository(private val database: Database, private val idGene
     UsersRepository {
 
     override fun getProfile(id: UserId): OwnerProfile = transaction(database) {
-        OwnerMembership
-            .leftJoin(Communities)
-            .leftJoin(Users)
-            .slice(Communities.columns + Users.columns + OwnerMembership.shares)
+        OwnerMembershipTable
+            .leftJoin(CommunitiesTable)
+            .leftJoin(UsersTable)
+            .slice(CommunitiesTable.columns + UsersTable.columns + OwnerMembershipTable.shares)
             .selectAll()
             .map {
                 it.readOwner() to Community(
-                    CommunityId(it[Communities.id]),
-                    it[Communities.name],
-                    it[Communities.totalShares]
+                    CommunityId(it[CommunitiesTable.id]),
+                    it[CommunitiesTable.name],
+                    it[CommunitiesTable.totalShares]
                 )
             }
             .groupBy { it.first }
@@ -80,7 +81,7 @@ class PostgresUsersRepository(private val database: Database, private val idGene
 
     override fun addPermission(userId: UserId, permission: Permission) {
         transaction(database) {
-            UserPermissions.insert {
+            UserPermissionsTable.insert {
                 it[this.id] = idGenerator.newId()
                 it[this.userId] = userId.id
                 it[this.permission] = permission.toDb()
@@ -89,8 +90,8 @@ class PostgresUsersRepository(private val database: Database, private val idGene
     }
 
     override fun getById(ownerId: OwnerId): Owner? = transaction(database) {
-        Users
-            .select { Users.id eq ownerId.id }
+        UsersTable
+            .select { UsersTable.id eq ownerId.id }
             .map { it.readOwner() }
             .firstOrNull()
     }
@@ -104,26 +105,26 @@ class PostgresUsersRepository(private val database: Database, private val idGene
         address: String,
         profileImageUrl: String?
     ) = transaction(database) {
-        val user = Users
-            .select { Users.username eq username }
+        val user = UsersTable
+            .select { UsersTable.username eq username }
             .firstOrNull()
 
         val userId = idGenerator.newId()
 
         if (user == null) {
-            Users.insert { ownersTable ->
+            UsersTable.insert { ownersTable ->
                 ownersTable[id] = userId
-                ownersTable[Users.username] = username
-                ownersTable[Users.password] = hash(password)
-                ownersTable[Users.email] = email
-                ownersTable[Users.phoneNumber] = phoneNumber
-                ownersTable[Users.address] = address
-                ownersTable[Users.profileImageUrl] = profileImageUrl
-                ownersTable[Users.userType] = PGUserType.OWNER
+                ownersTable[UsersTable.username] = username
+                ownersTable[UsersTable.password] = hash(password)
+                ownersTable[UsersTable.email] = email
+                ownersTable[UsersTable.phoneNumber] = phoneNumber
+                ownersTable[UsersTable.address] = address
+                ownersTable[UsersTable.profileImageUrl] = profileImageUrl
+                ownersTable[UsersTable.userType] = PGUserType.OWNER
             }
 
             communities.forEach { community ->
-                OwnerMembership.insert {
+                OwnerMembershipTable.insert {
                     it[id] = idGenerator.newId()
                     it[ownerId] = userId
                     it[communityId] = community.first.id
@@ -145,19 +146,19 @@ class PostgresUsersRepository(private val database: Database, private val idGene
     ): ManagerId? = transaction(database) {
 
         val userId = idGenerator.newId()
-        Users.insert { ownersTable ->
+        UsersTable.insert { ownersTable ->
             ownersTable[id] = userId
-            ownersTable[Users.username] = username
-            ownersTable[Users.password] = hash(password)
-            ownersTable[Users.email] = email
-            ownersTable[Users.phoneNumber] = phoneNumber
-            ownersTable[Users.address] = address
-            ownersTable[Users.profileImageUrl] = profileImageUrl
-            ownersTable[Users.userType] = PGUserType.ADMIN
+            ownersTable[UsersTable.username] = username
+            ownersTable[UsersTable.password] = hash(password)
+            ownersTable[UsersTable.email] = email
+            ownersTable[UsersTable.phoneNumber] = phoneNumber
+            ownersTable[UsersTable.address] = address
+            ownersTable[UsersTable.profileImageUrl] = profileImageUrl
+            ownersTable[UsersTable.userType] = PGUserType.ADMIN
         }
 
         communities.forEach { community ->
-            AdminCommunities.insert {
+            AdminCommunitiesTable.insert {
                 it[id] = idGenerator.newId()
                 it[adminId] = userId
                 it[communityId] = community.id
@@ -178,15 +179,15 @@ class PostgresUsersRepository(private val database: Database, private val idGene
     ): AdminId? = transaction(database) {
 
         val userId = idGenerator.newId()
-        Users.insert { ownersTable ->
+        UsersTable.insert { ownersTable ->
             ownersTable[id] = userId
-            ownersTable[Users.username] = username
-            ownersTable[Users.password] = hash(password)
-            ownersTable[Users.email] = email
-            ownersTable[Users.phoneNumber] = phoneNumber
-            ownersTable[Users.address] = address
-            ownersTable[Users.profileImageUrl] = profileImageUrl
-            ownersTable[Users.userType] = PGUserType.ADMIN
+            ownersTable[UsersTable.username] = username
+            ownersTable[UsersTable.password] = hash(password)
+            ownersTable[UsersTable.email] = email
+            ownersTable[UsersTable.phoneNumber] = phoneNumber
+            ownersTable[UsersTable.address] = address
+            ownersTable[UsersTable.profileImageUrl] = profileImageUrl
+            ownersTable[UsersTable.userType] = PGUserType.ADMIN
         }
 
         AdminId(userId)
@@ -194,10 +195,10 @@ class PostgresUsersRepository(private val database: Database, private val idGene
 
     override fun checkCredentials(username: String, password: String): Authorization? = transaction(database) {
         data class Result(val userId: String, val hashedPassword: String, val userType: PGUserType, val permissions: List<Permission>)
-        Users
-            .leftJoin(UserPermissions)
-            .select { (Users.username eq username) }
-            .map { Result(it[Users.id], it[Users.password], it[Users.userType], it.getOrNull(UserPermissions.permission)?.toDomain()?.let { listOf(it) }.orEmpty()) }
+        UsersTable
+            .leftJoin(UserPermissionsTable)
+            .select { (UsersTable.username eq username) }
+            .map { Result(it[UsersTable.id], it[UsersTable.password], it[UsersTable.userType], it.getOrNull(UserPermissionsTable.permission)?.toDomain()?.let { listOf(it) }.orEmpty()) }
             .reduceRightOrNull { acc, result -> acc.copy(permissions = acc.permissions + result.permissions)}
             ?.let {
                 if (verify(password, it.hashedPassword)) {
@@ -227,15 +228,15 @@ class PostgresUsersRepository(private val database: Database, private val idGene
         profileImageUrl: String?,
     ) {
         transaction(database) {
-            Users.update({ Users.id eq userId.id }) {
+            UsersTable.update({ UsersTable.id eq userId.id }) {
                 if (address != null)
-                    it[Users.address] = address
+                    it[UsersTable.address] = address
                 if (email != null)
-                    it[Users.email] = email
+                    it[UsersTable.email] = email
                 if (phoneNumber != null)
-                    it[Users.phoneNumber] = phoneNumber
+                    it[UsersTable.phoneNumber] = phoneNumber
                 if (profileImageUrl != null)
-                    it[Users.profileImageUrl] = profileImageUrl
+                    it[UsersTable.profileImageUrl] = profileImageUrl
             }
         }
     }

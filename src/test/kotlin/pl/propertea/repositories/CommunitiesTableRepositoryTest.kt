@@ -3,17 +3,20 @@ package pl.propertea.repositories
 import com.memoizr.assertk.expect
 import org.junit.Test
 import pl.propertea.dsl.DatabaseTest
-import pl.propertea.models.Community
-import pl.propertea.models.Owner
+import pl.propertea.models.*
+import pl.propertea.repositories.RepositoriesModule.buildingsRepository
 import pl.propertea.repositories.RepositoriesModule.communityRepository
 import pl.propertea.repositories.RepositoriesModule.usersRepository
 import ro.kreator.aRandom
 import ro.kreator.aRandomListOf
 
-class CommunitiesRepositoryTest : DatabaseTest() {
+class CommunitiesTableRepositoryTest : DatabaseTest() {
     val communities by aRandomListOf<Community>()
     val community by aRandom<Community>()
     val owner by aRandom<Owner>()
+    val building by aRandom<Building>()
+
+
 
     @Test
     fun `gets all communities`() {
@@ -45,5 +48,14 @@ class CommunitiesRepositoryTest : DatabaseTest() {
         communityRepository().removeMembership(ownerId, commId)
 
         expect that usersRepository().getProfile(ownerId).communities isEqualTo ids
+    }
+
+    @Test
+    fun `add a building to community`() {
+        val id = communityRepository().createCommunity(community)
+
+        val buildingId = building inThis id putIn buildingsRepository()
+
+        expect that buildingsRepository().getBuildingsProfile(buildingId)?.community?.id isEqualTo id
     }
 }

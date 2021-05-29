@@ -81,7 +81,7 @@ class PostgresBulletinBoardTest : DatabaseTest({ Mocks(clock.strict) }) {
         val id = bulletinRepository().createBulletin(
             BulletinCreation(bulletin.subject, bulletin.content, bulletin.communityId)
         )
-        expect that bulletinRepository().getBulletin(id!!) isEqualTo bulletin.copy(
+        expect that bulletinRepository().getBulletin(id) isEqualTo bulletin.copy(
             id = id, createdAt = now
         )
     }

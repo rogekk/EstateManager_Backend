@@ -1,9 +1,16 @@
+
 import com.snitch.Router
 import com.snitch.body
 import pl.propertea.handlers.resolutions.*
-import pl.propertea.models.*
-import pl.propertea.routes.*
-import pl.propertea.models.Permission.*
+import pl.propertea.models.ResolutionRequest
+import pl.propertea.models.ResolutionResultRequest
+import pl.propertea.models.ResolutionVoteRequest
+import pl.propertea.models.domain.Permission.CanCreateResolution
+import pl.propertea.models.domain.Permission.CanUpdateResolutionStatus
+import pl.propertea.routes.authenticated
+import pl.propertea.routes.communityId
+import pl.propertea.routes.resolutionId
+import pl.propertea.routes.withPermission
 
 fun Router.resolutionsRoutes() {
     "resolutions" {

@@ -5,7 +5,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import pl.propertea.common.Clock
 import pl.propertea.common.IdGenerator
 import pl.propertea.db.CommentsTable
-import pl.propertea.db.Users
+import pl.propertea.db.UsersTable
 import pl.propertea.db.TopicsTable
 import pl.propertea.models.*
 
@@ -25,19 +25,19 @@ class PostgresTopicsRepository(
 ) : TopicsRepository {
     override fun getTopics(communityId: CommunityId): List<TopicWithOwner> = transaction(database) {
         TopicsTable
-            .leftJoin(Users)
+            .leftJoin(UsersTable)
             .leftJoin(CommentsTable)
-            .slice(TopicsTable.columns + Users.columns + CommentsTable.topicId.count())
+            .slice(TopicsTable.columns + UsersTable.columns + CommentsTable.topicId.count())
             .select { TopicsTable.communityId eq communityId.id }
-            .groupBy(TopicsTable.id, Users.id)
+            .groupBy(TopicsTable.id, UsersTable.id)
             .orderBy(TopicsTable.createdAt, SortOrder.DESC)
             .map { TopicWithOwner(it.readTopic(), it.readOwner()) }
     }
 
     override fun getComments(id: TopicId): List<CommentWithOwner> = transaction(database) {
         CommentsTable
-            .leftJoin(Users)
-            .slice(Users.columns + CommentsTable.columns)
+            .leftJoin(UsersTable)
+            .slice(UsersTable.columns + CommentsTable.columns)
             .select { CommentsTable.topicId eq id.id }
             .map { CommentWithOwner(it.readComment(), it.readOwner()) }
     }

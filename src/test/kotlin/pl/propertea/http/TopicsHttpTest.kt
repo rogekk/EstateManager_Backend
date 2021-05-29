@@ -1,7 +1,7 @@
 package pl.propertea.http
 
 import com.memoizr.assertk.isEqualTo
-import pl.propertea.models.Permission.*
+import pl.propertea.models.domain.Permission.*
 import com.snitch.extensions.parseJson
 import io.mockk.every
 import io.mockk.verify

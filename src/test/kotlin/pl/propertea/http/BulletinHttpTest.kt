@@ -1,9 +1,7 @@
 package pl.propertea.http
 
-import com.snitch.extensions.json
-import com.snitch.extensions.parseJson
 import io.mockk.every
-import pl.propertea.models.Permission.*
+import pl.propertea.models.domain.Permission.*
 import io.mockk.verify
 import org.junit.Test
 import pl.propertea.dsl.Mocks

@@ -56,6 +56,7 @@ dependencies {
 }
 
 tasks.create<Exec>("startPostgres") {
+    dependsOn("stopPostgres")
     commandLine("docker",
         "run",
         "-p", "5432:5432",

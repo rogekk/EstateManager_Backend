@@ -3,12 +3,8 @@ package pl.propertea.dsl
 import org.junit.Rule
 import org.junit.rules.RuleChain
 import org.junit.rules.TestRule
-import pl.propertea.models.CommunityId
-import pl.propertea.models.Owner
-import pl.propertea.models.Shares
-import pl.propertea.repositories.OwnerCreated
-import pl.propertea.repositories.OwnerInsertion
-import pl.propertea.repositories.UsersRepository
+import pl.propertea.models.*
+import pl.propertea.repositories.*
 
 abstract class DatabaseTest(
     mockBlock: () -> Mocks = { Mocks() }
@@ -22,6 +18,7 @@ abstract class DatabaseTest(
     infix fun Owner.with(shares: Shares) = Pair(this, shares)
     infix fun Owner.inThis(community: CommunityId) = this with 100.shares inThis community
     infix fun Owner.inThese(communities: List<CommunityId>) = this with 100.shares inThese communities
+
 
     infix fun Pair<Owner, Shares>.inThis(community: CommunityId) =
         OwnerInsertion(first, "password", listOf(community to second))
@@ -45,5 +42,25 @@ abstract class DatabaseTest(
             address = owner.address,
             profileImageUrl = owner.profileImageUrl
         ) as OwnerCreated).ownerId
+
+    // building insertion
+    infix fun Building.with(usableArea: UsableArea) = Pair(this, usableArea)
+    infix fun Building.inThis(community: CommunityId) = this with 100.usableArea inThis community
+
+    data class BuildingInsertion(val building: Building, val communityId: CommunityId, val usableArea: UsableArea)
+
+    infix fun Pair<Building, UsableArea>.inThis(community: CommunityId) =
+        BuildingInsertion(first, community, second)
+
+
+    val Int.usableArea get() = UsableArea(this)
+    val <T> List<T>.evenIndexed get() = filterIndexed { index, _ -> index % 2 == 0 }
+
+    infix fun BuildingInsertion.putIn(rep: BuildingRepository) =
+        rep.createBuilding(
+            communityId = communityId,
+            usableArea = usableArea,
+            name = building.name,
+        )!!
 }
 

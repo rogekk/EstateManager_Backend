@@ -3,8 +3,10 @@ package pl.propertea.routes
 import AuthTokenValidator
 import authenticationRoutes
 import bulletinsRoutes
-import com.snitch.*
-import com.snitch.Enum
+import com.snitch.RequestHandler
+import com.snitch.Router
+import com.snitch.header
+import com.snitch.path
 import com.snitch.spark.SparkResponseWrapper
 import communitiesRoutes
 import ownersRoutes
@@ -22,6 +24,7 @@ val ownerId = path("ownerId", condition = ulid("owner", ::OwnerId))
 val authTokenHeader = header("X-Auth-Token", condition = AuthTokenValidator)
 val bulletinId = path("bulletinId", condition = ulid("bulletin", ::BulletinId))
 val issueId = path("issueId", condition = ulid("issue", ::IssueId))
+val buildingId = path("buildingId", condition = ulid("building", ::BuildingId))
 
 
 fun routes(http: Service): Router.() -> Unit = {
@@ -39,6 +42,8 @@ fun routes(http: Service): Router.() -> Unit = {
         bulletinsRoutes()
 
         issuesRoutes()
+
+        buildingRoutes()
     }
 
     setAccessControlHeaders(http)

@@ -6,6 +6,7 @@ import com.snitch.RequestHandler
 import com.snitch.get
 import pl.propertea.common.CommonModule.authenticator
 import pl.propertea.models.*
+import pl.propertea.models.domain.Permission
 
 fun <T : Any> Endpoint<T>.authenticated() = withHeader(authTokenHeader)
     .copy(before = { authenticator().verify(it[authTokenHeader].token) })
@@ -19,7 +20,7 @@ fun <T : Any> Endpoint<T>.restrictTo(userType: UserTypes) =
 fun <T : Any> Endpoint<T>.withPermission(permission: Permission) =
     withHeader(authTokenHeader)
         .copy(
-            summary = "${summary.orEmpty()} | With Permission: $permission",
+            summary = "${summary.orEmpty()} | With Permission: ${permission::class.simpleName}",
             before = { if (permission !in it[authTokenHeader].authorization.permissions) throw ForbiddenException() })
 
 fun RequestHandler<*>.authenticatedUser(): UserId {

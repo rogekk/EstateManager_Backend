@@ -6,7 +6,7 @@ import org.junit.Test
 import pl.propertea.dsl.Mocks
 import pl.propertea.dsl.SparkTest
 import pl.propertea.dsl.relaxed
-import pl.propertea.models.Permission.*
+import pl.propertea.models.domain.Permission.*
 import pl.propertea.models.*
 import pl.propertea.repositories.RepositoriesModule.resolutionsRepository
 import pl.propertea.tools.json
