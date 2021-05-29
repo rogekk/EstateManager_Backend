@@ -195,8 +195,6 @@ enum class Vote {
     PRO, AGAINST, ABSTAIN
 }
 
-
-
 data class Community(
     val id: CommunityId,
     val name: String,
