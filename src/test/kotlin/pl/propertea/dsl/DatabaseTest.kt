@@ -43,27 +43,21 @@ abstract class DatabaseTest(
             profileImageUrl = owner.profileImageUrl
         ) as OwnerCreated).ownerId
 
-
     // building insertion
     infix fun Building.with(usableArea: UsableArea) = Pair(this, usableArea)
     infix fun Building.inThis(community: CommunityId) = this with 100.usableArea inThis community
-    infix fun Building.inThese(communities: List<CommunityId>) = this with 100.usableArea inThese communities
-
 
     infix fun Pair<Building, UsableArea>.inThis(community: CommunityId) =
-        BuildingInsertion(first, listOf(community to second))
-
-
-    infix fun Pair<Building, UsableArea>.inThese(communities: List<CommunityId>) =
-        BuildingInsertion(first, communities.map { it to second})
+        BuildingInsertion(first, community, second)
 
 
     val Int.usableArea get() = UsableArea(this)
-    val <T> List<T>.evenIndexed get() =  this.filterIndexed { index, _ -> index % 2 == 0 }
+    val <T> List<T>.evenIndexed get() = filterIndexed { index, _ -> index % 2 == 0 }
 
     infix fun BuildingInsertion.putIn(rep: BuildingRepository) =
         (rep.createBuilding(
-            communities = communities,
+            communityId = communityId,
+            usableArea = usableArea,
             name = building.name,
         ) as BuildingCreated).buildingId
 }

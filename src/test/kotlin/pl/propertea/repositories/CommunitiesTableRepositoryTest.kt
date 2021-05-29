@@ -53,14 +53,9 @@ class CommunitiesTableRepositoryTest : DatabaseTest() {
     @Test
     fun `add a building to community`() {
         val id = communityRepository().createCommunity(community)
-        val ids = communities.map { communityRepository().createCommunity(it) }
 
         val buildingId = building inThis id putIn buildingRepository()
 
-        ids.forEach {
-            communityRepository().addBuilding(buildingId, it, 100.usableArea)
-        }
-
-        expect that buildingRepository().getBuildingsProfile(buildingId).community.map { it.id } containsOnly ids + id
+        expect that buildingRepository().getBuildingsProfile(buildingId)?.community?.id isEqualTo id
     }
 }

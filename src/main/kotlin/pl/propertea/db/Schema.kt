@@ -225,10 +225,11 @@ object CommunitiesTable : Table() {
     override val primaryKey = PrimaryKey(id)
 }
 
-object BuildingsTable : Table() {
+object BuildingsTable : Table("buildings") {
     val id = text("id")
     val name = text("name")
     val usableArea = integer("usable_area")
+    val communityId = text("community_id").references(CommunitiesTable.id)
 
     override val primaryKey = PrimaryKey(id)
 }

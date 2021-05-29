@@ -1,6 +1,7 @@
 package pl.propertea.repositories
 
 import com.memoizr.assertk.expect
+import com.snitch.extensions.print
 import org.junit.Test
 import pl.propertea.dsl.DatabaseTest
 import pl.propertea.models.*

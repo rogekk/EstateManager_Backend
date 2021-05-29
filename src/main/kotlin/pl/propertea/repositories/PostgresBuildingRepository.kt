@@ -1,9 +1,7 @@
 package pl.propertea.repositories
 
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
+import com.snitch.extensions.print
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import pl.propertea.common.IdGenerator
 import pl.propertea.db.*
@@ -13,8 +11,8 @@ import pl.propertea.models.*
 interface BuildingRepository {
 
     fun getBuildings(): List<Building>
-    fun createBuilding(communities: List<Pair<CommunityId, UsableArea>>, name: String): CreateBuildingResult
-    fun getBuildingsProfile(id: BuildingId): BuildingProfile
+    fun createBuilding(communityId: CommunityId, usableArea: UsableArea, name: String): CreateBuildingResult
+    fun getBuildingsProfile(id: BuildingId): BuildingProfile?
     fun createApartment(buildingId: BuildingId)
 }
 
@@ -23,7 +21,8 @@ class PostgresBuildingRepository(private val database: Database, private val idG
     BuildingRepository {
 
     override fun createBuilding(
-        communities: List<Pair<CommunityId, UsableArea>>,
+        communityId: CommunityId,
+        usableArea: UsableArea,
         name: String
     ): CreateBuildingResult = transaction(database) {
         val building = BuildingsTable
@@ -32,52 +31,44 @@ class PostgresBuildingRepository(private val database: Database, private val idG
 
         val buildingId = idGenerator.newId()
 
+
         if (building == null) {
-            BuildingsTable.insert { buildingTable ->
-                buildingTable[id] = buildingId
-                buildingTable[BuildingsTable.name] = name
-                buildingTable[usableArea] = usableArea
-            }
+            BuildingsTable
+                .insert { buildingTable ->
+                    buildingTable[this.id] = buildingId
+                    buildingTable[this.name] = name
+                    buildingTable[this.usableArea] = usableArea.value
+                    buildingTable[this.communityId] = communityId.id
+                }
         }
 
-        communities.forEach { community ->
-            BuildingToCommunity.insert {
-                it[id] = idGenerator.newId()
-                it[buildId] = buildingId
-                it[communityId] = community.first.id
-                it[usableArea] = community.second.value
-            }
-        }
-        BuildingCreated(BuildingId(id))
+        BuildingCreated(BuildingId(buildingId))
     }
 
     override fun getBuildings(): List<Building> = transaction(database) {
         BuildingsTable
             .selectAll()
             .map { Building(BuildingId(it[BuildingsTable.id]), it[BuildingsTable.name], it[BuildingsTable.usableArea]) }
-
     }
 
-    override fun getBuildingsProfile(id: BuildingId): BuildingProfile = transaction(database) {
-        BuildingToCommunity
+    override fun getBuildingsProfile(id: BuildingId): BuildingProfile? = transaction(database) {
+        BuildingsTable
             .leftJoin(CommunitiesTable)
-            .leftJoin(BuildingsTable)
-            .slice(CommunitiesTable.columns + BuildingsTable.columns + BuildingToCommunity.usableArea)
-            .selectAll()
+            .select { BuildingsTable.id eq id.id }
             .map {
-                Building(
-                    BuildingId(it[BuildingsTable.id]),
-                    it[BuildingsTable.name],
-                    it[BuildingsTable.usableArea]
-                ) to Community(
-                    CommunityId(it[CommunitiesTable.id]),
-                    it[CommunitiesTable.name],
-                    it[CommunitiesTable.totalShares]
+                BuildingProfile(
+                    Building(
+                        BuildingId(it[BuildingsTable.id]),
+                        it[BuildingsTable.name],
+                        it[BuildingsTable.usableArea]
+                    ), Community(
+                        CommunityId(it[CommunitiesTable.id]),
+                        it[CommunitiesTable.name],
+                        it[CommunitiesTable.totalShares]
+                    )
                 )
             }
-            .groupBy { it.first }
-            .map { BuildingProfile(it.key, it.value.map { it.second }) }
-            .first()
+            .firstOrNull()
     }
 
     override fun createApartment(buildingId: BuildingId) {
@@ -93,9 +84,9 @@ class PostgresBuildingRepository(private val database: Database, private val idG
 
 sealed class CreateBuildingResult
 
-data class BuildingCreated(val buildingId: BuildingId): CreateBuildingResult()
+data class BuildingCreated(val buildingId: BuildingId) : CreateBuildingResult()
 
-data class BuildingInsertion(val building: Building, val communities: List<Pair<CommunityId, UsableArea>>)
+data class BuildingInsertion(val building: Building, val communityId: CommunityId, val usableArea: UsableArea)
 
 sealed class CreateApartmentResult
 

@@ -249,6 +249,6 @@ data class Building(
 
 data class BuildingProfile(
     val building: Building,
-    val community: List<Community>
+    val community: Community
 )
 
