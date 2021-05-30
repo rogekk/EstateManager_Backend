@@ -1,6 +1,7 @@
 package pl.propertea.handlers.profile
 
 import com.snitch.Handler
+import com.snitch.notFound
 import com.snitch.ok
 import pl.propertea.models.*
 import pl.propertea.repositories.RepositoriesModule.usersRepository
@@ -8,20 +9,21 @@ import pl.propertea.routes.authenticatedUser
 
 
 val getProfile: Handler<Nothing, ProfileResponse> = {
-    val profile = usersRepository().getProfile(authenticatedUser())
+    usersRepository().getProfile(authenticatedUser())?.let { profile ->
 
-    ProfileResponse(
-        profile.owner.id.id,
-        profile.owner.username,
-        profile.owner.email,
-        profile.owner.phoneNumber,
-        profile.owner.address,
-        profile.communities.map {
-            CommunityMembershipResponse(
-                it.id.id,
-                it.name
-            )
-        }).ok
+        ProfileResponse(
+            profile.owner.id.id,
+            profile.owner.username,
+            profile.owner.email,
+            profile.owner.phoneNumber,
+            profile.owner.address,
+            profile.communities.map {
+                CommunityMembershipResponse(
+                    it.id.id,
+                    it.name
+                )
+            }).ok
+    } ?: notFound()
 }
 
 val updateOwnersHandler: Handler<UpdateOwnersRequest, GenericResponse> = {

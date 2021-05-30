@@ -3,7 +3,9 @@ package pl.propertea.repositories
 import com.memoizr.assertk.expect
 import org.junit.Test
 import pl.propertea.dsl.DatabaseTest
-import pl.propertea.models.*
+import pl.propertea.models.Building
+import pl.propertea.models.Community
+import pl.propertea.models.Owner
 import pl.propertea.repositories.RepositoriesModule.buildingsRepository
 import pl.propertea.repositories.RepositoriesModule.communityRepository
 import pl.propertea.repositories.RepositoriesModule.usersRepository
@@ -36,7 +38,7 @@ class CommunitiesTableRepositoryTest : DatabaseTest() {
             communityRepository().setMembership(ownerId, it, 100.shares)
         }
 
-        expect that usersRepository().getProfile(ownerId).communities.map { it.id } containsOnly ids + id
+        expect that usersRepository().getProfile(ownerId)!!.communities.map { it.id } containsOnly ids + id
     }
 
     @Test
@@ -47,7 +49,7 @@ class CommunitiesTableRepositoryTest : DatabaseTest() {
 
         communityRepository().removeMembership(ownerId, commId)
 
-        expect that usersRepository().getProfile(ownerId).communities isEqualTo ids
+        expect that usersRepository().getProfile(ownerId)!!.communities isEqualTo ids
     }
 
     @Test
