@@ -1,6 +1,7 @@
 package pl.propertea.http
 
 import com.memoizr.assertk.expect
+import com.memoizr.assertk.isEqualTo
 import io.mockk.every
 import io.mockk.verify
 import org.joda.time.DateTime
@@ -14,6 +15,7 @@ import pl.propertea.dsl.strict
 import pl.propertea.models.*
 import pl.propertea.models.domain.Admin
 import pl.propertea.models.domain.OwnerProfile
+import pl.propertea.models.domain.Permission.CanCreateOwner
 import pl.propertea.repositories.OwnerCreated
 import pl.propertea.repositories.RepositoriesModule.usersRepository
 import pl.propertea.tools.json
@@ -62,6 +64,19 @@ class AuthHttpTest : SparkTest({ Mocks(clock.strict, usersRepository.relaxed) })
     }
 
     @Test
+    fun `returns the user type for successful login`() {
+        every { usersRepository().checkCredentials("foo", "pass") } returns Authorization(admin.id.id, UserTypes.ADMIN, emptyList())
+        every { clock().getDateTime() } returns now
+
+        POST("/v1/login")
+            .withBody(json { "username" _ "foo"; "password" _ "pass" })
+            .expectCode(200)
+            .expect {
+                it.jsonObject.getString("userType") isEqualTo "admin"
+            }
+    }
+
+    @Test
     fun `returns failure for unsuccessful login`() {
         every { usersRepository().checkCredentials("a", "b") } returns null
 
@@ -95,7 +110,6 @@ class AuthHttpTest : SparkTest({ Mocks(clock.strict, usersRepository.relaxed) })
 
     @Test
     fun `after successful login sets a valid JWT for admin`() {
-//        every { usersRepository().getProfile(admin.id) } returns OwnerProfile(owner, emptyList())
         every { usersRepository().checkCredentials(admin.username, "b") } returns Authorization(admin.id.id, UserTypes.ADMIN, emptyList())
         every { clock().getDateTime() } returns now
 

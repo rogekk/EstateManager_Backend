@@ -59,7 +59,7 @@ interface UsersRepository {
         profileImageUrl: String? = null,
     )
 
-    fun getProfile(id: UserId): OwnerProfile
+    fun getProfile(id: UserId): OwnerProfile?
 
     fun addPermission(userId: UserId, permission: Permission)
 }
@@ -67,7 +67,7 @@ interface UsersRepository {
 class PostgresUsersRepository(private val database: Database, private val idGenerator: IdGenerator) :
     UsersRepository {
 
-    override fun getProfile(id: UserId): OwnerProfile = transaction(database) {
+    override fun getProfile(id: UserId): OwnerProfile? = transaction(database) {
         OwnerMembershipTable
             .leftJoin(CommunitiesTable)
             .leftJoin(UsersTable)
@@ -82,7 +82,7 @@ class PostgresUsersRepository(private val database: Database, private val idGene
             }
             .groupBy { it.first }
             .map { OwnerProfile(it.key, it.value.map { it.second }) }
-            .first()
+            .firstOrNull()
     }
 
     override fun addPermission(userId: UserId, permission: Permission) {
@@ -160,7 +160,7 @@ class PostgresUsersRepository(private val database: Database, private val idGene
             ownersTable[UsersTable.phoneNumber] = phoneNumber
             ownersTable[UsersTable.address] = address
             ownersTable[UsersTable.profileImageUrl] = profileImageUrl
-            ownersTable[UsersTable.userType] = PGUserType.ADMIN
+            ownersTable[UsersTable.userType] = PGUserType.MANAGER
         }
 
         communities.forEach { community ->

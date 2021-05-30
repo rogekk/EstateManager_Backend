@@ -1,5 +1,7 @@
 package pl.propertea.models.responses
 
+
+
 import pl.propertea.models.domain.domains.Resolution
 import pl.propertea.models.domain.domains.ResolutionResult
 

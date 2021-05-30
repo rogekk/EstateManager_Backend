@@ -38,7 +38,7 @@ class CommunitiesTableRepositoryTest : DatabaseTest() {
             communityRepository().setMembership(ownerId, it, 100.shares)
         }
 
-        expect that usersRepository().getProfile(ownerId).communities.map { it.id } containsOnly ids + id
+        expect that usersRepository().getProfile(ownerId)!!.communities.map { it.id } containsOnly ids + id
     }
 
     @Test
@@ -49,7 +49,7 @@ class CommunitiesTableRepositoryTest : DatabaseTest() {
 
         communityRepository().removeMembership(ownerId, commId)
 
-        expect that usersRepository().getProfile(ownerId).communities isEqualTo ids
+        expect that usersRepository().getProfile(ownerId)!!.communities isEqualTo ids
     }
 
     @Test

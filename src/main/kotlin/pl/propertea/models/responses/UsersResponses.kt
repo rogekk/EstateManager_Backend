@@ -5,8 +5,13 @@ import com.snitch.documentation.Description
 data class LoginResponse(
     @Description("The authtoken in JWT form")
     val token: String,
+    val userType: UserTypeResponse,
     val id: String
 )
+
+enum class UserTypeResponse {
+    admin, manager, owner
+}
 
 data class ProfileResponse(
     val id: String,
