@@ -24,6 +24,7 @@ fun main() {
         "111111111",
         "Bankowa"
     ) as OwnerCreated).ownerId
+
     val user2 = usersRepository().createOwner(
         listOf(communityId1 to Shares(10)),
         "JKowalski",
