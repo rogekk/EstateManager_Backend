@@ -6,6 +6,7 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
+import pl.propertea.common.Clock
 import pl.propertea.common.IdGenerator
 import pl.propertea.db.PGSurveyState
 import pl.propertea.db.QuestionsTable
@@ -13,6 +14,9 @@ import pl.propertea.db.SurveyTable
 import pl.propertea.models.CommunityId
 import pl.propertea.models.SurveyId
 import pl.propertea.models.db.Insert
+import pl.propertea.models.domain.domains.Survey
+import pl.propertea.models.domain.domains.SurveyCreation
+import pl.propertea.models.domain.domains.SurveyProfile
 
 
 interface SurveyRepository {
@@ -25,9 +29,12 @@ interface SurveyRepository {
         createdAt: DateTime,
         state: PGSurveyState
     ): SurveyId?
+
+    fun getSurveys(communityId: CommunityId): List<Survey>
+    fun createQuestions(surveyId: SurveyId): List<Survey>
 }
 
-class PostgresSurveyRepository(private val database: Database, private val idGenerator: IdGenerator)
+class PostgresSurveyRepository(private val database: Database, private val idGenerator: IdGenerator, private val clock: Clock)
     : SurveyRepository {
 
     override fun createSurvey(
@@ -65,7 +72,19 @@ class PostgresSurveyRepository(private val database: Database, private val idGen
         }
         SurveyId(surveyId)
     }
-}
+    override fun getSurveys (communityId: CommunityId): List<Survey>
+    = transaction (database) {
+        SurveyTable
+            .select{SurveyTable.communityId eq communityId.id}
+            .map { it.readSurvey() }
+    }
+
+    override fun createQuestions (surveyId: SurveyId): List<Survey> {
+        TODO()
+    }
+
+    }g
+
 
 
 

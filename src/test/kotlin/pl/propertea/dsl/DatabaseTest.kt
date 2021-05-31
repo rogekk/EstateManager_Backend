@@ -8,6 +8,7 @@ import pl.propertea.models.domain.Building
 import pl.propertea.models.domain.Owner
 import pl.propertea.models.domain.UsableArea
 import pl.propertea.models.domain.domains.Shares
+import pl.propertea.models.domain.domains.Survey
 import pl.propertea.repositories.*
 
 abstract class DatabaseTest(
@@ -66,5 +67,6 @@ abstract class DatabaseTest(
             usableArea = usableArea,
             name = building.name,
         )!!
+
 }
 

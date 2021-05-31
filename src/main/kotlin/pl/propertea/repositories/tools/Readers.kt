@@ -2,6 +2,7 @@ package pl.propertea.repositories
 
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.count
+import pl.propertea.db.SurveyTable
 import pl.propertea.db.schema.*
 import pl.propertea.models.*
 import pl.propertea.models.domain.Owner
@@ -74,4 +75,14 @@ fun ResultRow.readAnswer() = Answer(
     this[AnswerTable.createdAt],
     OwnerId(this[AnswerTable.authorOwnerId]),
     IssueId(this[AnswerTable.issueId])
+)
+
+fun ResultRow.readSurvey() = Survey(
+    SurveyId(this[SurveyTable.id]),
+    this[SurveyTable.number],
+    this[SurveyTable.subject],
+    this[SurveyTable.description],
+    this[SurveyTable.createdAt],
+    CommunityId(this[SurveyTable.communityId]),
+    this[SurveyTable.state].toState()
 )

@@ -22,6 +22,7 @@ object SurveyTable : Table("survey") {
 object QuestionsTable : Table("questions") {
     val id = text("id")
     val content = text("content")
+    val votesPro = enumeration("votes_pro",PGQuestionVotes ::class)
 }
 
 enum class PGSurveyState {
@@ -45,7 +46,6 @@ object QuestionVotesTable : Table("question_votes") {
     val ownerId= text("owner_id").references(UsersTable.id)
     val surveyId = text("resolution_id").references(SurveyTable.id)
     val vote = enumeration("vote", PGQuestionVotes::class)
-    val shares = integer("shares")
 
     init {
         uniqueIndex("uniqueVote", ownerId, surveyId)
@@ -55,5 +55,5 @@ object QuestionVotesTable : Table("question_votes") {
 }
 
 enum class PGQuestionVotes {
-    PRO, AGAINST
+    PRO
 }
