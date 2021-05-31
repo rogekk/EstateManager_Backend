@@ -19,5 +19,8 @@ val schema = arrayOf(
     ApartmentsTable,
     ParkingSpotsTable,
     StorageRoomsTable,
+    SurveyTable,
+    QuestionsTable,
+    QuestionVotesTable,
 )
 

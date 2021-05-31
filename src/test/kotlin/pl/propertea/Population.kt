@@ -37,6 +37,7 @@ fun main() {
         "222222222",
         "Bankowa"
     )
+
     val manager1 =usersRepository().createManager(
         listOf(communityId1),
         "manager",
@@ -45,6 +46,7 @@ fun main() {
         "333333333",
         "Bankowa"
     )
+
     val admin1 = usersRepository().createAdmin(
         listOf(communityId1),
         "admin",
@@ -53,6 +55,7 @@ fun main() {
         "444444444",
         "Kolejowa"
     )
+
     usersRepository().createOwner(
         listOf(communityId1 to Shares(10)),
         "LWojcik",
@@ -61,6 +64,7 @@ fun main() {
         "555555555",
         "Kolejowa"
     )
+
     usersRepository().createOwner(
         listOf(communityId1 to Shares(10)),
         "RKowalczyk",
@@ -69,7 +73,6 @@ fun main() {
         "666666666",
         "Kolejowa"
     )
-
 
     topicsRepository().crateTopic(
         TopicCreation(
@@ -80,6 +83,7 @@ fun main() {
             "He's been a very bad boy"
         )
     )
+
     topicsRepository().crateTopic(
         TopicCreation(
             "Estate management system",

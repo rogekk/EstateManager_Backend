@@ -9,5 +9,5 @@ object Insert {
 
     data class StorageRoom(val number: String)
 
-    data class Question(val question: String, val content: String)
+    data class Question(val content: String)
 }

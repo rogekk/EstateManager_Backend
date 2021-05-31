@@ -22,7 +22,9 @@ object SurveyTable : Table("survey") {
 object QuestionsTable : Table("questions") {
     val id = text("id")
     val content = text("content")
-    val votesPro = enumeration("votes_pro",PGQuestionVotes ::class)
+    val surveyId = text("survey_id").references(SurveyTable.id)
+
+    override val primaryKey = PrimaryKey(id)
 }
 
 enum class PGSurveyState {
@@ -44,16 +46,12 @@ enum class PGSurveyState {
 object QuestionVotesTable : Table("question_votes") {
     val id = text("id")
     val ownerId= text("owner_id").references(UsersTable.id)
-    val surveyId = text("resolution_id").references(SurveyTable.id)
-    val vote = enumeration("vote", PGQuestionVotes::class)
+    val surveyId = text("survey_id").references(SurveyTable.id)
+    val questionId = text("question_id").references(QuestionsTable.id)
 
     init {
-        uniqueIndex("uniqueVote", ownerId, surveyId)
+        uniqueIndex("question_votes_unique_vote", ownerId, surveyId)
     }
 
     override val primaryKey = PrimaryKey(id)
-}
-
-enum class PGQuestionVotes {
-    PRO
 }

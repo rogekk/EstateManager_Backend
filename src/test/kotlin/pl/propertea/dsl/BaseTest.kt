@@ -4,17 +4,14 @@ package pl.propertea.dsl
 import ch.qos.logback.classic.Level
 import com.github.f4b6a3.ulid.UlidCreator
 import io.mockk.mockk
-import life.shank.NewProvider0
 import life.shank.SingleProvider0
 import life.shank.resetShank
 import org.joda.time.DateTime
 import org.junit.After
 import org.junit.Before
 import pl.propertea.common.CommonModule.environment
-import pl.propertea.common.CommonModule.idGenerator
 import pl.propertea.env.TestEnvironmentVariables
 import pl.propertea.models.*
-import ro.kreator.Seed
 import ro.kreator.customize
 import ro.kreator.registerCustomizations
 import kotlin.reflect.KClass

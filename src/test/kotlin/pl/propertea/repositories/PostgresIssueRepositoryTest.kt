@@ -9,7 +9,7 @@ import pl.propertea.common.CommonModule.clock
 import pl.propertea.dsl.DatabaseTest
 import pl.propertea.dsl.Mocks
 import pl.propertea.dsl.strict
-import pl.propertea.models.*
+import pl.propertea.models.IssueId
 import pl.propertea.models.domain.Manager
 import pl.propertea.models.domain.Owner
 import pl.propertea.models.domain.domains.*
@@ -67,13 +67,13 @@ class PostgresIssueRepositoryTest : DatabaseTest({ Mocks(clock.strict) }) {
 
     @Test
     fun `returns an list of issues if there are any`() {
-        val expected = expectedIssues.map {
+        val expected = expectedIssues.map { issue1 ->
             val createdIssueId = issueRepository().createIssue(
-                IssueCreation(it.subject, it.description, it.attachments, createdOwnerId, community.id)
+                IssueCreation(issue1.subject, issue1.description, issue1.attachments, createdOwnerId, community.id)
             )
 
             IssueWithOwner(
-                owner.copy(id = createdOwnerId), it.copy(
+                owner.copy(id = createdOwnerId), issue1.copy(
                     createdIssueId,
                     createdBy = createdOwnerId,
                     commentCount = 0,
