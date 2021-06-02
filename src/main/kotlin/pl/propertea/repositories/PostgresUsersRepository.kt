@@ -1,7 +1,11 @@
 package pl.propertea.repositories
 
-import org.jetbrains.exposed.sql.*
+import com.snitch.extensions.print
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 import pl.propertea.common.IdGenerator
 import pl.propertea.db.schema.*
 import pl.propertea.models.*
@@ -68,11 +72,11 @@ class PostgresUsersRepository(private val database: Database, private val idGene
     UsersRepository {
 
     override fun getProfile(id: UserId): OwnerProfile? = transaction(database) {
-        OwnerMembershipTable
+        UsersTable
+            .leftJoin(OwnerMembershipTable)
             .leftJoin(CommunitiesTable)
-            .leftJoin(UsersTable)
             .slice(CommunitiesTable.columns + UsersTable.columns + OwnerMembershipTable.shares)
-            .selectAll()
+            .select { UsersTable.id eq id.id }
             .map {
                 it.readOwner() to Community(
                     CommunityId(it[CommunitiesTable.id]),
@@ -204,7 +208,9 @@ class PostgresUsersRepository(private val database: Database, private val idGene
         UsersTable
             .leftJoin(UserPermissionsTable)
             .select { (UsersTable.username eq username) }
-            .map { Result(it[UsersTable.id], it[UsersTable.password], it[UsersTable.userType], it.getOrNull(
+            .map {
+                it[UsersTable.username].print()
+                Result(it[UsersTable.id], it[UsersTable.password], it[UsersTable.userType], it.getOrNull(
                 UserPermissionsTable.permission)?.toDomain()?.let { listOf(it) }.orEmpty()) }
             .reduceRightOrNull { acc, result -> acc.copy(permissions = acc.permissions + result.permissions)}
             ?.let {
@@ -220,7 +226,7 @@ class PostgresUsersRepository(private val database: Database, private val idGene
                         PGUserType.OWNER -> UserTypes.OWNER
                     }
 
-                    Authorization(it.userId, userType, it.permissions)
+                    Authorization(userId.id, userType, it.permissions)
                 } else {
                     null
                 }

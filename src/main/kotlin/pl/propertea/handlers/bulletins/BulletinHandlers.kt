@@ -1,4 +1,4 @@
-package pl.propertea.handlers.`bulletins `
+package pl.propertea.handlers.bulletins
 
 import com.snitch.notFound
 import com.snitch.ok
