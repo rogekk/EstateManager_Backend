@@ -12,17 +12,18 @@ import pl.propertea.dsl.Mocks
 import pl.propertea.dsl.SparkTest
 import pl.propertea.dsl.relaxed
 import pl.propertea.dsl.strict
-import pl.propertea.models.*
+import pl.propertea.models.CommunityId
+import pl.propertea.models.CreateOwnerRequest
+import pl.propertea.models.OwnerId
 import pl.propertea.models.domain.Admin
 import pl.propertea.models.domain.OwnerProfile
 import pl.propertea.models.domain.Permission.CanCreateOwner
-import pl.propertea.repositories.OwnerCreated
-import pl.propertea.repositories.RepositoriesModule.usersRepository
-import pl.propertea.tools.json
-import pl.propertea.models.domain.Permission.*
 import pl.propertea.models.domain.domains.Authorization
 import pl.propertea.models.domain.domains.Shares
 import pl.propertea.models.domain.domains.UserTypes
+import pl.propertea.repositories.OwnerCreated
+import pl.propertea.repositories.RepositoriesModule.usersRepository
+import pl.propertea.tools.json
 import ro.kreator.aRandom
 
 class AuthHttpTest : SparkTest({ Mocks(clock.strict, usersRepository.relaxed) }) {
@@ -32,7 +33,7 @@ class AuthHttpTest : SparkTest({ Mocks(clock.strict, usersRepository.relaxed) })
     @Test
     fun `creates an owner`() {
         every { clock().getDateTime() } returns now
-        every { usersRepository().createOwner(any(), any(), any(), any(), any(), any(), any()) } returns OwnerCreated( OwnerId("hey") )
+        every { usersRepository().createOwner(any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns OwnerCreated( OwnerId("hey") )
 
         POST("/v1/owners")
             .withBody(createOwnerRequest)
@@ -44,6 +45,8 @@ class AuthHttpTest : SparkTest({ Mocks(clock.strict, usersRepository.relaxed) })
             createOwnerRequest.username,
             createOwnerRequest.password,
             createOwnerRequest.email,
+            createOwnerRequest.firstName,
+            createOwnerRequest.lastName,
             createOwnerRequest.phoneNumber,
             createOwnerRequest.address,
             createOwnerRequest.profileImageUrl

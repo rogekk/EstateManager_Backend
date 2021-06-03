@@ -43,6 +43,8 @@ abstract class DatabaseTest(
             username = owner.username,
             password = password,
             email = owner.email,
+            firstName = owner.firstName,
+            lastName = owner.lastName,
             phoneNumber = owner.phoneNumber,
             address = owner.address,
             profileImageUrl = owner.profileImageUrl

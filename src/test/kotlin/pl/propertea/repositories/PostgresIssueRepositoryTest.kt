@@ -179,6 +179,8 @@ class PostgresIssueRepositoryTest : DatabaseTest({ Mocks(clock.strict) }) {
             manager.username,
             "pass",
             manager.email,
+            manager.firstName,
+            manager.lastName,
             manager.phoneNumber,
             manager.address,
             manager.profileImageUrl

@@ -3,7 +3,7 @@ package pl.propertea.repositories
 import com.memoizr.assertk.expect
 import org.junit.Test
 import pl.propertea.dsl.DatabaseTest
-import pl.propertea.models.*
+import pl.propertea.models.CommunityId
 import pl.propertea.models.domain.Admin
 import pl.propertea.models.domain.Owner
 import pl.propertea.models.domain.OwnerProfile
@@ -44,6 +44,8 @@ class PostgresUsersRepositoryTest : DatabaseTest() {
             admin.username,
             "mypass",
             admin.email,
+            admin.firstName,
+            admin.lastName,
             admin.phoneNumber,
             admin.address,
             admin.profileImageUrl,

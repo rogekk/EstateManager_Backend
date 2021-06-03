@@ -17,13 +17,15 @@ import pl.propertea.routes.setHeader
 
 val createOwnerHandler: Handler<CreateOwnerRequest, GenericResponse> = {
     when (usersRepository().createOwner(
-        body.memberships.map { CommunityId(it.communityId) to Shares(it.shares) },
-        body.username,
-        body.password,
-        body.email,
-        body.phoneNumber,
-        body.address,
-        body.profileImageUrl,
+        communities = body.memberships.map { CommunityId(it.communityId) to Shares(it.shares) },
+        username = body.username,
+        password = body.password,
+        email = body.email,
+        firstName = body.firstName,
+        lastName = body.lastName,
+        phoneNumber = body.phoneNumber,
+        address = body.address,
+        profileImageUrl = body.profileImageUrl,
     )) {
         is OwnerCreated -> createdSuccessfully
         UsernameTaken -> badRequest("username ${body.username} is already taken")

@@ -8,6 +8,8 @@ data class CreateOwnerRequest(
     val username: String,
     val password: String,
     val email: String,
+    val firstName: String,
+    val lastName: String,
     val phoneNumber: String,
     val address: String,
     val memberships: List<CommunityMembershipRequest>,

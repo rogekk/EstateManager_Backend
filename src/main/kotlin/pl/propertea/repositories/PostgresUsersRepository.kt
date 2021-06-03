@@ -28,6 +28,8 @@ interface UsersRepository {
         username: String,
         password: String,
         email: String,
+        firstName: String,
+        lastName: String,
         phoneNumber: String,
         address: String,
         profileImageUrl: String? = null,
@@ -38,6 +40,8 @@ interface UsersRepository {
         username: String,
         password: String,
         email: String,
+        firstName: String,
+        lastName: String,
         phoneNumber: String,
         address: String,
         profileImageUrl: String? = null,
@@ -48,6 +52,8 @@ interface UsersRepository {
         username: String,
         password: String,
         email: String,
+        firstName: String,
+        lastName: String,
         phoneNumber: String,
         address: String,
         profileImageUrl: String? = null,
@@ -111,6 +117,8 @@ class PostgresUsersRepository(private val database: Database, private val idGene
         username: String,
         password: String,
         email: String,
+        firstName: String,
+        lastName: String,
         phoneNumber: String,
         address: String,
         profileImageUrl: String?
@@ -122,15 +130,17 @@ class PostgresUsersRepository(private val database: Database, private val idGene
         val userId = idGenerator.newId()
 
         if (user == null) {
-            UsersTable.insert { ownersTable ->
-                ownersTable[id] = userId
-                ownersTable[UsersTable.username] = username
-                ownersTable[UsersTable.password] = hash(password)
-                ownersTable[UsersTable.email] = email
-                ownersTable[UsersTable.phoneNumber] = phoneNumber
-                ownersTable[UsersTable.address] = address
-                ownersTable[UsersTable.profileImageUrl] = profileImageUrl
-                ownersTable[UsersTable.userType] = PGUserType.OWNER
+            UsersTable.insert {
+                it[id] = userId
+                it[UsersTable.username] = username
+                it[UsersTable.password] = hash(password)
+                it[UsersTable.email] = email
+                it[UsersTable.firstName] = firstName
+                it[UsersTable.lastName] = lastName
+                it[UsersTable.phoneNumber] = phoneNumber
+                it[UsersTable.address] = address
+                it[UsersTable.profileImageUrl] = profileImageUrl
+                it[UsersTable.userType] = PGUserType.OWNER
             }
 
             communities.forEach { community ->
@@ -150,21 +160,25 @@ class PostgresUsersRepository(private val database: Database, private val idGene
         username: String,
         password: String,
         email: String,
+        firstName: String,
+        lastName: String,
         phoneNumber: String,
         address: String,
         profileImageUrl: String?
     ): ManagerId? = transaction(database) {
 
         val userId = idGenerator.newId()
-        UsersTable.insert { ownersTable ->
-            ownersTable[id] = userId
-            ownersTable[UsersTable.username] = username
-            ownersTable[UsersTable.password] = hash(password)
-            ownersTable[UsersTable.email] = email
-            ownersTable[UsersTable.phoneNumber] = phoneNumber
-            ownersTable[UsersTable.address] = address
-            ownersTable[UsersTable.profileImageUrl] = profileImageUrl
-            ownersTable[UsersTable.userType] = PGUserType.MANAGER
+        UsersTable.insert {
+            it[id] = userId
+            it[UsersTable.username] = username
+            it[UsersTable.password] = hash(password)
+            it[UsersTable.email] = email
+            it[UsersTable.firstName] = firstName
+            it[UsersTable.lastName] = lastName
+            it[UsersTable.phoneNumber] = phoneNumber
+            it[UsersTable.address] = address
+            it[UsersTable.profileImageUrl] = profileImageUrl
+            it[UsersTable.userType] = PGUserType.MANAGER
         }
 
         communities.forEach { community ->
@@ -183,21 +197,25 @@ class PostgresUsersRepository(private val database: Database, private val idGene
         username: String,
         password: String,
         email: String,
+        firstName: String,
+        lastName: String,
         phoneNumber: String,
         address: String,
         profileImageUrl: String?
     ): AdminId? = transaction(database) {
 
         val userId = idGenerator.newId()
-        UsersTable.insert { ownersTable ->
-            ownersTable[id] = userId
-            ownersTable[UsersTable.username] = username
-            ownersTable[UsersTable.password] = hash(password)
-            ownersTable[UsersTable.email] = email
-            ownersTable[UsersTable.phoneNumber] = phoneNumber
-            ownersTable[UsersTable.address] = address
-            ownersTable[UsersTable.profileImageUrl] = profileImageUrl
-            ownersTable[UsersTable.userType] = PGUserType.ADMIN
+        UsersTable.insert {
+            it[id] = userId
+            it[UsersTable.username] = username
+            it[UsersTable.password] = hash(password)
+            it[UsersTable.email] = email
+            it[UsersTable.firstName] = firstName
+            it[UsersTable.lastName] = lastName
+            it[UsersTable.phoneNumber] = phoneNumber
+            it[UsersTable.address] = address
+            it[UsersTable.profileImageUrl] = profileImageUrl
+            it[UsersTable.userType] = PGUserType.ADMIN
         }
 
         AdminId(userId)

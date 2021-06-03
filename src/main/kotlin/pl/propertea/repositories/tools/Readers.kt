@@ -10,12 +10,14 @@ import pl.propertea.models.domain.Owner
 import pl.propertea.models.domain.domains.*
 
 fun ResultRow.readOwner() = Owner(
-    OwnerId(this[UsersTable.id]),
-    this[UsersTable.username],
-    this[UsersTable.email],
-    this[UsersTable.phoneNumber],
-    this[UsersTable.address],
-    this[UsersTable.profileImageUrl],
+    id = OwnerId(this[UsersTable.id]),
+    username = this[UsersTable.username],
+    email = this[UsersTable.email],
+    firstName = this[UsersTable.firstName],
+    lastName = this[UsersTable.lastName],
+    phoneNumber = this[UsersTable.phoneNumber],
+    address = this[UsersTable.address],
+    profileImageUrl = this[UsersTable.profileImageUrl],
 )
 
 fun ResultRow.readComment() = Comment(
