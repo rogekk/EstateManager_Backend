@@ -3,15 +3,16 @@ package pl.propertea.handlers.surveys
 import com.snitch.Handler
 import com.snitch.notFound
 import com.snitch.ok
-import org.joda.time.DateTime
 import pl.propertea.models.*
 import pl.propertea.models.db.Insert
-import pl.propertea.models.domain.domains.OptionVote
 import pl.propertea.models.responses.SurveyResponse
 import pl.propertea.models.responses.SurveysResponse
 import pl.propertea.models.responses.toResponse
 import pl.propertea.repositories.RepositoriesModule.surveyRepository
-import pl.propertea.routes.*
+import pl.propertea.routes.authenticatedUser
+import pl.propertea.routes.communityId
+import pl.propertea.routes.optionId
+import pl.propertea.routes.surveyId
 
 
 val createSurveyHandler: Handler<Requests.CreateSurveyRequest, GenericResponse> = {
@@ -23,7 +24,6 @@ val createSurveyHandler: Handler<Requests.CreateSurveyRequest, GenericResponse> 
         body.options.map {
             Insert.Option(it.content)
         },
-        createdAt = DateTime()
     )
     createdSuccessfully
 }
@@ -39,14 +39,13 @@ val getSurveyHandler: Handler<Nothing, SurveyResponse> = {
 }
 
 val voteSurveyHandler: Handler<SurveyVoteRequest, GenericResponse> = {
-surveyRepository().vote(
-    request[surveyId],
-    request[optionId],
-    authenticatedUser() as OwnerId,
-    OptionVote.PRO
-)
+    surveyRepository().vote(
+        request[surveyId],
+        request[optionId],
+        authenticatedUser() as OwnerId,
+    )
     createdSuccessfully
-    }
+}
 
 
 //val changeSurveyStateHandler: Handler<SurveyStateRequest, GenericResponse> = {

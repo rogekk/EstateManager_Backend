@@ -14,7 +14,7 @@ data class ApartmentId(val id: String)
 data class ParkingId(val id: String)
 data class StorageRoomId(val id: String)
 data class SurveyId(val id: String)
-data class SurveyOptionsId(val id: String)
+data class SurveyOptionId(val id: String)
 
 sealed class UserId: Sealed() {
     abstract val id: String

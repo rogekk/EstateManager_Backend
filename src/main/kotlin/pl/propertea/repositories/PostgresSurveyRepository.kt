@@ -3,17 +3,16 @@ package pl.propertea.repositories
 import com.snitch.extensions.print
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.joda.time.DateTime
 import pl.propertea.common.Clock
 import pl.propertea.common.IdGenerator
 import pl.propertea.db.PGSurveyState
 import pl.propertea.db.QuestionVotesTable
-import pl.propertea.db.QuestionsTable
+import pl.propertea.db.SurveyOptionsTable
 import pl.propertea.db.SurveyTable
 import pl.propertea.models.CommunityId
 import pl.propertea.models.OwnerId
 import pl.propertea.models.SurveyId
-import pl.propertea.models.SurveyOptionsId
+import pl.propertea.models.SurveyOptionId
 import pl.propertea.models.db.Insert
 import pl.propertea.models.domain.domains.*
 
@@ -25,11 +24,10 @@ interface SurveyRepository {
         number: String,
         description: String,
         options: List<Insert.Option>,
-        createdAt: DateTime,
     ): Survey?
     fun getSurveys(communityId: CommunityId): List<Survey>
     fun getSurvey(id: SurveyId): Survey?
-    fun vote(surveyId: SurveyId, options: SurveyOptionsId,ownerId: OwnerId, vote: OptionVote)
+    fun vote(surveyId: SurveyId, options: SurveyOptionId, ownerId: OwnerId)
     fun getResult(id: SurveyId): SurveyResult
     fun changeSurveyStatus(id: SurveyId, state: SurveyState)
 
@@ -46,16 +44,16 @@ class PostgresSurveyRepository(
         subject: String,
         number: String,
         description: String,
-        surveyOptions: List<Insert.Option>,
-        createdAt: DateTime,
+        options: List<Insert.Option>,
     ):
-            Survey? = transaction(database) {
+            Survey = transaction(database) {
         val survey = SurveyTable
             .select { SurveyTable.subject eq subject }
             .firstOrNull()
 
         val surveyId = idGenerator.newId()
-        val optionsWithIds = surveyOptions.map { SurveyOptions(SurveyOptionsId(idGenerator.newId()), it.content) }
+        val optionsWithIds = options.map { SurveyOptions(SurveyOptionId(idGenerator.newId()), it.content) }
+        val dateTime = clock.getDateTime()
 
         if (survey == null) {
             SurveyTable
@@ -65,15 +63,15 @@ class PostgresSurveyRepository(
                     surveyTable[this.number] = number
                     surveyTable[this.description] = description
                     surveyTable[this.communityId] = communityId.id
-                    surveyTable[this.state] = PGSurveyState.TEMPLATE
-                    surveyTable[this.createdAt] = createdAt
+                    surveyTable[this.state] = PGSurveyState.DRAFT
+                    surveyTable[this.createdAt] = dateTime
                 }
 
-            QuestionsTable
+            SurveyOptionsTable
                 .batchInsert(optionsWithIds) {
-                    this[QuestionsTable.id] = it.id.id
-                    this[QuestionsTable.content] = it.content
-                    this[QuestionsTable.surveyId] = surveyId
+                    this[SurveyOptionsTable.id] = it.id.id
+                    this[SurveyOptionsTable.content] = it.content
+                    this[SurveyOptionsTable.surveyId] = surveyId
                 }
         }
         Survey(
@@ -81,16 +79,16 @@ class PostgresSurveyRepository(
             number,
             subject,
             description,
-            createdAt,
+            dateTime,
             communityId,
-            SurveyState.TEMPLATE,
+            SurveyState.DRAFT,
             optionsWithIds
         )
     }
 
     override fun getSurveys(communityId: CommunityId): List<Survey> = transaction(database) {
         SurveyTable
-            .leftJoin(QuestionsTable)
+            .leftJoin(SurveyOptionsTable)
             .select { SurveyTable.communityId eq communityId.id }
             .map { it.readSurvey().print() }
             .groupBy { it.id }
@@ -99,12 +97,13 @@ class PostgresSurveyRepository(
 
     override fun getSurvey(id: SurveyId): Survey? = transaction (database) {
         SurveyTable
+            .leftJoin(SurveyOptionsTable)
             .select { SurveyTable.id eq id.id }
             .map { it.readSurvey() }
-            .firstOrNull()
+            .reduceRight { survey, acc -> survey.copy(options = survey.options + acc.options) }
     }
 
-    override fun vote(surveyId: SurveyId, options: SurveyOptionsId,ownerId: OwnerId, vote: OptionVote) {
+    override fun vote(surveyId: SurveyId, options: SurveyOptionId, ownerId: OwnerId) {
         transaction(database) {
             QuestionVotesTable
                 .insert {
@@ -117,9 +116,9 @@ class PostgresSurveyRepository(
     }
 
     override fun getResult(id: SurveyId): SurveyResult = transaction(database) {
-        val questionWithVotes = QuestionsTable
+        val questionWithVotes = SurveyOptionsTable
             .leftJoin(QuestionVotesTable)
-            .select { QuestionsTable.surveyId eq id.id }
+            .select { SurveyOptionsTable.surveyId eq id.id }
             .map {
                 val hasVotes = it.getOrNull(QuestionVotesTable.id) != null
                 OptionsWithVotes(it.readQuestion(), if (hasVotes) 1 else 0)

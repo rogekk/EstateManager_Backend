@@ -20,7 +20,7 @@ val schema = arrayOf(
     ParkingSpotsTable,
     StorageRoomsTable,
     SurveyTable,
-    QuestionsTable,
+    SurveyOptionsTable,
     QuestionVotesTable,
 )
 

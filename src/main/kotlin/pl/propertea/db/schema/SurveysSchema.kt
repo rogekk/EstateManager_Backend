@@ -19,7 +19,7 @@ object SurveyTable : Table("survey") {
     override val primaryKey = PrimaryKey(id)
 }
 
-object QuestionsTable : Table("questions") {
+object SurveyOptionsTable : Table("survey_options_table") {
     val id = text("id")
     val content = text("content")
     val surveyId = text("survey_id").references(SurveyTable.id)
@@ -28,18 +28,18 @@ object QuestionsTable : Table("questions") {
 }
 
 enum class PGSurveyState {
-    TEMPLATE, OPEN_FOR_VOTING, ENDED;
+    DRAFT, OPEN_FOR_VOTING, ENDED;
 
     companion object {
         fun fromState(state: SurveyState): PGSurveyState = when (state) {
-            SurveyState.TEMPLATE -> TEMPLATE
+            SurveyState.DRAFT -> DRAFT
             SurveyState.OPEN_FOR_VOTING -> OPEN_FOR_VOTING
             SurveyState.ENDED -> ENDED
         }
     }
 
     fun toState(): SurveyState = when (this) {
-        TEMPLATE -> SurveyState.TEMPLATE
+        DRAFT -> SurveyState.DRAFT
         OPEN_FOR_VOTING -> SurveyState.OPEN_FOR_VOTING
         ENDED -> SurveyState.ENDED
     }
@@ -49,7 +49,7 @@ object QuestionVotesTable : Table("question_votes") {
     val id = text("id")
     val ownerId= text("owner_id").references(UsersTable.id)
     val surveyId = text("survey_id").references(SurveyTable.id)
-    val optionId = text("question_id").references(QuestionsTable.id)
+    val optionId = text("question_id").references(SurveyOptionsTable.id)
 
     init {
         uniqueIndex("question_votes_unique_vote", ownerId, surveyId)

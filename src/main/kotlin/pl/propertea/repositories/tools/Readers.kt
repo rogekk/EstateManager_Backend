@@ -2,7 +2,7 @@ package pl.propertea.repositories
 
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.count
-import pl.propertea.db.QuestionsTable
+import pl.propertea.db.SurveyOptionsTable
 import pl.propertea.db.SurveyTable
 import pl.propertea.db.schema.*
 import pl.propertea.models.*
@@ -90,6 +90,6 @@ fun ResultRow.readSurvey() = Survey(
 )
 
 fun ResultRow.readQuestion() = SurveyOptions(
-    SurveyOptionsId(this[QuestionsTable.id]),
-    this[QuestionsTable.content]
+    SurveyOptionId(this[SurveyOptionsTable.id]),
+    this[SurveyOptionsTable.content]
 )

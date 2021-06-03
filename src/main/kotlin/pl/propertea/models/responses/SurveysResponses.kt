@@ -23,7 +23,7 @@ enum class SurveyStateResponse {
 
     companion object {
         fun fromState(state: SurveyState): SurveyStateResponse = when (state) {
-            SurveyState.TEMPLATE -> template
+            SurveyState.DRAFT -> template
             SurveyState.OPEN_FOR_VOTING -> open_for_voting
             SurveyState.ENDED -> ended
 

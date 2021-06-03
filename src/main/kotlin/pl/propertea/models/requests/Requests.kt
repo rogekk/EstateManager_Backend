@@ -129,7 +129,7 @@ data class SurveyStateRequest(
 )
 
 fun StateRequest.toDomain() = when (this) {
-    StateRequest.template -> SurveyState.TEMPLATE
+    StateRequest.template -> SurveyState.DRAFT
     StateRequest.open_for_voting -> SurveyState.OPEN_FOR_VOTING
     StateRequest.ended -> SurveyState.ENDED
 }
