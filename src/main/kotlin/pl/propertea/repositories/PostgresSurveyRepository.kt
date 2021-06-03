@@ -27,7 +27,7 @@ interface SurveyRepository {
     ): Survey?
     fun getSurveys(communityId: CommunityId): List<Survey>
     fun getSurvey(id: SurveyId): Survey?
-    fun vote(surveyId: SurveyId, options: SurveyOptionId, ownerId: OwnerId)
+    fun vote(surveyId: SurveyId, option: SurveyOptionId, ownerId: OwnerId)
     fun getResult(id: SurveyId): SurveyResult
     fun changeSurveyStatus(id: SurveyId, state: SurveyState)
 
@@ -103,14 +103,14 @@ class PostgresSurveyRepository(
             .reduceRight { survey, acc -> survey.copy(options = survey.options + acc.options) }
     }
 
-    override fun vote(surveyId: SurveyId, options: SurveyOptionId, ownerId: OwnerId) {
+    override fun vote(surveyId: SurveyId, option: SurveyOptionId, ownerId: OwnerId) {
         transaction(database) {
             QuestionVotesTable
                 .insert {
                     it[this.id] = idGenerator.newId()
                     it[this.ownerId] = ownerId.id
                     it[this.surveyId] = surveyId.id
-                    it[this.optionId] = options.id
+                    it[this.optionId] = option.id
                 }
         }
     }

@@ -118,22 +118,19 @@ object Requests {
 }
 
 data class SurveyVoteRequest(
-    val vote: VoteSurveyRequest,
+    val optionId: String,
 )
 
-enum class VoteSurveyRequest {
-    pro
-}
 data class SurveyStateRequest(
-    val state: SurveyState,
+    val state: StateRequest,
 )
 
 fun StateRequest.toDomain() = when (this) {
-    StateRequest.template -> SurveyState.DRAFT
+    StateRequest.draft -> SurveyState.DRAFT
     StateRequest.open_for_voting -> SurveyState.OPEN_FOR_VOTING
     StateRequest.ended -> SurveyState.ENDED
 }
 
 enum class StateRequest {
-    template, open_for_voting, ended
+    draft, open_for_voting, ended
 }

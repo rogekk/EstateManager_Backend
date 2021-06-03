@@ -11,7 +11,6 @@ import pl.propertea.models.responses.toResponse
 import pl.propertea.repositories.RepositoriesModule.surveyRepository
 import pl.propertea.routes.authenticatedUser
 import pl.propertea.routes.communityId
-import pl.propertea.routes.optionId
 import pl.propertea.routes.surveyId
 
 
@@ -41,18 +40,18 @@ val getSurveyHandler: Handler<Nothing, SurveyResponse> = {
 val voteSurveyHandler: Handler<SurveyVoteRequest, GenericResponse> = {
     surveyRepository().vote(
         request[surveyId],
-        request[optionId],
+        SurveyOptionId(body.optionId),
         authenticatedUser() as OwnerId,
     )
     createdSuccessfully
 }
 
 
-//val changeSurveyStateHandler: Handler<SurveyStateRequest, GenericResponse> = {
-//surveyRepository().changeSurveyStatus(
-//    request[surveyId],
-//    body.state.toDomain()
-//)
-//    success
-//}
+val changeSurveyStateHandler: Handler<SurveyStateRequest, GenericResponse> = {
+    surveyRepository().changeSurveyStatus(
+        request[surveyId],
+        body.state.toDomain()
+    )
+    success
+}
 
