@@ -1,17 +1,16 @@
 package pl.propertea.repositories
 
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 import pl.propertea.common.Clock
 import pl.propertea.common.IdGenerator
+import pl.propertea.db.SurveyTable
 import pl.propertea.db.schema.CommentsTable
 import pl.propertea.db.schema.UsersTable
 import pl.propertea.db.schema.TopicsTable
 import pl.propertea.models.*
-import pl.propertea.models.domain.domains.CommentCreation
-import pl.propertea.models.domain.domains.CommentWithOwner
-import pl.propertea.models.domain.domains.TopicCreation
-import pl.propertea.models.domain.domains.TopicWithOwner
+import pl.propertea.models.domain.domains.*
 
 interface TopicsRepository {
     fun getTopics(communityId: CommunityId): List<TopicWithOwner>
@@ -20,6 +19,7 @@ interface TopicsRepository {
     fun getComments(id: TopicId): List<CommentWithOwner>
     fun delete(topicId: TopicId)
     fun deleteComment(commentId: CommentId)
+    fun getTopic(id: TopicId): Topic?
 }
 
 class PostgresTopicsRepository(
@@ -44,6 +44,13 @@ class PostgresTopicsRepository(
             .slice(UsersTable.columns + CommentsTable.columns)
             .select { CommentsTable.topicId eq id.id }
             .map { CommentWithOwner(it.readComment(), it.readOwner()) }
+    }
+
+    override fun getTopic(id: TopicId): Topic?? = transaction (database) {
+        TopicsTable
+            .select { TopicsTable.id eq id.id }
+            .map { it.readTopic() }
+            .firstOrNull()
     }
 
     override fun crateTopic(topicCreation: TopicCreation): TopicId {

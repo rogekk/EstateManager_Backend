@@ -3,7 +3,7 @@ package pl.propertea.models.domain.domains
 import org.joda.time.DateTime
 import pl.propertea.models.CommunityId
 import pl.propertea.models.SurveyId
-import pl.propertea.models.SurveyQuestionId
+import pl.propertea.models.SurveyOptionsId
 
 data class Survey(
     val id: SurveyId,
@@ -13,36 +13,26 @@ data class Survey(
     val createdAt: DateTime,
     val communityId: CommunityId,
     val state: SurveyState,
-    val questions: List<SurveyQuestion>
+    val options: List<SurveyOptions>
 )
 
-data class SurveyQuestion(
-    val id: SurveyQuestionId,
+data class SurveyOptions(
+    val id: SurveyOptionsId,
     val content: String,
 )
 
-data class SurveyCreation(
-    val communityId: CommunityId,
-    val number: String,
-    val subject: String,
-    val description: String,
-)
-
 enum class SurveyState {
-    OPEN_FOR_VOTING, ENDED
+    TEMPLATE, OPEN_FOR_VOTING, ENDED
 }
-
-enum class QuestionsVote {
-    PRO
-}
-
-data class SurveyProfile(
-    val survey: Survey,
-    val community: Community,
-)
 
 data class SurveyResult(
-    val questionWithVotes: List<QuestionWithVotes>
+    val optionsWithVotes: List<OptionsWithVotes>
 )
 
-data class QuestionWithVotes(val question: SurveyQuestion, val votes: Int)
+data class OptionsWithVotes(
+    val options: SurveyOptions,
+    val votes: Int)
+
+enum class OptionVote {
+    PRO
+}

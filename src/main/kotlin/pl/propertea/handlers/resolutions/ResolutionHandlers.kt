@@ -26,7 +26,7 @@ val getResolution: Handler<Nothing, ResolutionResponse> = {
 }
 
 val createResolutionsHandler: Handler<ResolutionRequest, GenericResponse> = {
-    resolutionsRepository().crateResolution(
+    resolutionsRepository().createResolution(
         ResolutionCreation(
             request[communityId],
             body.number,

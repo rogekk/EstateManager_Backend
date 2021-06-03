@@ -21,4 +21,6 @@ sealed class Permission: Sealed() {
     object CanSeeAllApartments: Permission()
     object CanSeeAllStorageRooms: Permission()
     object CanSeeAllParkingSpots: Permission()
+    object CanCreateSurvey: Permission()
+    object CanChangeSurveyState: Permission()
 }

@@ -26,7 +26,7 @@ val bulletinId = path("bulletinId", condition = ulid("bulletin", ::BulletinId))
 val issueId = path("issueId", condition = ulid("issue", ::IssueId))
 val buildingId = path("buildingId", condition = ulid("building", ::BuildingId))
 val surveyId = path("surveyId", condition = ulid("survey", ::SurveyId))
-
+val optionId = path("optionId", condition = ulid("option",::SurveyOptionsId))
 
 fun routes(http: Service): Router.() -> Unit = {
     "v1" / {
@@ -45,6 +45,8 @@ fun routes(http: Service): Router.() -> Unit = {
         issuesRoutes()
 
         buildingRoutes()
+
+        surveyRoutes()
     }
 
     setAccessControlHeaders(http)

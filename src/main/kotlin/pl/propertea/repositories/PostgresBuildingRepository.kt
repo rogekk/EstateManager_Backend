@@ -25,7 +25,6 @@ interface BuildingRepository {
     ): BuildingId?
 
     fun getBuildingsProfile(id: BuildingId): BuildingProfile?
-    fun createApartment(buildingId: BuildingId)
     fun getApartments(buildingId: BuildingId): List<Apartment>
     fun getParkingSpots(buildingId: BuildingId): List<ParkingSpot>
     fun getStorageRooms(buildingId: BuildingId): List<StorageRoom>
@@ -100,10 +99,6 @@ class PostgresBuildingRepository(private val database: Database, private val idG
                 )
             }
             .firstOrNull()
-    }
-
-    override fun createApartment(buildingId: BuildingId) {
-        TODO("Not yet implemented")
     }
 
     override fun getApartments(buildingId: BuildingId): List<Apartment> = transaction(database) {

@@ -28,16 +28,18 @@ object QuestionsTable : Table("questions") {
 }
 
 enum class PGSurveyState {
-    OPEN_FOR_VOTING, ENDED;
+    TEMPLATE, OPEN_FOR_VOTING, ENDED;
 
     companion object {
         fun fromState(state: SurveyState): PGSurveyState = when (state) {
+            SurveyState.TEMPLATE -> TEMPLATE
             SurveyState.OPEN_FOR_VOTING -> OPEN_FOR_VOTING
             SurveyState.ENDED -> ENDED
         }
     }
 
     fun toState(): SurveyState = when (this) {
+        TEMPLATE -> SurveyState.TEMPLATE
         OPEN_FOR_VOTING -> SurveyState.OPEN_FOR_VOTING
         ENDED -> SurveyState.ENDED
     }
@@ -47,7 +49,7 @@ object QuestionVotesTable : Table("question_votes") {
     val id = text("id")
     val ownerId= text("owner_id").references(UsersTable.id)
     val surveyId = text("survey_id").references(SurveyTable.id)
-    val questionId = text("question_id").references(QuestionsTable.id)
+    val optionId = text("question_id").references(QuestionsTable.id)
 
     init {
         uniqueIndex("question_votes_unique_vote", ownerId, surveyId)

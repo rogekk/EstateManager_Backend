@@ -11,7 +11,6 @@ import pl.propertea.models.domain.Permission.CanUpdateIssueStatus
 
 fun Router.issuesRoutes() {
     "issues" {
-//        GET("/communities" / communityId / "issues" / issueId / "answers")
 
         GET("/communities" / communityId / "issues")
             .authenticated()

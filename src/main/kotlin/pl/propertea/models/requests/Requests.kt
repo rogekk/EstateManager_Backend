@@ -2,6 +2,7 @@ package pl.propertea.models
 
 import pl.propertea.models.domain.domains.IssueStatus
 import pl.propertea.models.domain.domains.ResolutionResult
+import pl.propertea.models.domain.domains.SurveyState
 
 data class CreateOwnerRequest(
     val username: String,
@@ -35,7 +36,7 @@ object Request {
 
     data class CreateParkingSpot(val number: String)
 
-    data class CreateStorageroom(val number: String)
+    data class CreateStorageRoom(val number: String)
 }
 
 
@@ -102,4 +103,37 @@ fun ResultRequest.toDomain() = when (this) {
 
 enum class ResultRequest {
     approved, rejected, open_for_voting, cancaled
+}
+object Requests {
+    data class CreateSurveyRequest(
+        val number: String,
+        val subject: String,
+        val description: String,
+        val options: List<CreateOptionRequest>
+    )
+
+    data class CreateOptionRequest(
+        val content: String
+    )
+}
+
+data class SurveyVoteRequest(
+    val vote: VoteSurveyRequest,
+)
+
+enum class VoteSurveyRequest {
+    pro
+}
+data class SurveyStateRequest(
+    val state: SurveyState,
+)
+
+fun StateRequest.toDomain() = when (this) {
+    StateRequest.template -> SurveyState.TEMPLATE
+    StateRequest.open_for_voting -> SurveyState.OPEN_FOR_VOTING
+    StateRequest.ended -> SurveyState.ENDED
+}
+
+enum class StateRequest {
+    template, open_for_voting, ended
 }

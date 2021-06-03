@@ -40,7 +40,7 @@ class ResolutionsHttpTest : SparkTest({
             .expectCode(201)
 
         verify {
-            resolutionsRepository().crateResolution(
+            resolutionsRepository().createResolution(
                 ResolutionCreation(
                     communityId,
                     "one",

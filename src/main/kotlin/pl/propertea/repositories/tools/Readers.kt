@@ -89,7 +89,7 @@ fun ResultRow.readSurvey() = Survey(
     listOf(readQuestion())
 )
 
-fun ResultRow.readQuestion() = SurveyQuestion(
-    SurveyQuestionId(this[QuestionsTable.id]),
+fun ResultRow.readQuestion() = SurveyOptions(
+    SurveyOptionsId(this[QuestionsTable.id]),
     this[QuestionsTable.content]
 )

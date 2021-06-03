@@ -170,11 +170,11 @@ class PostgresResolutionsRepositoryTest : DatabaseTest({ Mocks(clock.strict) }) 
 }
 
 infix fun Resolution.putIn(resolutionsRepository: ResolutionsRepository) =
-    resolutionsRepository.crateResolution(ResolutionCreation(communityId, number, subject, description))!!
+    resolutionsRepository.createResolution(ResolutionCreation(communityId, number, subject, description))!!
 
 infix fun List<Resolution>.putIn(resolutionsRepository: ResolutionsRepository) =
     map {
-        it.copy(resolutionsRepository.crateResolution(
+        it.copy(resolutionsRepository.createResolution(
             ResolutionCreation(
                 it.communityId,
                 it.number,

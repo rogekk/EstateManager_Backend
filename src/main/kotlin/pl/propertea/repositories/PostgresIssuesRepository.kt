@@ -1,9 +1,11 @@
 package pl.propertea.repositories
 
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 import pl.propertea.common.Clock
 import pl.propertea.common.IdGenerator
+import pl.propertea.db.SurveyTable
 import pl.propertea.db.schema.*
 import pl.propertea.models.*
 import pl.propertea.models.domain.domains.*
@@ -58,6 +60,7 @@ class PostgresIssuesRepository(
             .map { IssueWithOwner(it.readOwner(), it.readIssue()) }
             .firstOrNull()
     }
+
 
     override fun createIssue(issueCreation: IssueCreation): IssueId {
         val issueId = idGenerator.newId()

@@ -14,7 +14,7 @@ import pl.propertea.models.domain.domains.Vote
 
 interface ResolutionsRepository {
     fun getResolutions(communityId: CommunityId): List<Resolution>
-    fun crateResolution(resolutionCreation: ResolutionCreation): ResolutionId?
+    fun createResolution(resolutionCreation: ResolutionCreation): ResolutionId?
     fun getResolution(id: ResolutionId): Resolution?
     fun vote(communityId: CommunityId, resolutionId: ResolutionId, ownerId: OwnerId, vote: Vote): UpdateResult<Boolean>
     fun updateResolutionResult(id: ResolutionId, result: ResolutionResult)
@@ -58,7 +58,7 @@ class PostgresResolutionsRepository(
             }
     }
 
-    override fun crateResolution(resolutionCreation: ResolutionCreation): ResolutionId? {
+    override fun createResolution(resolutionCreation: ResolutionCreation): ResolutionId? {
         val resolutionId = idGenerator.newId()
         transaction(database) {
             ResolutionsTable

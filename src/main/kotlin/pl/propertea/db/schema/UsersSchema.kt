@@ -54,7 +54,9 @@ enum class PGPermission {
     CanSeeAllBuildings,
     CanSeeAllApartments,
     CanSeeAllParkingSpots,
-    CanSeeAllStorageRooms;
+    CanSeeAllStorageRooms,
+    CanCreateSurvey,
+    CanChangeSurveyState;
 
     fun toDomain() =
         when (this) {
@@ -76,6 +78,8 @@ enum class PGPermission {
             CanSeeAllApartments -> Permission.CanSeeAllApartments
             CanSeeAllStorageRooms -> Permission.CanSeeAllStorageRooms
             CanSeeAllParkingSpots -> Permission.CanSeeAllParkingSpots
+            CanCreateSurvey -> Permission.CanCreateSurvey
+            CanChangeSurveyState -> Permission.CanChangeSurveyState
         }
 }
 
@@ -98,4 +102,6 @@ fun Permission.toDb() = when (this) {
     is Permission.CanSeeAllApartments -> PGPermission.CanSeeAllApartments
     is Permission.CanSeeAllParkingSpots -> PGPermission.CanSeeAllParkingSpots
     is Permission.CanSeeAllStorageRooms -> PGPermission.CanSeeAllStorageRooms
+    is Permission.CanCreateSurvey -> PGPermission.CanCreateSurvey
+    is Permission.CanChangeSurveyState -> PGPermission.CanChangeSurveyState
 }
