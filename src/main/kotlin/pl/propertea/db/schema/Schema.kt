@@ -1,58 +1,41 @@
-package pl.propertea.db.schema
+package pl.propertea.db
 
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.jodatime.datetime
-import pl.propertea.models.domain.domains.ResolutionResult
+import pl.propertea.db.schema.AdminCommunitiesTable
+import pl.propertea.db.schema.AnswerTable
+import pl.propertea.db.schema.ApartmentsTable
+import pl.propertea.db.schema.BuildingsTable
+import pl.propertea.db.schema.BulletinTable
+import pl.propertea.db.schema.CommentsTable
+import pl.propertea.db.schema.CommunitiesTable
+import pl.propertea.db.schema.IssuesTable
+import pl.propertea.db.schema.OwnerMembershipTable
+import pl.propertea.db.schema.ParkingSpotsTable
+import pl.propertea.db.schema.ResolutionVotesTable
+import pl.propertea.db.schema.ResolutionsTable
+import pl.propertea.db.schema.StorageRoomsTable
+import pl.propertea.db.schema.TopicsTable
+import pl.propertea.db.schema.UserPermissionsTable
+import pl.propertea.db.schema.UsersTable
 
-object ResolutionsTable : Table("resolutions") {
-    val id = text("id")
-    val number = text("number")
-    val subject = text("subject")
-    val description = text("description")
-    val communityId = text("community_id").references(CommunitiesTable.id)
-    val createdAt = datetime("created_at")
-    val passingDate = datetime("passing_date").nullable()
-    val endingDate = datetime("ending_date").nullable()
-    val attachments = text("attachments").nullable()
-    val result = enumeration("result", PGResolutionResult::class)
+val schema = arrayOf(
+    UsersTable,
+    OwnerMembershipTable,
+    ResolutionVotesTable,
+    ResolutionsTable,
+    CommunitiesTable,
+    TopicsTable,
+    CommentsTable,
+    BulletinTable,
+    IssuesTable,
+    AnswerTable,
+    AdminCommunitiesTable,
+    UserPermissionsTable,
+    BuildingsTable,
+    ApartmentsTable,
+    ParkingSpotsTable,
+    StorageRoomsTable,
+    SurveyTable,
+    SurveyOptionsTable,
+    QuestionVotesTable,
+)
 
-    override val primaryKey = PrimaryKey(id)
-}
-
-enum class PGResolutionResult {
-    APPROVED, REJECTED, OPEN_FOR_VOTING, CANCELED;
-
-    companion object {
-        fun fromResult(result: ResolutionResult): PGResolutionResult = when (result) {
-            ResolutionResult.APPROVED -> APPROVED
-            ResolutionResult.REJECTED -> REJECTED
-            ResolutionResult.OPEN_FOR_VOTING -> OPEN_FOR_VOTING
-            ResolutionResult.CANCELED -> CANCELED
-        }
-    }
-
-    fun toResult(): ResolutionResult = when (this) {
-        APPROVED -> ResolutionResult.APPROVED
-        REJECTED -> ResolutionResult.REJECTED
-        OPEN_FOR_VOTING -> ResolutionResult.OPEN_FOR_VOTING
-        CANCELED -> ResolutionResult.CANCELED
-    }
-}
-
-object ResolutionVotesTable : Table("resolution_votes") {
-    val id = text("id")
-    val ownerId= text("owner_id").references(UsersTable.id)
-    val resolutionId = text("resolution_id").references(ResolutionsTable.id)
-    val vote = enumeration("vote", PGVote::class)
-    val shares = integer("shares")
-
-    init {
-        uniqueIndex("uniquevote", ownerId, resolutionId)
-    }
-
-    override val primaryKey = PrimaryKey(id)
-}
-
-enum class PGVote {
-    PRO, AGAINST, ABSTAIN
-}

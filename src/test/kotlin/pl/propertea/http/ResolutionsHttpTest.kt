@@ -17,7 +17,7 @@ import pl.propertea.models.domain.domains.Vote
 import pl.propertea.models.responses.ResolutionsResponse
 import pl.propertea.models.responses.toResponse
 import pl.propertea.models.toDomain
-import pl.propertea.repositories.RepositoriesModule.resolutionsRepository
+import pl.propertea.repositories.di.RepositoriesModule.resolutionsRepository
 import pl.propertea.tools.json
 import ro.kreator.aRandom
 import ro.kreator.aRandomListOf

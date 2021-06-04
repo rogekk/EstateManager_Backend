@@ -19,7 +19,7 @@ import pl.propertea.models.responses.IssuesResponse
 import pl.propertea.models.responses.toResponse
 import pl.propertea.models.success
 import pl.propertea.models.toDomain
-import pl.propertea.repositories.RepositoriesModule.issueRepository
+import pl.propertea.repositories.di.RepositoriesModule.issueRepository
 import pl.propertea.routes.authenticatedUser
 import pl.propertea.routes.communityId
 import pl.propertea.routes.issueId

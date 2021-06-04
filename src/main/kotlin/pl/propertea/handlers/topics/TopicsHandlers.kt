@@ -16,7 +16,7 @@ import pl.propertea.models.responses.GetCommentsResponse
 import pl.propertea.models.responses.TopicsResponse
 import pl.propertea.models.responses.toResponse
 import pl.propertea.models.success
-import pl.propertea.repositories.RepositoriesModule.topicsRepository
+import pl.propertea.repositories.di.RepositoriesModule.topicsRepository
 import pl.propertea.routes.authenticatedUser
 import pl.propertea.routes.commentId
 import pl.propertea.routes.communityId

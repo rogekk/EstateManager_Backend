@@ -16,7 +16,7 @@ import pl.propertea.models.domain.domains.Survey
 import pl.propertea.models.responses.SurveysResponse
 import pl.propertea.models.responses.toResponse
 import pl.propertea.models.toDomain
-import pl.propertea.repositories.RepositoriesModule.surveyRepository
+import pl.propertea.repositories.di.RepositoriesModule.surveyRepository
 import pl.propertea.tools.json
 import ro.kreator.aRandom
 import ro.kreator.aRandomListOf

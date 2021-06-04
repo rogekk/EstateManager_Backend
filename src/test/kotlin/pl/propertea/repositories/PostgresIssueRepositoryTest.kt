@@ -20,9 +20,9 @@ import pl.propertea.models.domain.domains.IssueStatus
 import pl.propertea.models.domain.domains.IssueWithOwner
 import pl.propertea.models.domain.domains.Manager
 import pl.propertea.models.domain.domains.Owner
-import pl.propertea.repositories.RepositoriesModule.communityRepository
-import pl.propertea.repositories.RepositoriesModule.issueRepository
-import pl.propertea.repositories.RepositoriesModule.usersRepository
+import pl.propertea.repositories.di.RepositoriesModule.communityRepository
+import pl.propertea.repositories.di.RepositoriesModule.issueRepository
+import pl.propertea.repositories.di.RepositoriesModule.usersRepository
 import ro.kreator.aRandom
 import ro.kreator.aRandomListOf
 

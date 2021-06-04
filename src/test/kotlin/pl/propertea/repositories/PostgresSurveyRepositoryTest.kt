@@ -12,9 +12,9 @@ import pl.propertea.models.domain.domains.Owner
 import pl.propertea.models.domain.domains.Survey
 import pl.propertea.models.domain.domains.SurveyResult
 import pl.propertea.models.domain.domains.SurveyState
-import pl.propertea.repositories.RepositoriesModule.communityRepository
-import pl.propertea.repositories.RepositoriesModule.surveyRepository
-import pl.propertea.repositories.RepositoriesModule.usersRepository
+import pl.propertea.repositories.di.RepositoriesModule.communityRepository
+import pl.propertea.repositories.di.RepositoriesModule.surveyRepository
+import pl.propertea.repositories.di.RepositoriesModule.usersRepository
 import ro.kreator.aRandom
 import ro.kreator.aRandomListOf
 

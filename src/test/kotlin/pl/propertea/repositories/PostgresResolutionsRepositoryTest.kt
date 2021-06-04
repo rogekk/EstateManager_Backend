@@ -18,9 +18,10 @@ import pl.propertea.models.domain.domains.Resolution
 import pl.propertea.models.domain.domains.ResolutionCreation
 import pl.propertea.models.domain.domains.ResolutionResult
 import pl.propertea.models.domain.domains.Vote
-import pl.propertea.repositories.RepositoriesModule.communityRepository
-import pl.propertea.repositories.RepositoriesModule.resolutionsRepository
-import pl.propertea.repositories.RepositoriesModule.usersRepository
+import pl.propertea.repositories.di.RepositoriesModule.communityRepository
+import pl.propertea.repositories.di.RepositoriesModule.resolutionsRepository
+import pl.propertea.repositories.di.RepositoriesModule.usersRepository
+import pl.propertea.repositories.resolutions.ResolutionsRepository
 import ro.kreator.aRandom
 import ro.kreator.aRandomListOf
 

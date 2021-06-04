@@ -12,8 +12,8 @@ import pl.propertea.dsl.strict
 import pl.propertea.models.domain.domains.Bulletin
 import pl.propertea.models.domain.domains.BulletinCreation
 import pl.propertea.models.domain.domains.Community
-import pl.propertea.repositories.RepositoriesModule.bulletinRepository
-import pl.propertea.repositories.RepositoriesModule.communityRepository
+import pl.propertea.repositories.di.RepositoriesModule.bulletinRepository
+import pl.propertea.repositories.di.RepositoriesModule.communityRepository
 import ro.kreator.aRandom
 import ro.kreator.aRandomListOf
 

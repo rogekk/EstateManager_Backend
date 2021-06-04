@@ -14,7 +14,7 @@ import pl.propertea.models.domain.domains.UsableArea
 import pl.propertea.models.responses.CommunitiesResponse
 import pl.propertea.models.responses.CommunityResponse
 import pl.propertea.models.success
-import pl.propertea.repositories.RepositoriesModule.communityRepository
+import pl.propertea.repositories.di.RepositoriesModule.communityRepository
 import pl.propertea.routes.buildingId
 import pl.propertea.routes.communityId
 import pl.propertea.routes.ownerId

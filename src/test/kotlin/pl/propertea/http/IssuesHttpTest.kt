@@ -23,7 +23,7 @@ import pl.propertea.models.domain.domains.Manager
 import pl.propertea.models.responses.GetAnswerResponse
 import pl.propertea.models.responses.toResponse
 import pl.propertea.models.toDomain
-import pl.propertea.repositories.RepositoriesModule.issueRepository
+import pl.propertea.repositories.di.RepositoriesModule.issueRepository
 import pl.propertea.tools.json
 import ro.kreator.aRandom
 import ro.kreator.aRandomListOf

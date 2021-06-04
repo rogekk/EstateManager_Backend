@@ -1,4 +1,4 @@
-package pl.propertea.db
+package pl.propertea.db.connection
 
 interface PostgresConnection {
     val address: String

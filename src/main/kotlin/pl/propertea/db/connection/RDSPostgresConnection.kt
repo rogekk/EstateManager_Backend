@@ -1,4 +1,4 @@
-package pl.propertea.db
+package pl.propertea.db.connection
 
 object RDSReadWritePostgresConnection : PostgresConnection {
     override val address: String = System.getenv("POSTGRES_ADDRESS") ?: "0.0.0.0:5432"

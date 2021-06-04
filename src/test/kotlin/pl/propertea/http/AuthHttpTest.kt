@@ -21,8 +21,8 @@ import pl.propertea.models.domain.domains.Authorization
 import pl.propertea.models.domain.domains.OwnerProfile
 import pl.propertea.models.domain.domains.Shares
 import pl.propertea.models.domain.domains.UserTypes
-import pl.propertea.repositories.OwnerCreated
-import pl.propertea.repositories.RepositoriesModule.usersRepository
+import pl.propertea.repositories.users.OwnerCreated
+import pl.propertea.repositories.di.RepositoriesModule.usersRepository
 import pl.propertea.tools.json
 import ro.kreator.aRandom
 

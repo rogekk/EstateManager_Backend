@@ -1,4 +1,4 @@
-package pl.propertea.repositories
+package pl.propertea.repositories.issues
 
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SortOrder
@@ -24,16 +24,9 @@ import pl.propertea.models.domain.domains.AnswerWithOwners
 import pl.propertea.models.domain.domains.IssueCreation
 import pl.propertea.models.domain.domains.IssueStatus
 import pl.propertea.models.domain.domains.IssueWithOwner
-
-interface IssuesRepository {
-
-    fun getIssues(userId: UserId): List<IssueWithOwner>
-    fun getIssue(id: IssueId): IssueWithOwner?
-    fun createIssue(issueCreation: IssueCreation): IssueId
-    fun createAnswer(answerCreation: AnswerCreation): AnswerId
-    fun getAnswers(id: IssueId): List<AnswerWithOwners>
-    fun updateIssuesStatus(id: IssueId, status: IssueStatus)
-}
+import pl.propertea.repositories.readAnswer
+import pl.propertea.repositories.readIssue
+import pl.propertea.repositories.readOwner
 
 class PostgresIssuesRepository(
     private val database: Database,

@@ -6,11 +6,11 @@ import pl.propertea.models.domain.domains.Community
 import pl.propertea.models.domain.domains.ResolutionCreation
 import pl.propertea.models.domain.domains.Shares
 import pl.propertea.models.domain.domains.TopicCreation
-import pl.propertea.repositories.OwnerCreated
-import pl.propertea.repositories.RepositoriesModule.communityRepository
-import pl.propertea.repositories.RepositoriesModule.resolutionsRepository
-import pl.propertea.repositories.RepositoriesModule.topicsRepository
-import pl.propertea.repositories.RepositoriesModule.usersRepository
+import pl.propertea.repositories.users.OwnerCreated
+import pl.propertea.repositories.di.RepositoriesModule.communityRepository
+import pl.propertea.repositories.di.RepositoriesModule.resolutionsRepository
+import pl.propertea.repositories.di.RepositoriesModule.topicsRepository
+import pl.propertea.repositories.di.RepositoriesModule.usersRepository
 
 fun main() {
 

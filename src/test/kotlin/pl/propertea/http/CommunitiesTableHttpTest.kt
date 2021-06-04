@@ -17,7 +17,7 @@ import pl.propertea.models.domain.Permission.CanSeeAllCommunities
 import pl.propertea.models.domain.domains.Community
 import pl.propertea.models.domain.domains.Shares
 import pl.propertea.models.responses.CommunitiesResponse
-import pl.propertea.repositories.RepositoriesModule.communityRepository
+import pl.propertea.repositories.di.RepositoriesModule.communityRepository
 import pl.propertea.tools.json
 import ro.kreator.aRandom
 import ro.kreator.aRandomListOf

@@ -1,4 +1,4 @@
-package pl.propertea.repositories
+package pl.propertea.repositories.bulletins
 
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SortOrder
@@ -12,12 +12,7 @@ import pl.propertea.models.domain.BulletinId
 import pl.propertea.models.domain.CommunityId
 import pl.propertea.models.domain.domains.Bulletin
 import pl.propertea.models.domain.domains.BulletinCreation
-
-interface BulletinsRepository {
-    fun getBulletins(id: CommunityId): List<Bulletin>
-    fun createBulletin(bulletinCreation: BulletinCreation): BulletinId
-    fun getBulletin(id: BulletinId): Bulletin?
-}
+import pl.propertea.repositories.readBulletin
 
 class PostgresBulletinsRepository(
     private val database: Database,

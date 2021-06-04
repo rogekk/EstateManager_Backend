@@ -1,4 +1,4 @@
-package pl.propertea.repositories
+package pl.propertea.repositories.users
 
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.Database
@@ -9,7 +9,8 @@ import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import pl.propertea.common.IdGenerator
-import pl.propertea.db.Literal
+import pl.propertea.db.extensions.Literal
+import pl.propertea.db.extensions.similarity
 import pl.propertea.db.schema.AdminCommunitiesTable
 import pl.propertea.db.schema.CommunitiesTable
 import pl.propertea.db.schema.OwnerMembershipTable
@@ -17,80 +18,22 @@ import pl.propertea.db.schema.PGUserType
 import pl.propertea.db.schema.UserPermissionsTable
 import pl.propertea.db.schema.UsersTable
 import pl.propertea.db.schema.toDb
-import pl.propertea.db.similarity
 import pl.propertea.models.domain.AdminId
 import pl.propertea.models.domain.CommunityId
 import pl.propertea.models.domain.ManagerId
 import pl.propertea.models.domain.OwnerId
-import pl.propertea.models.domain.UserId
 import pl.propertea.models.domain.Permission
+import pl.propertea.models.domain.UserId
 import pl.propertea.models.domain.domains.Authorization
 import pl.propertea.models.domain.domains.Community
 import pl.propertea.models.domain.domains.Owner
 import pl.propertea.models.domain.domains.OwnerProfile
 import pl.propertea.models.domain.domains.Shares
 import pl.propertea.models.domain.domains.UserTypes
+import pl.propertea.repositories.readOwner
 import pl.propertea.tools.hash
 import pl.propertea.tools.verify
 
-
-interface UsersRepository {
-    fun getById(ownerId: OwnerId): Owner?
-
-    fun createOwner(
-        communities: List<Pair<CommunityId, Shares>>,
-        username: String,
-        password: String,
-        email: String,
-        fullName: String,
-        phoneNumber: String,
-        address: String,
-        profileImageUrl: String? = null,
-    ): CreateOwnerResult
-
-    fun createManager(
-        communities: List<CommunityId>,
-        username: String,
-        password: String,
-        email: String,
-        fullName: String,
-        phoneNumber: String,
-        address: String,
-        profileImageUrl: String? = null,
-    ): ManagerId?
-
-    fun createAdmin(
-        communities: List<CommunityId>,
-        username: String,
-        password: String,
-        email: String,
-        fullName: String,
-        phoneNumber: String,
-        address: String,
-        profileImageUrl: String? = null,
-    ): AdminId?
-
-    fun checkCredentials(username: String, password: String): Authorization?
-
-    fun updateUserDetails(
-        userId: UserId,
-        email: String? = null,
-        address: String? = null,
-        phoneNumber: String? = null,
-        profileImageUrl: String? = null,
-    )
-
-    fun getProfile(id: UserId): OwnerProfile?
-
-    fun addPermission(userId: UserId, permission: Permission)
-    fun searchOwners(
-        username: String? = null,
-        email: String? = null,
-        fullname: String? = null,
-        phoneNumber: String? = null,
-        address: String? = null,
-    ): List<Owner>
-}
 
 class PostgresUsersRepository(private val database: Database, private val idGenerator: IdGenerator) :
     UsersRepository {

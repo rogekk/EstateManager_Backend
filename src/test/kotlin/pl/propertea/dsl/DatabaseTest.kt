@@ -8,10 +8,10 @@ import pl.propertea.models.domain.domains.Building
 import pl.propertea.models.domain.domains.Owner
 import pl.propertea.models.domain.domains.Shares
 import pl.propertea.models.domain.domains.UsableArea
-import pl.propertea.repositories.BuildingRepository
-import pl.propertea.repositories.OwnerCreated
-import pl.propertea.repositories.OwnerInsertion
-import pl.propertea.repositories.UsersRepository
+import pl.propertea.repositories.building.BuildingRepository
+import pl.propertea.repositories.users.OwnerCreated
+import pl.propertea.repositories.users.OwnerInsertion
+import pl.propertea.repositories.users.UsersRepository
 
 abstract class DatabaseTest(
     mockBlock: () -> Mocks = { Mocks() }

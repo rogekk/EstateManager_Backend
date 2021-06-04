@@ -11,7 +11,7 @@ import pl.propertea.dsl.relaxed
 import pl.propertea.models.domain.domains.Community
 import pl.propertea.models.domain.domains.Owner
 import pl.propertea.models.domain.domains.OwnerProfile
-import pl.propertea.repositories.RepositoriesModule.usersRepository
+import pl.propertea.repositories.di.RepositoriesModule.usersRepository
 import pl.propertea.tools.json
 import pl.propertea.tools.l
 import ro.kreator.aRandomListOf

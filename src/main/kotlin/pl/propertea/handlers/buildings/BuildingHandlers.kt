@@ -13,7 +13,7 @@ import pl.propertea.models.responses.BuildingsResponse
 import pl.propertea.models.responses.ParkingSpotsResponse
 import pl.propertea.models.responses.StorageRoomsResponse
 import pl.propertea.models.responses.toResponse
-import pl.propertea.repositories.RepositoriesModule.buildingsRepository
+import pl.propertea.repositories.di.RepositoriesModule.buildingsRepository
 import pl.propertea.routes.buildingId
 import pl.propertea.routes.communityId
 

@@ -17,9 +17,9 @@ import pl.propertea.models.domain.domains.Shares
 import pl.propertea.models.domain.domains.UserTypes
 import pl.propertea.models.responses.LoginResponse
 import pl.propertea.models.responses.UserTypeResponse
-import pl.propertea.repositories.OwnerCreated
-import pl.propertea.repositories.RepositoriesModule.usersRepository
-import pl.propertea.repositories.UsernameTaken
+import pl.propertea.repositories.users.OwnerCreated
+import pl.propertea.repositories.di.RepositoriesModule.usersRepository
+import pl.propertea.repositories.users.UsernameTaken
 import pl.propertea.routes.setHeader
 
 val createOwnerHandler: Handler<CreateOwnerRequest, GenericResponse> = {

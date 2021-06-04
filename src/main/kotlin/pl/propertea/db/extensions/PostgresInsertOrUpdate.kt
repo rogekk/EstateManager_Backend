@@ -1,4 +1,4 @@
-package pl.propertea.extensions
+package pl.propertea.db.extensions
 
 //TODO: replace with more robust implementation https://github.com/JetBrains/Exposed/issues/167#issuecomment-514558435
 

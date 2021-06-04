@@ -6,9 +6,9 @@ import pl.propertea.dsl.DatabaseTest
 import pl.propertea.models.domain.domains.Building
 import pl.propertea.models.domain.domains.Community
 import pl.propertea.models.domain.domains.Owner
-import pl.propertea.repositories.RepositoriesModule.buildingsRepository
-import pl.propertea.repositories.RepositoriesModule.communityRepository
-import pl.propertea.repositories.RepositoriesModule.usersRepository
+import pl.propertea.repositories.di.RepositoriesModule.buildingsRepository
+import pl.propertea.repositories.di.RepositoriesModule.communityRepository
+import pl.propertea.repositories.di.RepositoriesModule.usersRepository
 import ro.kreator.aRandom
 import ro.kreator.aRandomListOf
 
@@ -17,8 +17,6 @@ class CommunitiesTableRepositoryTest : DatabaseTest() {
     val community by aRandom<Community>()
     val owner by aRandom<Owner>()
     val building by aRandom<Building>()
-
-
 
     @Test
     fun `gets all communities`() {

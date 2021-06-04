@@ -21,7 +21,7 @@ import pl.propertea.models.responses.BuildingsResponse
 import pl.propertea.models.responses.ParkingSpotsResponse
 import pl.propertea.models.responses.StorageRoomsResponse
 import pl.propertea.models.responses.toResponse
-import pl.propertea.repositories.RepositoriesModule.buildingsRepository
+import pl.propertea.repositories.di.RepositoriesModule.buildingsRepository
 import ro.kreator.aRandom
 import ro.kreator.aRandomListOf
 

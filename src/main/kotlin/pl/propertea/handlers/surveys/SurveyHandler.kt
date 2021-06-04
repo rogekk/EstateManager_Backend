@@ -16,7 +16,7 @@ import pl.propertea.models.responses.SurveysResponse
 import pl.propertea.models.responses.toResponse
 import pl.propertea.models.success
 import pl.propertea.models.toDomain
-import pl.propertea.repositories.RepositoriesModule.surveyRepository
+import pl.propertea.repositories.di.RepositoriesModule.surveyRepository
 import pl.propertea.routes.authenticatedUser
 import pl.propertea.routes.communityId
 import pl.propertea.routes.surveyId

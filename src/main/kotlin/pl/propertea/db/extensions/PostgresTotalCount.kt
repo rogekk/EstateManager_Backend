@@ -1,4 +1,4 @@
-package pl.propertea.db
+package pl.propertea.db.extensions
 
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.DoubleColumnType

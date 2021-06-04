@@ -1,6 +1,6 @@
 package pl.propertea.dsl
 
-import pl.propertea.db.PostgresConnection
+import pl.propertea.db.connection.PostgresConnection
 
 object TestPostgresConnection : PostgresConnection {
     override val name: String = "postgres"

@@ -17,7 +17,7 @@ import pl.propertea.models.responses.ResolutionsResponse
 import pl.propertea.models.responses.toResponse
 import pl.propertea.models.success
 import pl.propertea.models.toDomain
-import pl.propertea.repositories.RepositoriesModule.resolutionsRepository
+import pl.propertea.repositories.di.RepositoriesModule.resolutionsRepository
 import pl.propertea.routes.authenticatedUser
 import pl.propertea.routes.communityId
 import pl.propertea.routes.resolutionId

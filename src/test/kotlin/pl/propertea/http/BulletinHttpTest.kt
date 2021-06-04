@@ -11,7 +11,7 @@ import pl.propertea.models.domain.Permission.CanCreateBulletin
 import pl.propertea.models.domain.domains.Bulletin
 import pl.propertea.models.domain.domains.BulletinCreation
 import pl.propertea.models.responses.toResponse
-import pl.propertea.repositories.RepositoriesModule.bulletinRepository
+import pl.propertea.repositories.di.RepositoriesModule.bulletinRepository
 import pl.propertea.tools.json
 import ro.kreator.aRandom
 import ro.kreator.aRandomListOf
