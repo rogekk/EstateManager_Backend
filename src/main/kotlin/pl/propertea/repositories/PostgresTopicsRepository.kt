@@ -1,16 +1,25 @@
 package pl.propertea.repositories
 
-import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.count
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import pl.propertea.common.Clock
 import pl.propertea.common.IdGenerator
-import pl.propertea.db.SurveyTable
 import pl.propertea.db.schema.CommentsTable
-import pl.propertea.db.schema.UsersTable
 import pl.propertea.db.schema.TopicsTable
-import pl.propertea.models.*
-import pl.propertea.models.domain.domains.*
+import pl.propertea.db.schema.UsersTable
+import pl.propertea.models.CommentId
+import pl.propertea.models.CommunityId
+import pl.propertea.models.TopicId
+import pl.propertea.models.domain.domains.CommentCreation
+import pl.propertea.models.domain.domains.CommentWithOwner
+import pl.propertea.models.domain.domains.Topic
+import pl.propertea.models.domain.domains.TopicCreation
+import pl.propertea.models.domain.domains.TopicWithOwner
 
 interface TopicsRepository {
     fun getTopics(communityId: CommunityId): List<TopicWithOwner>

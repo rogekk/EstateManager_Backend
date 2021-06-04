@@ -3,7 +3,10 @@ import com.snitch.extensions.json
 import com.snitch.extensions.parseJson
 import org.joda.time.DateTime
 import pl.propertea.common.CommonModule.authenticator
-import pl.propertea.models.*
+import pl.propertea.models.AdminId
+import pl.propertea.models.ManagerId
+import pl.propertea.models.OwnerId
+import pl.propertea.models.UserId
 import pl.propertea.models.domain.domains.AuthToken
 import pl.propertea.models.domain.domains.Authorization
 import pl.propertea.models.domain.domains.UserTypes

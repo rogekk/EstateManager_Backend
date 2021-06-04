@@ -1,7 +1,6 @@
 package pl.propertea.http
 
 import com.memoizr.assertk.isEqualTo
-import pl.propertea.models.domain.Permission.*
 import com.snitch.extensions.parseJson
 import io.mockk.every
 import io.mockk.verify
@@ -12,8 +11,16 @@ import pl.propertea.dsl.Mocks
 import pl.propertea.dsl.SparkTest
 import pl.propertea.dsl.relaxed
 import pl.propertea.dsl.strict
-import pl.propertea.models.*
-import pl.propertea.models.domain.domains.*
+import pl.propertea.models.CommunityId
+import pl.propertea.models.domain.Permission.CanDeleteComment
+import pl.propertea.models.domain.Permission.CanDeleteTopic
+import pl.propertea.models.domain.domains.Comment
+import pl.propertea.models.domain.domains.CommentCreation
+import pl.propertea.models.domain.domains.CommentWithOwner
+import pl.propertea.models.domain.domains.Community
+import pl.propertea.models.domain.domains.Topic
+import pl.propertea.models.domain.domains.TopicCreation
+import pl.propertea.models.domain.domains.TopicWithOwner
 import pl.propertea.models.responses.GetCommentsResponse
 import pl.propertea.models.responses.toResponse
 import pl.propertea.repositories.RepositoriesModule.topicsRepository

@@ -1,10 +1,10 @@
 package pl.propertea.db
 
+import java.sql.Connection
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import pl.propertea.db.DatabaseModule.readWriteDatabase
-import java.sql.Connection
 
 object Postgres {
 

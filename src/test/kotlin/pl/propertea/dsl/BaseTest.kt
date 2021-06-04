@@ -4,6 +4,7 @@ package pl.propertea.dsl
 import ch.qos.logback.classic.Level
 import com.github.f4b6a3.ulid.UlidCreator
 import io.mockk.mockk
+import kotlin.reflect.KClass
 import life.shank.SingleProvider0
 import life.shank.resetShank
 import org.joda.time.DateTime
@@ -11,10 +12,19 @@ import org.junit.After
 import org.junit.Before
 import pl.propertea.common.CommonModule.environment
 import pl.propertea.env.TestEnvironmentVariables
-import pl.propertea.models.*
+import pl.propertea.models.ApartmentId
+import pl.propertea.models.BuildingId
+import pl.propertea.models.BulletinId
+import pl.propertea.models.CommentId
+import pl.propertea.models.CommunityId
+import pl.propertea.models.IssueId
+import pl.propertea.models.OwnerId
+import pl.propertea.models.ParkingId
+import pl.propertea.models.ResolutionId
+import pl.propertea.models.SurveyId
+import pl.propertea.models.TopicId
 import ro.kreator.customize
 import ro.kreator.registerCustomizations
-import kotlin.reflect.KClass
 
 data class MockedProvider<T : SingleProvider0<*>>(val mock: T)
 class Mocks(vararg val mocks: MockedProvider<*>) {

@@ -4,7 +4,6 @@ import org.joda.time.DateTime
 import pl.propertea.models.BulletinId
 import pl.propertea.models.CommunityId
 
-//Bulletins
 data class Bulletin(
     val id: BulletinId,
     val subject: String,

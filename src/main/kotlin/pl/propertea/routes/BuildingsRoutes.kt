@@ -2,7 +2,11 @@ package pl.propertea.routes
 
 import com.snitch.Router
 import com.snitch.body
-import pl.propertea.handlers.buildings.*
+import pl.propertea.handlers.buildings.createBuildingHandler
+import pl.propertea.handlers.buildings.getApartmentsHandler
+import pl.propertea.handlers.buildings.getBuildingsHandler
+import pl.propertea.handlers.buildings.getParkingSpotsHandler
+import pl.propertea.handlers.buildings.getStorageRoomsHandler
 import pl.propertea.models.Request
 import pl.propertea.models.domain.Permission
 

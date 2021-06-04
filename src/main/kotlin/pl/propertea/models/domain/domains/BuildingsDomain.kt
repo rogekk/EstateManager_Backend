@@ -1,17 +1,11 @@
-package pl.propertea.models.domain
+package pl.propertea.models.domain.domains
 
 import pl.propertea.models.ApartmentId
 import pl.propertea.models.BuildingId
 import pl.propertea.models.ParkingId
 import pl.propertea.models.StorageRoomId
-import pl.propertea.models.domain.domains.Community
-
 
 data class UsableArea(val value: Int)
-
-//Survey system
-
-// Buildings
 
 data class Building(
     val id: BuildingId,
@@ -42,4 +36,3 @@ data class BuildingProfile(
     val building: Building,
     val community: Community,
 )
-

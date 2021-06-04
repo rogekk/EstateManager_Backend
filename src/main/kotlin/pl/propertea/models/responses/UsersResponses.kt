@@ -1,7 +1,7 @@
 package pl.propertea.models.responses
 
 import com.snitch.documentation.Description
-import pl.propertea.models.domain.User
+import pl.propertea.models.domain.domains.User
 
 data class LoginResponse(
     @Description("The authtoken in JWT form")

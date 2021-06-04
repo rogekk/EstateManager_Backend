@@ -1,9 +1,9 @@
 package pl.propertea.models.responses
 
-import pl.propertea.models.domain.Apartment
-import pl.propertea.models.domain.Building
-import pl.propertea.models.domain.ParkingSpot
-import pl.propertea.models.domain.StorageRoom
+import pl.propertea.models.domain.domains.Apartment
+import pl.propertea.models.domain.domains.Building
+import pl.propertea.models.domain.domains.ParkingSpot
+import pl.propertea.models.domain.domains.StorageRoom
 
 data class BuildingsResponse(val buildings: List<BuildingResponse>)
 data class BuildingResponse(

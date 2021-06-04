@@ -5,12 +5,12 @@ import org.junit.Test
 import pl.propertea.dsl.DatabaseTest
 import pl.propertea.models.CommunityId
 import pl.propertea.models.OwnerId
-import pl.propertea.models.domain.Admin
-import pl.propertea.models.domain.Owner
-import pl.propertea.models.domain.OwnerProfile
 import pl.propertea.models.domain.Permission
+import pl.propertea.models.domain.domains.Admin
 import pl.propertea.models.domain.domains.Authorization
 import pl.propertea.models.domain.domains.Community
+import pl.propertea.models.domain.domains.Owner
+import pl.propertea.models.domain.domains.OwnerProfile
 import pl.propertea.models.domain.domains.UserTypes
 import pl.propertea.repositories.RepositoriesModule.communityRepository
 import pl.propertea.repositories.RepositoriesModule.usersRepository

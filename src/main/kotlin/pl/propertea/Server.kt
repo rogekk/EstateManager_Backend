@@ -1,6 +1,6 @@
 package pl.propertea
 
-import com.snitch.*
+import com.snitch.Config
 import com.snitch.documentation.generateDocs
 import com.snitch.spark.SparkSnitchService
 import pl.propertea.routes.routes

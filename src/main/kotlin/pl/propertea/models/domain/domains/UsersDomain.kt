@@ -1,9 +1,8 @@
-package pl.propertea.models.domain
+package pl.propertea.models.domain.domains
 
 import pl.propertea.models.AdminId
 import pl.propertea.models.OwnerId
 import pl.propertea.models.UserId
-import pl.propertea.models.domain.domains.Community
 
 sealed class User {
     abstract val id: UserId

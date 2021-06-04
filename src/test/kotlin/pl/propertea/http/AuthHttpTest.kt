@@ -15,10 +15,10 @@ import pl.propertea.dsl.strict
 import pl.propertea.models.CommunityId
 import pl.propertea.models.CreateOwnerRequest
 import pl.propertea.models.OwnerId
-import pl.propertea.models.domain.Admin
-import pl.propertea.models.domain.OwnerProfile
 import pl.propertea.models.domain.Permission.CanCreateOwner
+import pl.propertea.models.domain.domains.Admin
 import pl.propertea.models.domain.domains.Authorization
+import pl.propertea.models.domain.domains.OwnerProfile
 import pl.propertea.models.domain.domains.Shares
 import pl.propertea.models.domain.domains.UserTypes
 import pl.propertea.repositories.OwnerCreated

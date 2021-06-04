@@ -4,10 +4,32 @@ import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.count
 import pl.propertea.db.SurveyOptionsTable
 import pl.propertea.db.SurveyTable
-import pl.propertea.db.schema.*
-import pl.propertea.models.*
-import pl.propertea.models.domain.Owner
-import pl.propertea.models.domain.domains.*
+import pl.propertea.db.schema.AnswerTable
+import pl.propertea.db.schema.BulletinTable
+import pl.propertea.db.schema.CommentsTable
+import pl.propertea.db.schema.IssuesTable
+import pl.propertea.db.schema.ResolutionsTable
+import pl.propertea.db.schema.TopicsTable
+import pl.propertea.db.schema.UsersTable
+import pl.propertea.models.AnswerId
+import pl.propertea.models.BulletinId
+import pl.propertea.models.CommentId
+import pl.propertea.models.CommunityId
+import pl.propertea.models.IssueId
+import pl.propertea.models.OwnerId
+import pl.propertea.models.ResolutionId
+import pl.propertea.models.SurveyId
+import pl.propertea.models.SurveyOptionId
+import pl.propertea.models.TopicId
+import pl.propertea.models.domain.domains.Answer
+import pl.propertea.models.domain.domains.Bulletin
+import pl.propertea.models.domain.domains.Comment
+import pl.propertea.models.domain.domains.Issue
+import pl.propertea.models.domain.domains.Owner
+import pl.propertea.models.domain.domains.Resolution
+import pl.propertea.models.domain.domains.Survey
+import pl.propertea.models.domain.domains.SurveyOptions
+import pl.propertea.models.domain.domains.Topic
 
 fun ResultRow.readOwner() = Owner(
     id = OwnerId(this[UsersTable.id]),

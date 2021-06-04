@@ -6,8 +6,12 @@ import org.junit.Test
 import pl.propertea.dsl.DatabaseTest
 import pl.propertea.dsl.Mocks
 import pl.propertea.models.db.Insert
-import pl.propertea.models.domain.Owner
-import pl.propertea.models.domain.domains.*
+import pl.propertea.models.domain.domains.Community
+import pl.propertea.models.domain.domains.OptionsWithVotes
+import pl.propertea.models.domain.domains.Owner
+import pl.propertea.models.domain.domains.Survey
+import pl.propertea.models.domain.domains.SurveyResult
+import pl.propertea.models.domain.domains.SurveyState
 import pl.propertea.repositories.RepositoriesModule.communityRepository
 import pl.propertea.repositories.RepositoriesModule.surveyRepository
 import pl.propertea.repositories.RepositoriesModule.usersRepository

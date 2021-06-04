@@ -1,8 +1,11 @@
 package pl.propertea.models.domain.domains
 
 import org.joda.time.DateTime
-import pl.propertea.models.*
-import pl.propertea.models.domain.Owner
+import pl.propertea.models.AnswerId
+import pl.propertea.models.CommunityId
+import pl.propertea.models.IssueId
+import pl.propertea.models.OwnerId
+import pl.propertea.models.UserId
 
 //Issues
 data class Issue(

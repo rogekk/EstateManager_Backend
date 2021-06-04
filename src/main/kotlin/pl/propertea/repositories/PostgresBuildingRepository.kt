@@ -6,11 +6,24 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import pl.propertea.common.IdGenerator
-import pl.propertea.db.schema.*
-import pl.propertea.models.*
+import pl.propertea.db.schema.ApartmentsTable
+import pl.propertea.db.schema.BuildingsTable
+import pl.propertea.db.schema.CommunitiesTable
+import pl.propertea.db.schema.ParkingSpotsTable
+import pl.propertea.db.schema.StorageRoomsTable
+import pl.propertea.models.ApartmentId
+import pl.propertea.models.BuildingId
+import pl.propertea.models.CommunityId
+import pl.propertea.models.ParkingId
+import pl.propertea.models.StorageRoomId
 import pl.propertea.models.db.Insert
-import pl.propertea.models.domain.*
+import pl.propertea.models.domain.domains.Apartment
+import pl.propertea.models.domain.domains.Building
+import pl.propertea.models.domain.domains.BuildingProfile
 import pl.propertea.models.domain.domains.Community
+import pl.propertea.models.domain.domains.ParkingSpot
+import pl.propertea.models.domain.domains.StorageRoom
+import pl.propertea.models.domain.domains.UsableArea
 
 interface BuildingRepository {
 

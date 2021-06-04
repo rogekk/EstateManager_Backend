@@ -2,10 +2,17 @@ package pl.propertea.handlers.buildings
 
 import com.snitch.Handler
 import com.snitch.ok
-import pl.propertea.models.*
+import pl.propertea.models.GenericResponse
+import pl.propertea.models.Request
+import pl.propertea.models.createdSuccessfully
 import pl.propertea.models.db.Insert
-import pl.propertea.models.domain.UsableArea
-import pl.propertea.models.responses.*
+import pl.propertea.models.domain.domains.UsableArea
+import pl.propertea.models.responses.ApartmentsResponse
+import pl.propertea.models.responses.BuildingResponse
+import pl.propertea.models.responses.BuildingsResponse
+import pl.propertea.models.responses.ParkingSpotsResponse
+import pl.propertea.models.responses.StorageRoomsResponse
+import pl.propertea.models.responses.toResponse
 import pl.propertea.repositories.RepositoriesModule.buildingsRepository
 import pl.propertea.routes.buildingId
 import pl.propertea.routes.communityId

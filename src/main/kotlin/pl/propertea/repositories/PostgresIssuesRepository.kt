@@ -1,14 +1,29 @@
 package pl.propertea.repositories
 
-import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.count
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 import pl.propertea.common.Clock
 import pl.propertea.common.IdGenerator
-import pl.propertea.db.SurveyTable
-import pl.propertea.db.schema.*
-import pl.propertea.models.*
-import pl.propertea.models.domain.domains.*
+import pl.propertea.db.schema.AdminCommunitiesTable
+import pl.propertea.db.schema.AnswerTable
+import pl.propertea.db.schema.IssuesTable
+import pl.propertea.db.schema.PGIssueStatus
+import pl.propertea.db.schema.UsersTable
+import pl.propertea.models.AnswerId
+import pl.propertea.models.IssueId
+import pl.propertea.models.ManagerId
+import pl.propertea.models.OwnerId
+import pl.propertea.models.UserId
+import pl.propertea.models.domain.domains.AnswerCreation
+import pl.propertea.models.domain.domains.AnswerWithOwners
+import pl.propertea.models.domain.domains.IssueCreation
+import pl.propertea.models.domain.domains.IssueStatus
+import pl.propertea.models.domain.domains.IssueWithOwner
 
 interface IssuesRepository {
 

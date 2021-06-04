@@ -1,7 +1,9 @@
 package pl.propertea.models.responses
 
 import org.joda.time.DateTime
-import pl.propertea.models.domain.domains.*
+import pl.propertea.models.domain.domains.Survey
+import pl.propertea.models.domain.domains.SurveyOptions
+import pl.propertea.models.domain.domains.SurveyState
 
 data class SurveysResponse(val surveys: List<SurveyResponse>)
 

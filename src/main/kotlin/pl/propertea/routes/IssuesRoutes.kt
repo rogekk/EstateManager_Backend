@@ -2,7 +2,12 @@ package pl.propertea.routes
 
 import com.snitch.Router
 import com.snitch.body
-import pl.propertea.handlers.issues.*
+import pl.propertea.handlers.issues.createAnswerHandler
+import pl.propertea.handlers.issues.createIssueHandler
+import pl.propertea.handlers.issues.getAnswersHandler
+import pl.propertea.handlers.issues.getIssueHandler
+import pl.propertea.handlers.issues.getIssuesHandler
+import pl.propertea.handlers.issues.updateStatusHandler
 import pl.propertea.models.CreateAnswerRequest
 import pl.propertea.models.IssueRequest
 import pl.propertea.models.IssueStatusRequest

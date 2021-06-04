@@ -1,7 +1,12 @@
 package pl.propertea.db
 
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.Column
+import org.jetbrains.exposed.sql.DoubleColumnType
+import org.jetbrains.exposed.sql.Expression
 import org.jetbrains.exposed.sql.Function
+import org.jetbrains.exposed.sql.QueryBuilder
+import org.jetbrains.exposed.sql.Transaction
+import org.jetbrains.exposed.sql.stringLiteral
 
 fun Transaction.similarity(column:Column<String>, to: String) = object : Function<Double>(DoubleColumnType()) {
     override fun toQueryBuilder(queryBuilder: QueryBuilder) = queryBuilder {

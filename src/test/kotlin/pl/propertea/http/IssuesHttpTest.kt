@@ -1,7 +1,6 @@
 package pl.propertea.http
 
 import com.memoizr.assertk.isEqualTo
-import pl.propertea.models.domain.Permission.*
 import com.snitch.extensions.parseJson
 import io.mockk.every
 import io.mockk.verify
@@ -13,13 +12,17 @@ import pl.propertea.dsl.Mocks
 import pl.propertea.dsl.SparkTest
 import pl.propertea.dsl.relaxed
 import pl.propertea.dsl.strict
-import pl.propertea.models.*
-import pl.propertea.models.domain.Manager
+import pl.propertea.models.CommunityId
+import pl.propertea.models.IssueId
+import pl.propertea.models.IssueStatusRequest
+import pl.propertea.models.domain.Permission.CanUpdateIssueStatus
 import pl.propertea.models.domain.domains.AnswerWithOwners
 import pl.propertea.models.domain.domains.IssueCreation
 import pl.propertea.models.domain.domains.IssueWithOwner
+import pl.propertea.models.domain.domains.Manager
 import pl.propertea.models.responses.GetAnswerResponse
 import pl.propertea.models.responses.toResponse
+import pl.propertea.models.toDomain
 import pl.propertea.repositories.RepositoriesModule.issueRepository
 import pl.propertea.tools.json
 import ro.kreator.aRandom

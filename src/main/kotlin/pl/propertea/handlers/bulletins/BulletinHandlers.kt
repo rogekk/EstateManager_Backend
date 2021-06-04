@@ -1,9 +1,11 @@
 package pl.propertea.handlers.bulletins
 
+import com.snitch.Handler
 import com.snitch.notFound
 import com.snitch.ok
-import com.snitch.Handler
-import pl.propertea.models.*
+import pl.propertea.models.BulletinRequest
+import pl.propertea.models.GenericResponse
+import pl.propertea.models.createdSuccessfully
 import pl.propertea.models.domain.domains.BulletinCreation
 import pl.propertea.models.responses.BulletinResponse
 import pl.propertea.models.responses.BulletinsResponse

@@ -1,7 +1,11 @@
 
 import com.snitch.Router
 import com.snitch.body
-import pl.propertea.handlers.resolutions.*
+import pl.propertea.handlers.resolutions.createResolutionVoteHandler
+import pl.propertea.handlers.resolutions.createResolutionsHandler
+import pl.propertea.handlers.resolutions.getResolution
+import pl.propertea.handlers.resolutions.getResolutions
+import pl.propertea.handlers.resolutions.updateResolutionsResultHandler
 import pl.propertea.models.ResolutionRequest
 import pl.propertea.models.ResolutionResultRequest
 import pl.propertea.models.ResolutionVoteRequest

@@ -2,7 +2,11 @@ package pl.propertea.routes
 
 import com.snitch.Router
 import com.snitch.body
-import pl.propertea.handlers.surveys.*
+import pl.propertea.handlers.surveys.changeSurveyStateHandler
+import pl.propertea.handlers.surveys.createSurveyHandler
+import pl.propertea.handlers.surveys.getSurveyHandler
+import pl.propertea.handlers.surveys.getSurveysHandler
+import pl.propertea.handlers.surveys.voteSurveyHandler
 import pl.propertea.models.Requests
 import pl.propertea.models.SurveyStateRequest
 import pl.propertea.models.SurveyVoteRequest

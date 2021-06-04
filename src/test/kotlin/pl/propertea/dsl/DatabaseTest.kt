@@ -4,10 +4,10 @@ import org.junit.Rule
 import org.junit.rules.RuleChain
 import org.junit.rules.TestRule
 import pl.propertea.models.CommunityId
-import pl.propertea.models.domain.Building
-import pl.propertea.models.domain.Owner
-import pl.propertea.models.domain.UsableArea
+import pl.propertea.models.domain.domains.Building
+import pl.propertea.models.domain.domains.Owner
 import pl.propertea.models.domain.domains.Shares
+import pl.propertea.models.domain.domains.UsableArea
 import pl.propertea.repositories.BuildingRepository
 import pl.propertea.repositories.OwnerCreated
 import pl.propertea.repositories.OwnerInsertion

@@ -1,6 +1,6 @@
 package pl.propertea.models.db
 
-import pl.propertea.models.domain.UsableArea
+import pl.propertea.models.domain.domains.UsableArea
 
 object Insert {
     data class Apartment(val number: String, val usableArea: UsableArea)

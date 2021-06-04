@@ -1,7 +1,12 @@
 package pl.propertea.routes
 import com.snitch.Router
 import com.snitch.body
-import pl.propertea.handlers.topics.*
+import pl.propertea.handlers.topics.createCommentHandler
+import pl.propertea.handlers.topics.createTopicsHandler
+import pl.propertea.handlers.topics.deleteCommentHandler
+import pl.propertea.handlers.topics.deleteTopicHandler
+import pl.propertea.handlers.topics.getCommentsHandler
+import pl.propertea.handlers.topics.getTopics
 import pl.propertea.models.CreateCommentRequest
 import pl.propertea.models.TopicRequest
 import pl.propertea.models.domain.Permission.CanDeleteComment

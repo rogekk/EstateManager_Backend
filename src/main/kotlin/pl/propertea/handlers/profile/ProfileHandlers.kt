@@ -12,7 +12,12 @@ import pl.propertea.models.responses.UsersResponses
 import pl.propertea.models.responses.toResponse
 import pl.propertea.models.success
 import pl.propertea.repositories.RepositoriesModule.usersRepository
-import pl.propertea.routes.*
+import pl.propertea.routes.addressSearch
+import pl.propertea.routes.authenticatedUser
+import pl.propertea.routes.emailSearch
+import pl.propertea.routes.fullNameSearch
+import pl.propertea.routes.phoneSearch
+import pl.propertea.routes.usernameSeach
 
 
 val getProfile: Handler<Nothing, ProfileResponse> = {

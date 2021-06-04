@@ -5,7 +5,6 @@ import com.auth0.jwt.exceptions.JWTDecodeException
 import com.snitch.extensions.json
 import pl.propertea.tools.json
 import spark.Service
-import java.lang.IllegalArgumentException
 
 fun handleExceptions(http: Service) {
     http.exception(JWTDecodeException::class.java) { _, _, response ->
