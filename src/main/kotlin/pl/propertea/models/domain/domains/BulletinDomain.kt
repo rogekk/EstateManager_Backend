@@ -1,8 +1,8 @@
 package pl.propertea.models.domain.domains
 
 import org.joda.time.DateTime
-import pl.propertea.models.BulletinId
-import pl.propertea.models.CommunityId
+import pl.propertea.models.domain.BulletinId
+import pl.propertea.models.domain.CommunityId
 
 data class Bulletin(
     val id: BulletinId,

@@ -1,3 +1,4 @@
+package pl.propertea.routes
 
 import com.snitch.Router
 import com.snitch.body
@@ -13,6 +14,7 @@ import pl.propertea.routes.withPermission
 
 fun Router.bulletinsRoutes() {
     "bulletins" {
+
         POST("/communities" / communityId / "bulletins")
             .inSummary("Creates a new bulletin")
             .withPermission(CanCreateBulletin)
@@ -28,5 +30,6 @@ fun Router.bulletinsRoutes() {
             .inSummary("Gets a specific bulletin")
             .authenticated()
             .isHandledBy(getBulletinHandler)
+
     }
 }

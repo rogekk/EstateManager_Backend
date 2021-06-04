@@ -16,9 +16,9 @@ import pl.propertea.db.schema.PGResolutionResult
 import pl.propertea.db.schema.PGVote
 import pl.propertea.db.schema.ResolutionVotesTable
 import pl.propertea.db.schema.ResolutionsTable
-import pl.propertea.models.CommunityId
-import pl.propertea.models.OwnerId
-import pl.propertea.models.ResolutionId
+import pl.propertea.models.domain.CommunityId
+import pl.propertea.models.domain.OwnerId
+import pl.propertea.models.domain.ResolutionId
 import pl.propertea.models.domain.domains.Resolution
 import pl.propertea.models.domain.domains.ResolutionCreation
 import pl.propertea.models.domain.domains.ResolutionResult

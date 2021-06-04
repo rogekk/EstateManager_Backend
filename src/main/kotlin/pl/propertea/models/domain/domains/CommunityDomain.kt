@@ -1,6 +1,6 @@
 package pl.propertea.models.domain.domains
 
-import pl.propertea.models.CommunityId
+import pl.propertea.models.domain.CommunityId
 
 data class Community(
     val id: CommunityId,

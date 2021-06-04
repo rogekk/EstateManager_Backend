@@ -6,8 +6,8 @@ import org.junit.Test
 import pl.propertea.dsl.Mocks
 import pl.propertea.dsl.SparkTest
 import pl.propertea.dsl.relaxed
-import pl.propertea.models.CommunityId
-import pl.propertea.models.ResolutionId
+import pl.propertea.models.domain.CommunityId
+import pl.propertea.models.domain.ResolutionId
 import pl.propertea.models.ResolutionResultRequest
 import pl.propertea.models.domain.Permission.CanCreateResolution
 import pl.propertea.models.domain.Permission.CanUpdateResolutionStatus

@@ -12,17 +12,17 @@ import org.junit.After
 import org.junit.Before
 import pl.propertea.common.CommonModule.environment
 import pl.propertea.env.TestEnvironmentVariables
-import pl.propertea.models.ApartmentId
-import pl.propertea.models.BuildingId
-import pl.propertea.models.BulletinId
-import pl.propertea.models.CommentId
-import pl.propertea.models.CommunityId
-import pl.propertea.models.IssueId
-import pl.propertea.models.OwnerId
-import pl.propertea.models.ParkingId
-import pl.propertea.models.ResolutionId
-import pl.propertea.models.SurveyId
-import pl.propertea.models.TopicId
+import pl.propertea.models.domain.ApartmentId
+import pl.propertea.models.domain.BuildingId
+import pl.propertea.models.domain.BulletinId
+import pl.propertea.models.domain.CommentId
+import pl.propertea.models.domain.CommunityId
+import pl.propertea.models.domain.IssueId
+import pl.propertea.models.domain.OwnerId
+import pl.propertea.models.domain.ParkingId
+import pl.propertea.models.domain.ResolutionId
+import pl.propertea.models.domain.SurveyId
+import pl.propertea.models.domain.TopicId
 import ro.kreator.customize
 import ro.kreator.registerCustomizations
 
@@ -43,9 +43,9 @@ abstract class BaseTest(val mockBlock: () -> Mocks = { Mocks() }) {
     private val customCommentId by customize { CommentId(ulid()) }
     private val customIssueId by customize { IssueId(ulid()) }
     private val buildingId by customize { BuildingId(ulid()) }
-    private val apartmentId by customize {ApartmentId(ulid()) }
-    private val parkingId by customize {ParkingId(ulid()) }
-    private val surveyId by customize {SurveyId(ulid()) }
+    private val apartmentId by customize { ApartmentId(ulid()) }
+    private val parkingId by customize { ParkingId(ulid()) }
+    private val surveyId by customize { SurveyId(ulid()) }
 
     fun ulid() = UlidCreator.getMonotonicUlid(now.millis).toString()
 

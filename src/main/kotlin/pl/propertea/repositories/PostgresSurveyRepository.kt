@@ -13,10 +13,10 @@ import pl.propertea.db.PGSurveyState
 import pl.propertea.db.QuestionVotesTable
 import pl.propertea.db.SurveyOptionsTable
 import pl.propertea.db.SurveyTable
-import pl.propertea.models.CommunityId
-import pl.propertea.models.OwnerId
-import pl.propertea.models.SurveyId
-import pl.propertea.models.SurveyOptionId
+import pl.propertea.models.domain.CommunityId
+import pl.propertea.models.domain.OwnerId
+import pl.propertea.models.domain.SurveyId
+import pl.propertea.models.domain.SurveyOptionId
 import pl.propertea.models.db.Insert
 import pl.propertea.models.domain.domains.OptionsWithVotes
 import pl.propertea.models.domain.domains.Survey

@@ -8,8 +8,8 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import pl.propertea.common.Clock
 import pl.propertea.common.IdGenerator
 import pl.propertea.db.schema.BulletinTable
-import pl.propertea.models.BulletinId
-import pl.propertea.models.CommunityId
+import pl.propertea.models.domain.BulletinId
+import pl.propertea.models.domain.CommunityId
 import pl.propertea.models.domain.domains.Bulletin
 import pl.propertea.models.domain.domains.BulletinCreation
 

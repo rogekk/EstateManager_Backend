@@ -12,9 +12,9 @@ import pl.propertea.common.IdGenerator
 import pl.propertea.db.schema.CommentsTable
 import pl.propertea.db.schema.TopicsTable
 import pl.propertea.db.schema.UsersTable
-import pl.propertea.models.CommentId
-import pl.propertea.models.CommunityId
-import pl.propertea.models.TopicId
+import pl.propertea.models.domain.CommentId
+import pl.propertea.models.domain.CommunityId
+import pl.propertea.models.domain.TopicId
 import pl.propertea.models.domain.domains.CommentCreation
 import pl.propertea.models.domain.domains.CommentWithOwner
 import pl.propertea.models.domain.domains.Topic

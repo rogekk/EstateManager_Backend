@@ -1,4 +1,4 @@
-
+package pl.propertea.routes
 import com.snitch.Router
 import com.snitch.body
 import pl.propertea.handlers.communities.addBuildingHandler

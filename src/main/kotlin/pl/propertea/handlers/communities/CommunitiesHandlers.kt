@@ -3,7 +3,7 @@ package pl.propertea.handlers.communities
 import com.snitch.Handler
 import com.snitch.ok
 import pl.propertea.models.AddBuildingToCommunityRequest
-import pl.propertea.models.CommunityId
+import pl.propertea.models.domain.CommunityId
 import pl.propertea.models.CommunityRequest
 import pl.propertea.models.CreateCommunityMembershipRequest
 import pl.propertea.models.GenericResponse

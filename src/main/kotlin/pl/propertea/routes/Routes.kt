@@ -1,8 +1,5 @@
 package pl.propertea.routes
 
-import AuthTokenValidator
-import authenticationRoutes
-import bulletinsRoutes
 import com.snitch.NonEmptyString
 import com.snitch.RequestHandler
 import com.snitch.Router
@@ -10,21 +7,19 @@ import com.snitch.header
 import com.snitch.optionalQuery
 import com.snitch.path
 import com.snitch.spark.SparkResponseWrapper
-import communitiesRoutes
-import ownersRoutes
-import pl.propertea.models.BuildingId
-import pl.propertea.models.BulletinId
-import pl.propertea.models.CommentId
-import pl.propertea.models.CommunityId
-import pl.propertea.models.IssueId
-import pl.propertea.models.OwnerId
-import pl.propertea.models.ResolutionId
-import pl.propertea.models.SurveyId
-import pl.propertea.models.SurveyOptionId
-import pl.propertea.models.TopicId
-import resolutionsRoutes
+import pl.propertea.AuthTokenValidator
+import pl.propertea.models.domain.BuildingId
+import pl.propertea.models.domain.BulletinId
+import pl.propertea.models.domain.CommentId
+import pl.propertea.models.domain.CommunityId
+import pl.propertea.models.domain.IssueId
+import pl.propertea.models.domain.OwnerId
+import pl.propertea.models.domain.ResolutionId
+import pl.propertea.models.domain.SurveyId
+import pl.propertea.models.domain.SurveyOptionId
+import pl.propertea.models.domain.TopicId
+import pl.propertea.ulid
 import spark.Service
-import ulid
 
 val topicId = path("topicId", condition = ulid("topic", ::TopicId))
 val commentId = path("commentId", condition = ulid("comment", ::CommentId))

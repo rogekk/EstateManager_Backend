@@ -18,11 +18,11 @@ import pl.propertea.db.schema.UserPermissionsTable
 import pl.propertea.db.schema.UsersTable
 import pl.propertea.db.schema.toDb
 import pl.propertea.db.similarity
-import pl.propertea.models.AdminId
-import pl.propertea.models.CommunityId
-import pl.propertea.models.ManagerId
-import pl.propertea.models.OwnerId
-import pl.propertea.models.UserId
+import pl.propertea.models.domain.AdminId
+import pl.propertea.models.domain.CommunityId
+import pl.propertea.models.domain.ManagerId
+import pl.propertea.models.domain.OwnerId
+import pl.propertea.models.domain.UserId
 import pl.propertea.models.domain.Permission
 import pl.propertea.models.domain.domains.Authorization
 import pl.propertea.models.domain.domains.Community

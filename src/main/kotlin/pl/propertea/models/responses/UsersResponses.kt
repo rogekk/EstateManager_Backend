@@ -32,11 +32,11 @@ data class UserResponse(
 )
 
 fun User.toResponse() = UserResponse(
-id.id,
-username,
-email,
-phoneNumber,
-address,
+    id.id,
+    username,
+    email,
+    phoneNumber,
+    address,
 )
 
 data class UsersResponses(val users: List<UserResponse>)

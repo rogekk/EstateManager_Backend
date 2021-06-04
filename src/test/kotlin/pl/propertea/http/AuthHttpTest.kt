@@ -12,9 +12,9 @@ import pl.propertea.dsl.Mocks
 import pl.propertea.dsl.SparkTest
 import pl.propertea.dsl.relaxed
 import pl.propertea.dsl.strict
-import pl.propertea.models.CommunityId
+import pl.propertea.models.domain.CommunityId
 import pl.propertea.models.CreateOwnerRequest
-import pl.propertea.models.OwnerId
+import pl.propertea.models.domain.OwnerId
 import pl.propertea.models.domain.Permission.CanCreateOwner
 import pl.propertea.models.domain.domains.Admin
 import pl.propertea.models.domain.domains.Authorization

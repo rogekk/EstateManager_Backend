@@ -3,7 +3,7 @@ package pl.propertea.handlers.topics
 import com.snitch.Handler
 import com.snitch.ok
 import pl.propertea.common.CommonModule.clock
-import pl.propertea.models.CommunityId
+import pl.propertea.models.domain.CommunityId
 import pl.propertea.models.CreateCommentRequest
 import pl.propertea.models.GenericResponse
 import pl.propertea.models.TopicRequest

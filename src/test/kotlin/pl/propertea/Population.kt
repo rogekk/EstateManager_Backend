@@ -1,7 +1,7 @@
 package pl.propertea.db
 
 import org.joda.time.DateTime
-import pl.propertea.models.CommunityId
+import pl.propertea.models.domain.CommunityId
 import pl.propertea.models.domain.domains.Community
 import pl.propertea.models.domain.domains.ResolutionCreation
 import pl.propertea.models.domain.domains.Shares

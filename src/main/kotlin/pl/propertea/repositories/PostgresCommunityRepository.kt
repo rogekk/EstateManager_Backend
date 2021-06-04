@@ -11,9 +11,9 @@ import pl.propertea.db.schema.BuildingsTable
 import pl.propertea.db.schema.CommunitiesTable
 import pl.propertea.db.schema.OwnerMembershipTable
 import pl.propertea.db.schema.OwnerMembershipTable.communityId
-import pl.propertea.models.BuildingId
-import pl.propertea.models.CommunityId
-import pl.propertea.models.OwnerId
+import pl.propertea.models.domain.BuildingId
+import pl.propertea.models.domain.CommunityId
+import pl.propertea.models.domain.OwnerId
 import pl.propertea.models.domain.domains.Community
 import pl.propertea.models.domain.domains.Shares
 import pl.propertea.models.domain.domains.UsableArea

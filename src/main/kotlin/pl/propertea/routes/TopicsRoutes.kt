@@ -14,6 +14,7 @@ import pl.propertea.models.domain.Permission.CanDeleteTopic
 
 fun Router.topicsRoutes() {
     "topics" {
+
         GET("/communities" / communityId / "topics")
             .inSummary("Gets all the topics in the community")
             .authenticated()
@@ -45,5 +46,6 @@ fun Router.topicsRoutes() {
             .inSummary("Deletes a Comment")
             .withPermission(CanDeleteComment)
             .isHandledBy(deleteCommentHandler)
+
     }
 }

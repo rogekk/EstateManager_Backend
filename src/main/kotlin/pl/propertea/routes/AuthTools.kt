@@ -5,10 +5,10 @@ import com.snitch.Endpoint
 import com.snitch.RequestHandler
 import com.snitch.get
 import pl.propertea.common.CommonModule.authenticator
-import pl.propertea.models.AdminId
-import pl.propertea.models.ManagerId
-import pl.propertea.models.OwnerId
-import pl.propertea.models.UserId
+import pl.propertea.models.domain.AdminId
+import pl.propertea.models.domain.ManagerId
+import pl.propertea.models.domain.OwnerId
+import pl.propertea.models.domain.UserId
 import pl.propertea.models.domain.Permission
 import pl.propertea.models.domain.domains.UserTypes
 

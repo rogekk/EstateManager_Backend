@@ -14,6 +14,7 @@ import pl.propertea.models.domain.Permission
 
 fun Router.surveyRoutes() {
     "surveys" {
+
         GET("/communities" / communityId / "surveys")
             .inSummary("Gets all the surveys for the community")
             .authenticated()
@@ -41,5 +42,6 @@ fun Router.surveyRoutes() {
             .withPermission(Permission.CanChangeSurveyState)
             .with(body<SurveyStateRequest>())
             .isHandledBy(changeSurveyStateHandler)
+
     }
 }

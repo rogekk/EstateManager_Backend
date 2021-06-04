@@ -1,9 +1,9 @@
 package pl.propertea.models.domain.domains
 
-import pl.propertea.models.ApartmentId
-import pl.propertea.models.BuildingId
-import pl.propertea.models.ParkingId
-import pl.propertea.models.StorageRoomId
+import pl.propertea.models.domain.ApartmentId
+import pl.propertea.models.domain.BuildingId
+import pl.propertea.models.domain.ParkingId
+import pl.propertea.models.domain.StorageRoomId
 
 data class UsableArea(val value: Int)
 

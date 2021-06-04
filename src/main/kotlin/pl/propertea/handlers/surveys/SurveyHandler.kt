@@ -4,9 +4,9 @@ import com.snitch.Handler
 import com.snitch.notFound
 import com.snitch.ok
 import pl.propertea.models.GenericResponse
-import pl.propertea.models.OwnerId
+import pl.propertea.models.domain.OwnerId
 import pl.propertea.models.Requests
-import pl.propertea.models.SurveyOptionId
+import pl.propertea.models.domain.SurveyOptionId
 import pl.propertea.models.SurveyStateRequest
 import pl.propertea.models.SurveyVoteRequest
 import pl.propertea.models.createdSuccessfully

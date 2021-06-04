@@ -4,7 +4,7 @@ import com.snitch.Handler
 import com.snitch.notFound
 import com.snitch.ok
 import pl.propertea.models.GenericResponse
-import pl.propertea.models.OwnerId
+import pl.propertea.models.domain.OwnerId
 import pl.propertea.models.ResolutionRequest
 import pl.propertea.models.ResolutionResultRequest
 import pl.propertea.models.ResolutionVoteRequest

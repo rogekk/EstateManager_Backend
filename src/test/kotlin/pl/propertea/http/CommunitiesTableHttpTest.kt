@@ -8,8 +8,8 @@ import org.junit.Test
 import pl.propertea.dsl.Mocks
 import pl.propertea.dsl.SparkTest
 import pl.propertea.dsl.relaxed
-import pl.propertea.models.CommunityId
-import pl.propertea.models.OwnerId
+import pl.propertea.models.domain.CommunityId
+import pl.propertea.models.domain.OwnerId
 import pl.propertea.models.domain.Permission.CanCreateCommunity
 import pl.propertea.models.domain.Permission.CanCreateCommunityMemberships
 import pl.propertea.models.domain.Permission.CanRemoveCommunityMemberships

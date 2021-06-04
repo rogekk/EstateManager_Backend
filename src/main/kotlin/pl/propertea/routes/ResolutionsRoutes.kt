@@ -1,4 +1,4 @@
-
+package pl.propertea.routes
 import com.snitch.Router
 import com.snitch.body
 import pl.propertea.handlers.resolutions.createResolutionVoteHandler
@@ -18,6 +18,7 @@ import pl.propertea.routes.withPermission
 
 fun Router.resolutionsRoutes() {
     "resolutions" {
+
         POST("/communities" / communityId / "resolutions")
             .with(body<ResolutionRequest>())
             .inSummary("Creates a new resolution")
@@ -45,5 +46,6 @@ fun Router.resolutionsRoutes() {
             .with(body<ResolutionResultRequest>())
             .withPermission(CanUpdateResolutionStatus)
             .isHandledBy(updateResolutionsResultHandler)
+
     }
 }

@@ -1,8 +1,8 @@
 package pl.propertea.models.domain.domains
 
-import pl.propertea.models.AdminId
-import pl.propertea.models.OwnerId
-import pl.propertea.models.UserId
+import pl.propertea.models.domain.AdminId
+import pl.propertea.models.domain.OwnerId
+import pl.propertea.models.domain.UserId
 
 sealed class User {
     abstract val id: UserId

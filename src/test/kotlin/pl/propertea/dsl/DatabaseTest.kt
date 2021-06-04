@@ -3,7 +3,7 @@ package pl.propertea.dsl
 import org.junit.Rule
 import org.junit.rules.RuleChain
 import org.junit.rules.TestRule
-import pl.propertea.models.CommunityId
+import pl.propertea.models.domain.CommunityId
 import pl.propertea.models.domain.domains.Building
 import pl.propertea.models.domain.domains.Owner
 import pl.propertea.models.domain.domains.Shares

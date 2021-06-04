@@ -1,4 +1,4 @@
-package pl.propertea.models
+package pl.propertea.models.domain
 
 import com.snitch.Sealed
 
@@ -19,6 +19,7 @@ data class SurveyOptionId(val id: String)
 sealed class UserId: Sealed() {
     abstract val id: String
 }
+
 data class ManagerId(override val id: String): UserId()
 data class AdminId(override val id: String): UserId()
 data class OwnerId(override val id: String): UserId()

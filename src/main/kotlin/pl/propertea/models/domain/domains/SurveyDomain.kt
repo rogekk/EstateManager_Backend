@@ -1,9 +1,9 @@
 package pl.propertea.models.domain.domains
 
 import org.joda.time.DateTime
-import pl.propertea.models.CommunityId
-import pl.propertea.models.SurveyId
-import pl.propertea.models.SurveyOptionId
+import pl.propertea.models.domain.CommunityId
+import pl.propertea.models.domain.SurveyId
+import pl.propertea.models.domain.SurveyOptionId
 
 data class Survey(
     val id: SurveyId,
@@ -31,4 +31,5 @@ data class SurveyResult(
 
 data class OptionsWithVotes(
     val options: SurveyOptions,
-    val votes: Int)
+    val votes: Int
+)

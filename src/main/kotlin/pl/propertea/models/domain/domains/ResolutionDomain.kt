@@ -1,8 +1,8 @@
 package pl.propertea.models.domain.domains
 
 import org.joda.time.DateTime
-import pl.propertea.models.CommunityId
-import pl.propertea.models.ResolutionId
+import pl.propertea.models.domain.CommunityId
+import pl.propertea.models.domain.ResolutionId
 
 //Resolutions
 data class Resolution(

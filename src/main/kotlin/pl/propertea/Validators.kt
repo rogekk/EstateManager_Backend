@@ -1,25 +1,24 @@
+package pl.propertea
+
+import ForbiddenException
 import com.snitch.Validator
-import com.snitch.extensions.json
-import com.snitch.extensions.parseJson
 import org.joda.time.DateTime
 import pl.propertea.common.CommonModule.authenticator
-import pl.propertea.models.AdminId
-import pl.propertea.models.ManagerId
-import pl.propertea.models.OwnerId
-import pl.propertea.models.UserId
+import pl.propertea.models.domain.AdminId
+import pl.propertea.models.domain.ManagerId
+import pl.propertea.models.domain.OwnerId
+import pl.propertea.models.domain.UserId
 import pl.propertea.models.domain.domains.AuthToken
-import pl.propertea.models.domain.domains.Authorization
 import pl.propertea.models.domain.domains.UserTypes
 
-val ulidRegex = """^[0-9a-zA-Z=_]{26}$""".toRegex(RegexOption.DOT_MATCHES_ALL)
+private val ulidRegex = """^[0-9a-zA-Z=_]{26}$""".toRegex(RegexOption.DOT_MATCHES_ALL)
+fun <R> ulid(name: String, fn: (String) -> R) = object : IdValidator<R>(name, fn) {}
 
 abstract class IdValidator<R>(val name: String, fn: (String) -> R) : Validator<String, R> {
     override val description = "The Id of the $name, in ulid format"
     override val regex = ulidRegex
     override val parse = fn
 }
-
-fun <R> ulid(name: String, fn: (String) -> R) = object : IdValidator<R>(name, fn) {}
 
 object AuthTokenValidator : Validator<String, AuthToken> {
     override val description = "The auth token"
@@ -43,10 +42,4 @@ object AuthTokenValidator : Validator<String, AuthToken> {
             authorization = authorization.copy(userId = userId.id)
         )
     }
-}
-
-fun main() {
-    Authorization("foobar", UserTypes.OWNER, listOf())
-        .json
-        .parseJson<Authorization>()
 }

@@ -1,3 +1,5 @@
+package pl.propertea.routes
+
 import com.snitch.Router
 import com.snitch.body
 import com.snitch.queries
@@ -15,6 +17,7 @@ import pl.propertea.routes.usernameSeach
 
 fun Router.ownersRoutes() {
     "owners" {
+
         GET("/owners")
             .inSummary("Gets users")
             .with(queries(usernameSeach, fullNameSearch, emailSearch, addressSearch, phoneSearch))
@@ -31,5 +34,6 @@ fun Router.ownersRoutes() {
             .with(body<UpdateOwnersRequest>())
             .authenticated()
             .isHandledBy(updateOwnersHandler)
+
     }
 }

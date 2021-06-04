@@ -5,13 +5,13 @@ import com.snitch.badRequest
 import com.snitch.forbidden
 import com.snitch.ok
 import pl.propertea.common.CommonModule.authenticator
-import pl.propertea.models.AdminId
-import pl.propertea.models.CommunityId
+import pl.propertea.models.domain.AdminId
+import pl.propertea.models.domain.CommunityId
 import pl.propertea.models.CreateOwnerRequest
 import pl.propertea.models.GenericResponse
 import pl.propertea.models.LoginRequest
-import pl.propertea.models.ManagerId
-import pl.propertea.models.OwnerId
+import pl.propertea.models.domain.ManagerId
+import pl.propertea.models.domain.OwnerId
 import pl.propertea.models.createdSuccessfully
 import pl.propertea.models.domain.domains.Shares
 import pl.propertea.models.domain.domains.UserTypes

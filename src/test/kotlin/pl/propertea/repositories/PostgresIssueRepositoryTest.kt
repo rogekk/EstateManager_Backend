@@ -9,7 +9,7 @@ import pl.propertea.common.CommonModule.clock
 import pl.propertea.dsl.DatabaseTest
 import pl.propertea.dsl.Mocks
 import pl.propertea.dsl.strict
-import pl.propertea.models.IssueId
+import pl.propertea.models.domain.IssueId
 import pl.propertea.models.domain.domains.Answer
 import pl.propertea.models.domain.domains.AnswerCreation
 import pl.propertea.models.domain.domains.AnswerWithOwners

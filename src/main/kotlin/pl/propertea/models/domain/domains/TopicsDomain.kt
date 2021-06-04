@@ -1,13 +1,12 @@
 package pl.propertea.models.domain.domains
 
 import org.joda.time.DateTime
-import pl.propertea.models.CommentId
-import pl.propertea.models.CommunityId
-import pl.propertea.models.OwnerId
-import pl.propertea.models.TopicId
-import pl.propertea.models.UserId
+import pl.propertea.models.domain.CommentId
+import pl.propertea.models.domain.CommunityId
+import pl.propertea.models.domain.OwnerId
+import pl.propertea.models.domain.TopicId
+import pl.propertea.models.domain.UserId
 
-//Topics
 data class Topic(
     val id: TopicId,
     val subject: String,

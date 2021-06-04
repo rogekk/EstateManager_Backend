@@ -11,11 +11,11 @@ import pl.propertea.db.schema.BuildingsTable
 import pl.propertea.db.schema.CommunitiesTable
 import pl.propertea.db.schema.ParkingSpotsTable
 import pl.propertea.db.schema.StorageRoomsTable
-import pl.propertea.models.ApartmentId
-import pl.propertea.models.BuildingId
-import pl.propertea.models.CommunityId
-import pl.propertea.models.ParkingId
-import pl.propertea.models.StorageRoomId
+import pl.propertea.models.domain.ApartmentId
+import pl.propertea.models.domain.BuildingId
+import pl.propertea.models.domain.CommunityId
+import pl.propertea.models.domain.ParkingId
+import pl.propertea.models.domain.StorageRoomId
 import pl.propertea.models.db.Insert
 import pl.propertea.models.domain.domains.Apartment
 import pl.propertea.models.domain.domains.Building

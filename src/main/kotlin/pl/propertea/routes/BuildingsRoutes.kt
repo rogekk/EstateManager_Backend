@@ -13,6 +13,7 @@ import pl.propertea.models.domain.Permission
 
 fun Router.buildingRoutes() {
     "buildings" {
+
         POST("communities" / communityId / "buildings")
             .with(body<Request.CreateBuilding>())
             .inSummary("Creates a new building")
@@ -38,5 +39,6 @@ fun Router.buildingRoutes() {
             .inSummary("Get all storage rooms in a building")
             .withPermission(Permission.CanSeeAllStorageRooms)
             .isHandledBy(getStorageRoomsHandler)
+
     }
 }

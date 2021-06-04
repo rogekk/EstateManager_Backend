@@ -14,11 +14,11 @@ import pl.propertea.db.schema.AnswerTable
 import pl.propertea.db.schema.IssuesTable
 import pl.propertea.db.schema.PGIssueStatus
 import pl.propertea.db.schema.UsersTable
-import pl.propertea.models.AnswerId
-import pl.propertea.models.IssueId
-import pl.propertea.models.ManagerId
-import pl.propertea.models.OwnerId
-import pl.propertea.models.UserId
+import pl.propertea.models.domain.AnswerId
+import pl.propertea.models.domain.IssueId
+import pl.propertea.models.domain.ManagerId
+import pl.propertea.models.domain.OwnerId
+import pl.propertea.models.domain.UserId
 import pl.propertea.models.domain.domains.AnswerCreation
 import pl.propertea.models.domain.domains.AnswerWithOwners
 import pl.propertea.models.domain.domains.IssueCreation
