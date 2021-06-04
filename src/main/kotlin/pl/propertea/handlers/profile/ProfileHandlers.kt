@@ -8,9 +8,11 @@ import pl.propertea.models.GenericResponse
 import pl.propertea.models.UpdateOwnersRequest
 import pl.propertea.models.responses.CommunityMembershipResponse
 import pl.propertea.models.responses.ProfileResponse
+import pl.propertea.models.responses.UsersResponses
+import pl.propertea.models.responses.toResponse
 import pl.propertea.models.success
 import pl.propertea.repositories.RepositoriesModule.usersRepository
-import pl.propertea.routes.authenticatedUser
+import pl.propertea.routes.*
 
 
 val getProfile: Handler<Nothing, ProfileResponse> = {
@@ -27,7 +29,7 @@ val getProfile: Handler<Nothing, ProfileResponse> = {
                     it.id.id,
                     it.name
                 )
-            }).print().ok
+            }).ok
     } ?: notFound()
 }
 
@@ -43,3 +45,12 @@ val updateOwnersHandler: Handler<UpdateOwnersRequest, GenericResponse> = {
     success
 }
 
+val getOwners: Handler<Nothing, UsersResponses> = {
+    UsersResponses(usersRepository().searchOwners(
+        username = request[usernameSeach],
+        email = request[emailSearch],
+        fullname = request[fullNameSearch],
+        phoneNumber = request[phoneSearch],
+        address = request[addressSearch],
+    ).map { it.toResponse() }).ok
+}

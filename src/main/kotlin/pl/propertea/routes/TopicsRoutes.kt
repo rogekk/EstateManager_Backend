@@ -1,4 +1,4 @@
-
+package pl.propertea.routes
 import com.snitch.Router
 import com.snitch.body
 import pl.propertea.handlers.topics.*
@@ -6,7 +6,6 @@ import pl.propertea.models.CreateCommentRequest
 import pl.propertea.models.TopicRequest
 import pl.propertea.models.domain.Permission.CanDeleteComment
 import pl.propertea.models.domain.Permission.CanDeleteTopic
-import pl.propertea.routes.*
 
 fun Router.topicsRoutes() {
     "topics" {

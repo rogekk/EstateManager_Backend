@@ -109,16 +109,16 @@ class PostgresUsersRepository(private val database: Database, private val idGene
 
     private fun searchColumn(column: Column<String>, text: String) =
         transaction {
-            val dist = Literal("dist")
-            val similarity = similarity(column, text).alias(dist.value)
+            val lexicographicalDistance = Literal("distance")
+            val similarity = similarity(column, text).alias(lexicographicalDistance.value)
 
             UsersTable
                 .slice(UsersTable.columns + similarity)
                 .selectAll()
                 .alias(UsersTable.nameInDatabaseCase())
-                .slice(UsersTable.columns + dist)
-                .select { dist.lessEq(Literal("0.9")) }
-                .orderBy(dist)
+                .slice(UsersTable.columns + lexicographicalDistance)
+                .select { lexicographicalDistance.lessEq(Literal("0.9")) }
+                .orderBy(lexicographicalDistance)
                 .map { it.readOwner() }
         }
 
@@ -130,18 +130,12 @@ class PostgresUsersRepository(private val database: Database, private val idGene
         phoneNumber: String?,
         address: String?,
     ): List<Owner> {
-        val byFullName = if (fullname != null) searchColumn(UsersTable.fullName, fullname) else emptyList()
-        val byUsername = if (username != null) searchColumn(UsersTable.username, username) else emptyList()
-        val byEmail = if (email != null) searchColumn(UsersTable.email, email) else emptyList()
-        val byAddress = if (address != null) searchColumn(UsersTable.address, address) else emptyList()
-        val byPhone = if (phoneNumber != null) searchColumn(UsersTable.phoneNumber, phoneNumber) else emptyList()
-
         return listOf(
-            byFullName,
-            byUsername,
-            byEmail,
-            byAddress,
-            byPhone
+            if (!fullname.isNullOrBlank()) searchColumn(UsersTable.fullName, fullname) else emptyList(),
+            if (!username.isNullOrBlank()) searchColumn(UsersTable.username, username) else emptyList(),
+            if (!email.isNullOrBlank()) searchColumn(UsersTable.email, email) else emptyList(),
+            if (!address.isNullOrBlank()) searchColumn(UsersTable.address, address) else emptyList(),
+            if (!phoneNumber.isNullOrBlank()) searchColumn(UsersTable.phoneNumber, phoneNumber) else emptyList(),
         )
             .sortedByDescending { it.size }
             .filter { it.isNotEmpty() }
