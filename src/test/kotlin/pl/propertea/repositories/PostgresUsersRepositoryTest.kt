@@ -160,6 +160,16 @@ class PostgresUsersRepositoryTest : DatabaseTest() {
         profileImageUrl = "",
     ).let { it.copy(it inThis community.id putIn usersRepository()) }
 
+    val markDrugo = Owner(
+        id = OwnerId("b"),
+        username = "markdrugo",
+        email = "sirenga@fool.me",
+        fullName = "markdrugo",
+        phoneNumber = "+4444",
+        address = "Via Erezione Mattinale 69, Madonneria",
+        profileImageUrl = "",
+    ).let { it.copy(it inThis community.id putIn usersRepository()) }
+
     val mollyPatton = Owner(
         id = OwnerId("c"),
         username = "MollyPatton",
@@ -186,14 +196,14 @@ class PostgresUsersRepositoryTest : DatabaseTest() {
     fun `searches users by full name`() {
         val foundOwners = usersRepository().searchOwners(fullname = "Mario Drago")
 
-        expect that foundOwners containsOnly listOf(marioDragi, marcoDrogi)
+        expect that foundOwners containsOnly listOf(marioDragi, marcoDrogi, markDrugo)
     }
 
     @Test
     fun `searches the user by username`() {
         val foundOwners = usersRepository().searchOwners(username = "Marco Drago")
 
-        expect that foundOwners containsOnly listOf(marcoDrogi, marioDragi)
+        expect that foundOwners containsOnly listOf(marcoDrogi, marioDragi, markDrugo)
     }
 
     @Test
@@ -215,5 +225,12 @@ class PostgresUsersRepositoryTest : DatabaseTest() {
         val foundOwners = usersRepository().searchOwners(phoneNumber = "111")
 
         expect that foundOwners containsOnly listOf(marioDragi)
+    }
+
+    @Test
+    fun `searches by multiple parameters`() {
+        val foundOwners = usersRepository().searchOwners(fullname = "Mario Drago", email = "Siringa")
+
+        expect that foundOwners containsOnly listOf(marcoDrogi, markDrugo)
     }
 }

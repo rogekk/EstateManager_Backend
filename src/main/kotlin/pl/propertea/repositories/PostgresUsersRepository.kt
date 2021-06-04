@@ -1,6 +1,5 @@
 package pl.propertea.repositories
 
-import com.snitch.extensions.print
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import pl.propertea.common.IdGenerator
@@ -131,14 +130,23 @@ class PostgresUsersRepository(private val database: Database, private val idGene
         phoneNumber: String?,
         address: String?,
     ): List<Owner> {
-        return when {
-            fullname != null -> searchColumn(UsersTable.fullName, fullname)
-            username != null -> searchColumn(UsersTable.username, username)
-            email != null -> searchColumn(UsersTable.email, email)
-            address != null -> searchColumn(UsersTable.address, address)
-            phoneNumber != null -> searchColumn(UsersTable.phoneNumber, phoneNumber)
-            else -> emptyList()
-        }
+        val byFullName = if (fullname != null) searchColumn(UsersTable.fullName, fullname) else emptyList()
+        val byUsername = if (username != null) searchColumn(UsersTable.username, username) else emptyList()
+        val byEmail = if (email != null) searchColumn(UsersTable.email, email) else emptyList()
+        val byAddress = if (address != null) searchColumn(UsersTable.address, address) else emptyList()
+        val byPhone = if (phoneNumber != null) searchColumn(UsersTable.phoneNumber, phoneNumber) else emptyList()
+
+        return listOf(
+            byFullName,
+            byUsername,
+            byEmail,
+            byAddress,
+            byPhone
+        ).sortedByDescending { it.size }
+            .filter { it.isNotEmpty() }
+            .map { it.toMutableSet() }
+            .reduceRight { set, acc -> set.apply { retainAll(acc) } }
+            .toList()
     }
 
     override fun getById(ownerId: OwnerId): Owner? = transaction(database) {
@@ -262,7 +270,6 @@ class PostgresUsersRepository(private val database: Database, private val idGene
             .leftJoin(UserPermissionsTable)
             .select { (UsersTable.username eq username) }
             .map {
-                it[UsersTable.username].print()
                 Result(
                     it[UsersTable.id], it[UsersTable.password], it[UsersTable.userType], it.getOrNull(
                         UserPermissionsTable.permission
