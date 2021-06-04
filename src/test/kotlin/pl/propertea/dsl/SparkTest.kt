@@ -18,7 +18,7 @@ import pl.propertea.models.domain.Permission
 import pl.propertea.models.domain.domains.Authorization
 import pl.propertea.models.domain.domains.Owner
 import pl.propertea.models.domain.domains.UserTypes
-import pl.propertea.routes.authTokenHeader
+import pl.propertea.http.parameters.authTokenHeader
 import ro.kreator.aRandom
 
 abstract class SparkTest(mockBlock: () -> Mocks = { Mocks() }) :

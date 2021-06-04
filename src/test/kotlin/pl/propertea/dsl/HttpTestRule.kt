@@ -5,7 +5,7 @@ import com.snitch.spark.SparkSnitchService
 import org.junit.rules.ExternalResource
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
-import pl.propertea.routes.routes
+import pl.propertea.http.routes.routes
 
 open class HttpTestRule(open val port: Int) : ExternalResource() {
 
