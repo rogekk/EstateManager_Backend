@@ -68,7 +68,13 @@ interface UsersRepository {
     fun getProfile(id: UserId): OwnerProfile?
 
     fun addPermission(userId: UserId, permission: Permission)
-    fun searchOwners(fullname: String): List<Owner>
+    fun searchOwners(
+        username: String? = null,
+        email: String? = null,
+        fullname: String? = null,
+        phoneNumber: String? = null,
+        address: String? = null,
+    ): List<Owner>
 }
 
 class PostgresUsersRepository(private val database: Database, private val idGenerator: IdGenerator) :
@@ -118,8 +124,21 @@ class PostgresUsersRepository(private val database: Database, private val idGene
         }
 
 
-    override fun searchOwners(fullname: String): List<Owner> {
-        return searchColumn(UsersTable.fullName, fullname)
+    override fun searchOwners(
+        username: String?,
+        email: String?,
+        fullname: String?,
+        phoneNumber: String?,
+        address: String?,
+    ): List<Owner> {
+        return when {
+            fullname != null -> searchColumn(UsersTable.fullName, fullname)
+            username != null -> searchColumn(UsersTable.username, username)
+            email != null -> searchColumn(UsersTable.email, email)
+            address != null -> searchColumn(UsersTable.address, address)
+            phoneNumber != null -> searchColumn(UsersTable.phoneNumber, phoneNumber)
+            else -> emptyList()
+        }
     }
 
     override fun getById(ownerId: OwnerId): Owner? = transaction(database) {
@@ -306,3 +325,4 @@ data class Verified(val id: OwnerId) : OwnerCredentials()
 object NotVerified : OwnerCredentials()
 
 data class OwnerInsertion(val owner: Owner, val password: String, val communities: List<Pair<CommunityId, Shares>>)
+

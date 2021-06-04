@@ -4,6 +4,7 @@ import com.memoizr.assertk.expect
 import org.junit.Test
 import pl.propertea.dsl.DatabaseTest
 import pl.propertea.models.CommunityId
+import pl.propertea.models.OwnerId
 import pl.propertea.models.domain.Admin
 import pl.propertea.models.domain.Owner
 import pl.propertea.models.domain.OwnerProfile
@@ -139,38 +140,80 @@ class PostgresUsersRepositoryTest : DatabaseTest() {
 
     }
 
-    val marioDragi by aRandom<Owner> {
-        copy(fullName = "Mario Dragi")
-            .let { it.copy(it inThis community.id putIn usersRepository()) }
-    }
+    val marioDragi = Owner(
+        id = OwnerId("a"),
+        username = "mariodragi",
+        email = "mariodragi@eu.eu",
+        fullName = "Mario Dragi",
+        phoneNumber = "+11111111",
+        address = "mariodragaia street 5, Milano",
+        profileImageUrl = "",
+    ).let { it.copy(it inThis community.id putIn usersRepository()) }
 
-    val marcoDrogi by aRandom<Owner> {
-        copy(fullName = "Marco Drogi")
-            .let { it.copy(it inThis community.id putIn usersRepository()) }
-    }
+    val marcoDrogi = Owner(
+        id = OwnerId("b"),
+        username = "marcodroga",
+        email = "droghino@siringa.me",
+        fullName = "Marco Droga",
+        phoneNumber = "+222222",
+        address = "Sotto Ponte Cavalcanti, Terza Tenda a Sinistra",
+        profileImageUrl = "",
+    ).let { it.copy(it inThis community.id putIn usersRepository()) }
 
-    val mollyPatton by aRandom<Owner> {
-        copy(fullName = "Molly Patton")
-            .let { it.copy(it inThis community.id putIn usersRepository()) }
-    }
+    val mollyPatton = Owner(
+        id = OwnerId("c"),
+        username = "MollyPatton",
+        email = "mollypatty@apple.me",
+        fullName = "Molly Patton",
+        phoneNumber = "+666666666",
+        address = "1312 Aspen Avenue, Boulder, CO",
+        profileImageUrl = "",
+    ).let { it.copy(it inThis community.id putIn usersRepository()) }
 
 
-    val albertKnut by aRandom<Owner> {
-        copy(fullName = "Albert Knut")
-            .let { it.copy(it inThis community.id putIn usersRepository()) }
-    }
+    val albertKnut = Owner(
+        id = OwnerId("d"),
+        username = "AlbertKnut",
+        email = "albert@apple.me",
+        fullName = "Albert Knut",
+        phoneNumber = "+9999999",
+        address = "666 Hells Kitchens Road, NYC, NY",
+        profileImageUrl = "",
+    ).let { it.copy(it inThis community.id putIn usersRepository()) }
 
 
     @Test
-    fun `searches users`() {
-        // the randomly generated values are lazy and need to be accessed before they are initialized, and therefore inserted in the DB
-        marcoDrogi
-        marioDragi
-        mollyPatton
-        albertKnut
-
+    fun `searches users by full name`() {
         val foundOwners = usersRepository().searchOwners(fullname = "Mario Drago")
 
         expect that foundOwners containsOnly listOf(marioDragi, marcoDrogi)
+    }
+
+    @Test
+    fun `searches the user by username`() {
+        val foundOwners = usersRepository().searchOwners(username = "Marco Drago")
+
+        expect that foundOwners containsOnly listOf(marcoDrogi, marioDragi)
+    }
+
+    @Test
+    fun `searches the user by email`() {
+        val foundOwners = usersRepository().searchOwners(email = "albert")
+
+        expect that foundOwners containsOnly listOf(albertKnut)
+    }
+
+    @Test
+    fun `searches the user by address`() {
+        val foundOwners = usersRepository().searchOwners(address = "Boulder")
+
+        expect that foundOwners containsOnly listOf(mollyPatton)
+    }
+
+    @Test
+    fun `searches the user by phone number`() {
+        val foundOwners = usersRepository().searchOwners(phoneNumber = "111")
+
+        expect that foundOwners containsOnly listOf(marioDragi)
     }
 }
