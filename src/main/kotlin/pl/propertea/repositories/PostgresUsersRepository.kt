@@ -142,7 +142,8 @@ class PostgresUsersRepository(private val database: Database, private val idGene
             byEmail,
             byAddress,
             byPhone
-        ).sortedByDescending { it.size }
+        )
+            .sortedByDescending { it.size }
             .filter { it.isNotEmpty() }
             .map { it.toMutableSet() }
             .reduceRight { set, acc -> set.apply { retainAll(acc) } }
