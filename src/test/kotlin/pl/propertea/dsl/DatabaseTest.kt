@@ -3,13 +3,15 @@ package pl.propertea.dsl
 import org.junit.Rule
 import org.junit.rules.RuleChain
 import org.junit.rules.TestRule
-import pl.propertea.models.*
+import pl.propertea.models.CommunityId
 import pl.propertea.models.domain.Building
 import pl.propertea.models.domain.Owner
 import pl.propertea.models.domain.UsableArea
 import pl.propertea.models.domain.domains.Shares
-import pl.propertea.models.domain.domains.Survey
-import pl.propertea.repositories.*
+import pl.propertea.repositories.BuildingRepository
+import pl.propertea.repositories.OwnerCreated
+import pl.propertea.repositories.OwnerInsertion
+import pl.propertea.repositories.UsersRepository
 
 abstract class DatabaseTest(
     mockBlock: () -> Mocks = { Mocks() }
@@ -43,8 +45,7 @@ abstract class DatabaseTest(
             username = owner.username,
             password = password,
             email = owner.email,
-            firstName = owner.firstName,
-            lastName = owner.lastName,
+            fullName = owner.fullName,
             phoneNumber = owner.phoneNumber,
             address = owner.address,
             profileImageUrl = owner.profileImageUrl

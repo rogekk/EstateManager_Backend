@@ -16,7 +16,9 @@ object Postgres {
             user = postgresConnection.user,
             password = postgresConnection.password,
             driver = "org.postgresql.Driver",
-//
+            setupConnection = {
+                makeSurePostgresSearchExtensionAvailable(it)
+            },
         )
 
         creteMissingTablesAndColumns(database)
@@ -36,6 +38,7 @@ object Postgres {
 
     private fun makeSurePostgresSearchExtensionAvailable(it: Connection) {
         it.prepareStatement("create extension if not exists pg_trgm;").execute()
+        it.prepareStatement("create extension if not exists btree_gist;").execute()
     }
 
     private fun creteMissingTablesAndColumns(readWriteDatabase: Database) {
@@ -44,6 +47,8 @@ object Postgres {
                 SchemaUtils.createMissingTablesAndColumns(*schema)
                 initialized = true
             }
+
+//            connection.prepareStatement("""CREATE INDEX IF NOT EXISTS user_first_name_search_idx ON users USING gist (first_name gist_trgm_ops);""", false).executeUpdate()
         }
     }
 }

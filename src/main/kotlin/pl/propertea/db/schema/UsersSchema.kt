@@ -14,8 +14,7 @@ object AdminCommunitiesTable: Table("admin_communities") {
 object UsersTable : Table("users") {
     val id = text("id")
     val username = text("username").uniqueIndex()
-    val firstName = text("first_name")
-    val lastName = text("last_name")
+    val fullName = text("full_name")
     val password = text("password")
     val email = text("email")
     val phoneNumber = text("phone_number")

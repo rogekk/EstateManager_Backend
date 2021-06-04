@@ -8,8 +8,7 @@ import pl.propertea.models.domain.domains.Community
 sealed class User {
     abstract val id: UserId
     abstract val username: String
-    abstract val firstName: String
-    abstract val lastName: String
+    abstract val fullName: String
     abstract val email: String
     abstract val phoneNumber: String
     abstract val address: String
@@ -20,8 +19,7 @@ data class Manager(
     override val id: AdminId,
     override val username: String,
     override val email: String,
-    override val firstName: String,
-    override val lastName: String,
+    override val fullName: String,
     override val phoneNumber: String,
     override val address: String,
     override val profileImageUrl: String?,
@@ -31,8 +29,7 @@ data class Admin(
     override val id: AdminId,
     override val username: String,
     override val email: String,
-    override val firstName: String,
-    override val lastName: String,
+    override val fullName: String,
     override val phoneNumber: String,
     override val address: String,
     override val profileImageUrl: String?,
@@ -42,8 +39,7 @@ data class Owner(
     override val id: OwnerId,
     override val username: String,
     override val email: String,
-    override val firstName: String,
-    override val lastName: String,
+    override val fullName: String,
     override val phoneNumber: String,
     override val address: String,
     override val profileImageUrl: String?,

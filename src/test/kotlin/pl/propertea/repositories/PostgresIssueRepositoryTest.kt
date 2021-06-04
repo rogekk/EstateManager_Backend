@@ -175,12 +175,12 @@ class PostgresIssueRepositoryTest : DatabaseTest({ Mocks(clock.strict) }) {
         )
 
         // assign community to admin
-        val managerId = usersRepository().createManager(listOf(community.id),
+        val managerId = usersRepository().createManager(
+            listOf(community.id),
             manager.username,
             "pass",
             manager.email,
-            manager.firstName,
-            manager.lastName,
+            manager.fullName,
             manager.phoneNumber,
             manager.address,
             manager.profileImageUrl
@@ -189,15 +189,15 @@ class PostgresIssueRepositoryTest : DatabaseTest({ Mocks(clock.strict) }) {
         // Get issues
         expect that issueRepository().getIssues(managerId) isEqualTo listOf(
             IssueWithOwner(
-            owner.copy(id = createdOwnerId),
-            issue.copy(
+                owner.copy(id = createdOwnerId),
+                issue.copy(
                     id = issueInMyCommunity,
                     createdBy = createdOwnerId,
                     communityId = community.id,
                     commentCount = 0,
                     status = IssueStatus.NEW
                 )
-        )
+            )
         )
     }
 }

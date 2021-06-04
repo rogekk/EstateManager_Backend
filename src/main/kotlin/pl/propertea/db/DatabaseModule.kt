@@ -9,4 +9,3 @@ object DatabaseModule : ShankModule {
     val readWriteDatabase = single { -> Postgres.getReadWriteDatabase(readWritePostgresConnection()) }
     val readOnlyDatabase = single { -> Postgres.getReadOnlyDatabase(readOnlyPostgresConnection()) }
 }
-

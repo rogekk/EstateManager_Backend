@@ -18,7 +18,7 @@ import ro.kreator.aRandomListOf
 
 
 class PostgresUsersRepositoryTest : DatabaseTest() {
-    val community by aRandom<Community>()
+    val community by aRandom<Community> { copy(communityRepository().createCommunity(this)) }
     val owner by aRandom<Owner>()
     val admin by aRandom<Admin>()
     val communities by aRandomListOf<Community>(10) { mapIndexed { i, it -> it.copy(id = CommunityId("id$i")) } }
@@ -26,39 +26,43 @@ class PostgresUsersRepositoryTest : DatabaseTest() {
 
     @Test
     fun `allows creation and login of owners`() {
-        val communityId = communityRepository().createCommunity(community)
         expect that usersRepository().checkCredentials(owner.username, "mypass") isEqualTo null
 
-        val ownerId = owner inThis communityId withPassword "mypass" putIn usersRepository()
+        val ownerId = owner inThis community.id withPassword "mypass" putIn usersRepository()
 
-        expect that usersRepository().checkCredentials(owner.username, "mypass") isEqualTo Authorization(ownerId.id, UserTypes.OWNER, emptyList())
+        expect that usersRepository().checkCredentials(owner.username, "mypass") isEqualTo Authorization(
+            ownerId.id,
+            UserTypes.OWNER,
+            emptyList()
+        )
     }
 
     @Test
     fun `allows creation and login of admin`() {
-        val communityId = communityRepository().createCommunity(community)
         expect that usersRepository().checkCredentials(admin.username, "mypass") isEqualTo null
 
         val adminId = usersRepository().createAdmin(
-            listOf(communityId),
+            listOf(community.id),
             admin.username,
             "mypass",
             admin.email,
-            admin.firstName,
-            admin.lastName,
+            admin.fullName,
             admin.phoneNumber,
             admin.address,
             admin.profileImageUrl,
         )
 
-        expect that usersRepository().checkCredentials(admin.username, "mypass") isEqualTo Authorization(adminId!!.id, UserTypes.ADMIN, emptyList())
+        expect that usersRepository().checkCredentials(admin.username, "mypass") isEqualTo Authorization(
+            adminId!!.id,
+            UserTypes.ADMIN,
+            emptyList()
+        )
     }
 
     @Test
     fun `allow user to change his contact data`() {
-        val communityId = communityRepository().createCommunity(community)
 
-        val ownerId = owner inThis communityId putIn usersRepository()
+        val ownerId = owner inThis community.id putIn usersRepository()
 
         usersRepository().updateUserDetails(ownerId, "newEmail", "newAddress", "newPhoneNumber")
 
@@ -72,8 +76,7 @@ class PostgresUsersRepositoryTest : DatabaseTest() {
 
     @Test
     fun `allow user to change only email`() {
-        val communityId = communityRepository().createCommunity(community)
-        val ownerId = owner inThis communityId putIn usersRepository()
+        val ownerId = owner inThis community.id putIn usersRepository()
 
         usersRepository().updateUserDetails(ownerId, email = "theemail")
 
@@ -85,8 +88,7 @@ class PostgresUsersRepositoryTest : DatabaseTest() {
 
     @Test
     fun `allow user to change only phone number`() {
-        val communityId = communityRepository().createCommunity(community)
-        val ownerId = owner inThis communityId putIn usersRepository()
+        val ownerId = owner inThis community.id putIn usersRepository()
 
         usersRepository().updateUserDetails(ownerId, phoneNumber = "222")
 
@@ -98,8 +100,7 @@ class PostgresUsersRepositoryTest : DatabaseTest() {
 
     @Test
     fun `allow user to change only profilePicture`() {
-        val communityId = communityRepository().createCommunity(community)
-        val ownerId = owner inThis communityId putIn usersRepository()
+        val ownerId = owner inThis community.id putIn usersRepository()
 
         usersRepository().updateUserDetails(ownerId, profileImageUrl = "http://cats.com/carlito.jpg")
 
@@ -125,16 +126,51 @@ class PostgresUsersRepositoryTest : DatabaseTest() {
 
     @Test
     fun `adds permissions to user`() {
-        val communityId = communityRepository().createCommunity(community)
 
-        val ownerId = owner inThis communityId putIn usersRepository()
+        val ownerId = owner inThis community.id putIn usersRepository()
 
         usersRepository().addPermission(ownerId, Permission.CanDeleteComment)
 
-        expect that usersRepository().checkCredentials(owner.username, "password") isEqualTo Authorization(ownerId.id, UserTypes.OWNER, listOf(
-            Permission.CanDeleteComment))
+        expect that usersRepository().checkCredentials(owner.username, "password") isEqualTo Authorization(
+            ownerId.id, UserTypes.OWNER, listOf(
+                Permission.CanDeleteComment
+            )
+        )
 
     }
 
+    val marioDragi by aRandom<Owner> {
+        copy(fullName = "Mario Dragi")
+            .let { it.copy(it inThis community.id putIn usersRepository()) }
+    }
 
+    val marcoDrogi by aRandom<Owner> {
+        copy(fullName = "Marco Drogi")
+            .let { it.copy(it inThis community.id putIn usersRepository()) }
+    }
+
+    val mollyPatton by aRandom<Owner> {
+        copy(fullName = "Molly Patton")
+            .let { it.copy(it inThis community.id putIn usersRepository()) }
+    }
+
+
+    val albertKnut by aRandom<Owner> {
+        copy(fullName = "Albert Knut")
+            .let { it.copy(it inThis community.id putIn usersRepository()) }
+    }
+
+
+    @Test
+    fun `searches users`() {
+        // the randomly generated values are lazy and need to be accessed before they are initialized, and therefore inserted in the DB
+        marcoDrogi
+        marioDragi
+        mollyPatton
+        albertKnut
+
+        val foundOwners = usersRepository().searchOwners(fullname = "Mario Drago")
+
+        expect that foundOwners containsOnly listOf(marioDragi, marcoDrogi)
+    }
 }

@@ -1,13 +1,12 @@
 package pl.propertea.repositories
 
 import com.snitch.extensions.print
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
 import pl.propertea.common.IdGenerator
+import pl.propertea.db.Literal
 import pl.propertea.db.schema.*
+import pl.propertea.db.similarity
 import pl.propertea.models.*
 import pl.propertea.models.domain.Owner
 import pl.propertea.models.domain.OwnerProfile
@@ -28,8 +27,7 @@ interface UsersRepository {
         username: String,
         password: String,
         email: String,
-        firstName: String,
-        lastName: String,
+        fullName: String,
         phoneNumber: String,
         address: String,
         profileImageUrl: String? = null,
@@ -40,8 +38,7 @@ interface UsersRepository {
         username: String,
         password: String,
         email: String,
-        firstName: String,
-        lastName: String,
+        fullName: String,
         phoneNumber: String,
         address: String,
         profileImageUrl: String? = null,
@@ -52,8 +49,7 @@ interface UsersRepository {
         username: String,
         password: String,
         email: String,
-        firstName: String,
-        lastName: String,
+        fullName: String,
         phoneNumber: String,
         address: String,
         profileImageUrl: String? = null,
@@ -72,6 +68,7 @@ interface UsersRepository {
     fun getProfile(id: UserId): OwnerProfile?
 
     fun addPermission(userId: UserId, permission: Permission)
+    fun searchOwners(fullname: String): List<Owner>
 }
 
 class PostgresUsersRepository(private val database: Database, private val idGenerator: IdGenerator) :
@@ -105,6 +102,26 @@ class PostgresUsersRepository(private val database: Database, private val idGene
         }
     }
 
+    private fun searchColumn(column: Column<String>, text: String) =
+        transaction {
+            val dist = Literal("dist")
+            val similarity = similarity(column, text).alias(dist.value)
+
+            UsersTable
+                .slice(UsersTable.columns + similarity)
+                .selectAll()
+                .alias(UsersTable.nameInDatabaseCase())
+                .slice(UsersTable.columns + dist)
+                .select { dist.lessEq(Literal("0.9")) }
+                .orderBy(dist)
+                .map { it.readOwner() }
+        }
+
+
+    override fun searchOwners(fullname: String): List<Owner> {
+        return searchColumn(UsersTable.fullName, fullname)
+    }
+
     override fun getById(ownerId: OwnerId): Owner? = transaction(database) {
         UsersTable
             .select { UsersTable.id eq ownerId.id }
@@ -117,8 +134,7 @@ class PostgresUsersRepository(private val database: Database, private val idGene
         username: String,
         password: String,
         email: String,
-        firstName: String,
-        lastName: String,
+        fullName: String,
         phoneNumber: String,
         address: String,
         profileImageUrl: String?
@@ -135,8 +151,7 @@ class PostgresUsersRepository(private val database: Database, private val idGene
                 it[UsersTable.username] = username
                 it[UsersTable.password] = hash(password)
                 it[UsersTable.email] = email
-                it[UsersTable.firstName] = firstName
-                it[UsersTable.lastName] = lastName
+                it[UsersTable.fullName] = fullName
                 it[UsersTable.phoneNumber] = phoneNumber
                 it[UsersTable.address] = address
                 it[UsersTable.profileImageUrl] = profileImageUrl
@@ -160,8 +175,7 @@ class PostgresUsersRepository(private val database: Database, private val idGene
         username: String,
         password: String,
         email: String,
-        firstName: String,
-        lastName: String,
+        fullName: String,
         phoneNumber: String,
         address: String,
         profileImageUrl: String?
@@ -173,8 +187,7 @@ class PostgresUsersRepository(private val database: Database, private val idGene
             it[UsersTable.username] = username
             it[UsersTable.password] = hash(password)
             it[UsersTable.email] = email
-            it[UsersTable.firstName] = firstName
-            it[UsersTable.lastName] = lastName
+            it[UsersTable.fullName] = fullName
             it[UsersTable.phoneNumber] = phoneNumber
             it[UsersTable.address] = address
             it[UsersTable.profileImageUrl] = profileImageUrl
@@ -197,8 +210,7 @@ class PostgresUsersRepository(private val database: Database, private val idGene
         username: String,
         password: String,
         email: String,
-        firstName: String,
-        lastName: String,
+        fullName: String,
         phoneNumber: String,
         address: String,
         profileImageUrl: String?
@@ -210,8 +222,7 @@ class PostgresUsersRepository(private val database: Database, private val idGene
             it[UsersTable.username] = username
             it[UsersTable.password] = hash(password)
             it[UsersTable.email] = email
-            it[UsersTable.firstName] = firstName
-            it[UsersTable.lastName] = lastName
+            it[UsersTable.fullName] = fullName
             it[UsersTable.phoneNumber] = phoneNumber
             it[UsersTable.address] = address
             it[UsersTable.profileImageUrl] = profileImageUrl
@@ -222,15 +233,24 @@ class PostgresUsersRepository(private val database: Database, private val idGene
     }
 
     override fun checkCredentials(username: String, password: String): Authorization? = transaction(database) {
-        data class Result(val userId: String, val hashedPassword: String, val userType: PGUserType, val permissions: List<Permission>)
+        data class Result(
+            val userId: String,
+            val hashedPassword: String,
+            val userType: PGUserType,
+            val permissions: List<Permission>
+        )
         UsersTable
             .leftJoin(UserPermissionsTable)
             .select { (UsersTable.username eq username) }
             .map {
                 it[UsersTable.username].print()
-                Result(it[UsersTable.id], it[UsersTable.password], it[UsersTable.userType], it.getOrNull(
-                UserPermissionsTable.permission)?.toDomain()?.let { listOf(it) }.orEmpty()) }
-            .reduceRightOrNull { acc, result -> acc.copy(permissions = acc.permissions + result.permissions)}
+                Result(
+                    it[UsersTable.id], it[UsersTable.password], it[UsersTable.userType], it.getOrNull(
+                        UserPermissionsTable.permission
+                    )?.toDomain()?.let { listOf(it) }.orEmpty()
+                )
+            }
+            .reduceRightOrNull { acc, result -> acc.copy(permissions = acc.permissions + result.permissions) }
             ?.let {
                 if (verify(password, it.hashedPassword)) {
                     val userId = when (it.userType) {

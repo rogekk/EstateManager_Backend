@@ -33,7 +33,7 @@ class AuthHttpTest : SparkTest({ Mocks(clock.strict, usersRepository.relaxed) })
     @Test
     fun `creates an owner`() {
         every { clock().getDateTime() } returns now
-        every { usersRepository().createOwner(any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns OwnerCreated( OwnerId("hey") )
+        every { usersRepository().createOwner(any(), any(), any(), any(), any(), any(), any(), any()) } returns OwnerCreated( OwnerId("hey") )
 
         POST("/v1/owners")
             .withBody(createOwnerRequest)
@@ -45,8 +45,7 @@ class AuthHttpTest : SparkTest({ Mocks(clock.strict, usersRepository.relaxed) })
             createOwnerRequest.username,
             createOwnerRequest.password,
             createOwnerRequest.email,
-            createOwnerRequest.firstName,
-            createOwnerRequest.lastName,
+            createOwnerRequest.fullName,
             createOwnerRequest.phoneNumber,
             createOwnerRequest.address,
             createOwnerRequest.profileImageUrl
