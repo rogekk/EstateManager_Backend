@@ -12,7 +12,7 @@ import pl.estatemanager.http.parameters.emailSearch
 import pl.estatemanager.http.parameters.fullNameSearch
 import pl.estatemanager.http.parameters.ownerId
 import pl.estatemanager.http.parameters.phoneSearch
-import pl.estatemanager.http.parameters.usernameSeach
+import pl.estatemanager.http.parameters.usernameSearch
 import pl.estatemanager.models.CreateOwnerRequest
 import pl.estatemanager.models.UpdateOwnersRequest
 import pl.estatemanager.models.domain.Permission
@@ -22,7 +22,7 @@ fun Router.ownersRoutes() {
 
         GET("/owners")
             .inSummary("Gets users")
-            .with(queries(usernameSeach, fullNameSearch, emailSearch, addressSearch, phoneSearch))
+            .with(queries(usernameSearch, fullNameSearch, emailSearch, addressSearch, phoneSearch))
             .authenticated()
             .isHandledBy(getOwners)
 
