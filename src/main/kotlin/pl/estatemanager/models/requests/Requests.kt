@@ -3,6 +3,8 @@ package pl.estatemanager.models
 import pl.estatemanager.models.domain.domains.IssueStatus
 import pl.estatemanager.models.domain.domains.ResolutionResult
 import pl.estatemanager.models.domain.domains.SurveyState
+import pl.estatemanager.models.domain.domains.VoteCountingMethod
+import pl.estatemanager.models.domain.domains.VotingMethod
 
 data class CreateOwnerRequest(
     val username: String,
@@ -44,15 +46,37 @@ object Request {
 data class ResolutionRequest(
     val number: String,
     val subject: String,
-    val description: String
+    val description: String,
+    val voteCountingMethod: VoteCountingMethodRequest,
 )
+
+enum class VoteCountingMethodRequest {
+    one_owner_one_vote, shares_based;
+
+    fun toDomain() = when (this) {
+        one_owner_one_vote -> VoteCountingMethod.ONE_OWNER_ONE_VOTE
+        shares_based -> VoteCountingMethod.SHARES_BASED
+    }
+}
+
+
 
 data class ResolutionVoteRequest(
     val vote: VoteRequest,
+    val votingMethod: VotingMethodRequest
 )
 
 enum class VoteRequest {
     pro, against, abstain
+}
+
+enum class VotingMethodRequest {
+    individual, meeting, portal
+}
+fun VotingMethodRequest.toDomain() = when (this) {
+    VotingMethodRequest.individual -> VotingMethod.INDIVIDUAL
+    VotingMethodRequest.meeting -> VotingMethod.MEETING
+    VotingMethodRequest.portal -> VotingMethod.PORTAL
 }
 
 data class UpdateOwnersRequest(

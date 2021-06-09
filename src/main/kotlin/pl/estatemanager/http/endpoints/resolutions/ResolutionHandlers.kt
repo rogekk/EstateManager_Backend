@@ -39,7 +39,8 @@ val createResolutionsHandler: Handler<ResolutionRequest, GenericResponse> = {
             request[communityId],
             body.number,
             body.subject,
-            body.description
+            body.description,
+            body.voteCountingMethod.toDomain(),
         )
     )
 
@@ -55,7 +56,8 @@ val createResolutionVoteHandler: Handler<ResolutionVoteRequest, GenericResponse>
             VoteRequest.pro -> Vote.PRO
             VoteRequest.against -> Vote.AGAINST
             VoteRequest.abstain -> Vote.ABSTAIN
-        }
+        },
+        body.votingMethod.toDomain()
     )
 
     createdSuccessfully

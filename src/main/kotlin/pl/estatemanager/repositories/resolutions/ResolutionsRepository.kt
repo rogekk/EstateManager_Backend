@@ -8,12 +8,20 @@ import pl.estatemanager.models.domain.domains.Resolution
 import pl.estatemanager.models.domain.domains.ResolutionCreation
 import pl.estatemanager.models.domain.domains.ResolutionResult
 import pl.estatemanager.models.domain.domains.Vote
+import pl.estatemanager.models.domain.domains.VotingMethod
 
 interface ResolutionsRepository {
     fun getResolutions(communityId: CommunityId): List<Resolution>
     fun createResolution(resolutionCreation: ResolutionCreation): ResolutionId?
     fun getResolution(id: ResolutionId): Resolution?
-    fun vote(communityId: CommunityId, resolutionId: ResolutionId, ownerId: OwnerId, vote: Vote): UpdateResult<Boolean>
+    fun vote(
+        communityId: CommunityId,
+        resolutionId: ResolutionId,
+        ownerId: OwnerId,
+        vote: Vote,
+        votingMethod: VotingMethod
+    ): UpdateResult<Boolean>
+
     fun updateResolutionResult(id: ResolutionId, result: ResolutionResult)
     fun hasVoted(owner: OwnerId, id: ResolutionId): Boolean
 }

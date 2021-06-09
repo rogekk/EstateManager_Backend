@@ -8,7 +8,7 @@ import pl.estatemanager.models.domain.Permission
 import pl.estatemanager.models.domain.UserId
 import pl.estatemanager.models.domain.domains.Authorization
 import pl.estatemanager.models.domain.domains.Owner
-import pl.estatemanager.models.domain.domains.OwnerProfile
+import pl.estatemanager.models.domain.domains.UserProfile
 import pl.estatemanager.models.domain.domains.Shares
 
 interface UsersRepository {
@@ -57,7 +57,7 @@ interface UsersRepository {
         profileImageUrl: String? = null,
     )
 
-    fun getProfile(id: UserId): OwnerProfile?
+    fun getProfile(id: UserId): UserProfile?
 
     fun addPermission(userId: UserId, permission: Permission)
     fun searchOwners(

@@ -11,7 +11,7 @@ import pl.estatemanager.dsl.relaxed
 import pl.estatemanager.models.domain.CommunityId
 import pl.estatemanager.models.domain.domains.Community
 import pl.estatemanager.models.domain.domains.Owner
-import pl.estatemanager.models.domain.domains.OwnerProfile
+import pl.estatemanager.models.domain.domains.UserProfile
 import pl.estatemanager.repositories.di.RepositoriesModule.usersRepository
 import pl.estatemanager.tools.json
 import pl.estatemanager.tools.l
@@ -38,7 +38,7 @@ class ProfileHttpTest : SparkTest({ Mocks(usersRepository.relaxed) }) {
 
     @Test
     fun `gets user profile`() {
-        every { usersRepository().getProfile(owner.id) } returns OwnerProfile(owner, communities)
+        every { usersRepository().getProfile(owner.id) } returns UserProfile(owner, communities)
 
         GET("/v1/owners/${owner.id.id}")
             .authenticated(owner.id)
