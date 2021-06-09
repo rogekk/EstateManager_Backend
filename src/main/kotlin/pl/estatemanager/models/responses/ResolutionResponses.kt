@@ -9,7 +9,7 @@ import pl.estatemanager.models.domain.domains.VoteCountingMethod
 data class ResolutionsResponse(val resolutions: List<ResolutionResponse>)
 
 fun List<Resolution>.toResponse() = ResolutionsResponse(
-    map { it.toResponse().copy(sharesAgainst = null, sharesPro = null) }
+    map { it.toResponse() }
 )
 
 fun Resolution.toResponse() = ResolutionResponse(

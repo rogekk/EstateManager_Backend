@@ -68,7 +68,7 @@ class ResolutionsHttpTest : SparkTest({
             .expectCode(200)
             .expectBodyJson(ResolutionsResponse(
                 resolutions.map {
-                    it.toResponse().copy(sharesAgainst = null, sharesPro = null)
+                    it.toResponse()
                 }
             ))
     }
