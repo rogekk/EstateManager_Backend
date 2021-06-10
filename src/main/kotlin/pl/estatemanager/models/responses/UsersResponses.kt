@@ -27,16 +27,18 @@ data class UserResponse(
     val id: String,
     val username: String,
     val email: String,
+    val fullName: String,
     val phoneNumber: String,
     val address: String,
 )
 
 fun User.toResponse() = UserResponse(
-    id.id,
-    username,
-    email,
-    phoneNumber,
-    address,
+    id = id.id,
+    username = username,
+    email = email,
+    fullName = fullName,
+    phoneNumber = phoneNumber,
+    address = address,
 )
 
 data class UsersResponses(val users: List<UserResponse>)

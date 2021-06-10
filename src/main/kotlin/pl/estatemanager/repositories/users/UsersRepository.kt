@@ -61,6 +61,7 @@ interface UsersRepository {
 
     fun addPermission(userId: UserId, permission: Permission)
     fun searchOwners(
+        communityId: CommunityId,
         username: String? = null,
         email: String? = null,
         fullname: String? = null,

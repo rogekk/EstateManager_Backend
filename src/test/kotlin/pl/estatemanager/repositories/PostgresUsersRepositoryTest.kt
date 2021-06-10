@@ -137,7 +137,6 @@ class PostgresUsersRepositoryTest : DatabaseTest() {
                 Permission.CanDeleteComment
             )
         )
-
     }
 
     val marioDragi = Owner(
@@ -191,45 +190,44 @@ class PostgresUsersRepositoryTest : DatabaseTest() {
         profileImageUrl = "",
     ).let { it.copy(it inThis community.id putIn usersRepository()) }
 
-
     @Test
     fun `searches users by full name`() {
-        val foundOwners = usersRepository().searchOwners(fullname = "Mario Drago")
+        val foundOwners = usersRepository().searchOwners(community.id, fullname = "Mario Drago")
 
         expect that foundOwners containsOnly listOf(marioDragi, marcoDrogi, markDrugo)
     }
 
     @Test
     fun `searches the user by username`() {
-        val foundOwners = usersRepository().searchOwners(username = "Marco Drago")
+        val foundOwners = usersRepository().searchOwners(community.id,username = "Marco Drago")
 
         expect that foundOwners containsOnly listOf(marcoDrogi, marioDragi, markDrugo)
     }
 
     @Test
     fun `searches the user by email`() {
-        val foundOwners = usersRepository().searchOwners(email = "albert")
+        val foundOwners = usersRepository().searchOwners(community.id,email = "albert")
 
         expect that foundOwners containsOnly listOf(albertKnut)
     }
 
     @Test
     fun `searches the user by address`() {
-        val foundOwners = usersRepository().searchOwners(address = "Boulder")
+        val foundOwners = usersRepository().searchOwners(community.id,address = "Boulder")
 
         expect that foundOwners containsOnly listOf(mollyPatton)
     }
 
     @Test
     fun `searches the user by phone number`() {
-        val foundOwners = usersRepository().searchOwners(phoneNumber = "111")
+        val foundOwners = usersRepository().searchOwners(community.id,phoneNumber = "111")
 
         expect that foundOwners containsOnly listOf(marioDragi)
     }
 
     @Test
     fun `searches by multiple parameters`() {
-        val foundOwners = usersRepository().searchOwners(fullname = "Mario Drago", email = "Siringa")
+        val foundOwners = usersRepository().searchOwners(community.id,fullname = "Mario Drago", email = "Siringa")
 
         expect that foundOwners containsOnly listOf(marcoDrogi, markDrugo)
     }

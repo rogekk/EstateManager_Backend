@@ -1,5 +1,6 @@
 package pl.estatemanager.repositories.users
 
+import com.snitch.extensions.print
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.alias
@@ -83,6 +84,7 @@ class PostgresUsersRepository(private val database: Database, private val idGene
 
 
     override fun searchOwners(
+        communityId: CommunityId,
         username: String?,
         email: String?,
         fullname: String?,
@@ -98,9 +100,23 @@ class PostgresUsersRepository(private val database: Database, private val idGene
         )
             .sortedByDescending { it.size }
             .filter { it.isNotEmpty() }
-            .map { it.toMutableSet() }
-            .reduceRight { set, acc -> set.apply { retainAll(acc) } }
-            .toList()
+            .let {
+                if (it.isEmpty())
+                    transaction(database) {
+                        UsersTable
+                            .leftJoin(OwnerMembershipTable)
+                            .leftJoin(CommunitiesTable)
+                            .slice(CommunitiesTable.columns + UsersTable.columns + OwnerMembershipTable.shares)
+                            .select { CommunitiesTable.id eq communityId.id }
+                            .map {
+                                it.fieldIndex.print()
+                                it.readOwner() }
+                    }
+                else
+                    it.map { it.toMutableSet() }
+                        .reduceRight { set, acc -> set.apply { retainAll(acc) } }
+                        .toList()
+            }
     }
 
     override fun getById(ownerId: OwnerId): Owner? = transaction(database) {

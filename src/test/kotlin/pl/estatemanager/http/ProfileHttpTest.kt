@@ -8,17 +8,20 @@ import org.junit.Test
 import pl.estatemanager.dsl.Mocks
 import pl.estatemanager.dsl.SparkTest
 import pl.estatemanager.dsl.relaxed
+import pl.estatemanager.models.domain.CommunityId
 import pl.estatemanager.models.domain.domains.Community
 import pl.estatemanager.models.domain.domains.Owner
 import pl.estatemanager.models.domain.domains.OwnerProfile
 import pl.estatemanager.repositories.di.RepositoriesModule.usersRepository
 import pl.estatemanager.tools.json
 import pl.estatemanager.tools.l
+import ro.kreator.aRandom
 import ro.kreator.aRandomListOf
 
 class ProfileHttpTest : SparkTest({ Mocks(usersRepository.relaxed) }) {
     val communities by aRandomListOf<Community>(2)
     val owners by aRandomListOf<Owner>()
+    val communityId by aRandom<CommunityId>()
 
     @Test
     fun `allow users to change details`() {
@@ -63,11 +66,12 @@ class ProfileHttpTest : SparkTest({ Mocks(usersRepository.relaxed) }) {
     fun `searches for owners using single parameter`() {
         every { usersRepository().searchOwners(any(), any(), any(), any(), any()) } returns owners
 
-        GET("/v1/owners?address=rome")
+        GET("/v1/communities/${communityId.id}/members?address=rome")
             .authenticated(owner.id)
             .expectCode(200)
 
         verify { usersRepository().searchOwners(
+            communityId = communityId,
             username = null,
             email = null,
             fullname = null,
@@ -80,11 +84,13 @@ class ProfileHttpTest : SparkTest({ Mocks(usersRepository.relaxed) }) {
     fun `searches for owners using multiple parameters`() {
         every { usersRepository().searchOwners(any(), any(), any(), any(), any()) } returns owners
 
-        GET("/v1/owners?username=user&fullName=name&phone=1234&address=rome&email=email")
+
+        GET("/v1/communities/${communityId.id}/members?username=user&fullName=name&phone=1234&address=rome&email=email")
             .authenticated(owner.id)
             .expectCode(200)
 
         verify { usersRepository().searchOwners(
+            communityId = communityId,
             username = "user",
             email = "email",
             fullname = "name",
