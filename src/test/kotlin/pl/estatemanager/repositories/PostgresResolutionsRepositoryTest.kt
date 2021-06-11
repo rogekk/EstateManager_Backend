@@ -18,6 +18,7 @@ import pl.estatemanager.models.domain.domains.Resolution
 import pl.estatemanager.models.domain.domains.ResolutionCreation
 import pl.estatemanager.models.domain.domains.ResolutionResult
 import pl.estatemanager.models.domain.domains.Vote
+import pl.estatemanager.models.domain.domains.VotingMethod
 import pl.estatemanager.repositories.di.RepositoriesModule.communityRepository
 import pl.estatemanager.repositories.di.RepositoriesModule.resolutionsRepository
 import pl.estatemanager.repositories.di.RepositoriesModule.usersRepository
@@ -103,9 +104,9 @@ class PostgresResolutionsRepositoryTest : DatabaseTest({ Mocks(clock.strict) }) 
 
         expect that resolutionsRepository().getResolution(id)?.sharesPro isEqualTo 0
 
-        resolutionsRepository().vote(community.id, id, owner1Id, Vote.PRO)
-        resolutionsRepository().vote(community.id, id, owner2Id, Vote.PRO)
-        resolutionsRepository().vote(community.id, id, owner3Id, Vote.AGAINST)
+        resolutionsRepository().vote(community.id, id, owner1Id, Vote.PRO, VotingMethod.MEETING)
+        resolutionsRepository().vote(community.id, id, owner2Id, Vote.PRO, VotingMethod.MEETING)
+        resolutionsRepository().vote(community.id, id, owner3Id, Vote.AGAINST, VotingMethod.MEETING)
 
         expect that resolutionsRepository().getResolution(id)?.sharesPro isEqualTo 40
         expect that resolutionsRepository().getResolution(id)?.sharesAgainst isEqualTo 100
@@ -119,8 +120,8 @@ class PostgresResolutionsRepositoryTest : DatabaseTest({ Mocks(clock.strict) }) 
 
         expect that resolutionsRepository().getResolution(id)?.sharesPro isEqualTo 0
 
-        val success = resolutionsRepository().vote(community.id, id, owner1Id, Vote.PRO)
-        val failed = resolutionsRepository().vote(community.id, id, owner1Id, Vote.PRO)
+        val success = resolutionsRepository().vote(community.id, id, owner1Id, Vote.PRO, VotingMethod.MEETING)
+        val failed = resolutionsRepository().vote(community.id, id, owner1Id, Vote.PRO, VotingMethod.MEETING)
 
         expect that success isInstance of<Success<*>>()
         expect that failed isInstance of<Failed<*>>()
@@ -167,15 +168,14 @@ class PostgresResolutionsRepositoryTest : DatabaseTest({ Mocks(clock.strict) }) 
 
         expect that resolutionsRepository().hasVoted(ownerId, id) _is false
 
-        resolutionsRepository().vote(community.id, id, ownerId, Vote.AGAINST)
+        resolutionsRepository().vote(community.id, id, ownerId, Vote.AGAINST, VotingMethod.MEETING)
 
         expect that resolutionsRepository().hasVoted(ownerId, id) _is true
-
     }
 }
 
 infix fun Resolution.putIn(resolutionsRepository: ResolutionsRepository) =
-    resolutionsRepository.createResolution(ResolutionCreation(communityId, number, subject, description))!!
+    resolutionsRepository.createResolution(ResolutionCreation(communityId, number, subject, description, voteCountingMethod))!!
 
 infix fun List<Resolution>.putIn(resolutionsRepository: ResolutionsRepository) =
     map {
@@ -184,7 +184,8 @@ infix fun List<Resolution>.putIn(resolutionsRepository: ResolutionsRepository) =
                 it.communityId,
                 it.number,
                 it.subject,
-                it.description
+                it.description,
+                it.voteCountingMethod,
             )
         )!!)
     }

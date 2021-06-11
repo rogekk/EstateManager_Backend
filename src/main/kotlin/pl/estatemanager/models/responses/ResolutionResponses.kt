@@ -4,11 +4,12 @@ package pl.estatemanager.models.responses
 
 import pl.estatemanager.models.domain.domains.Resolution
 import pl.estatemanager.models.domain.domains.ResolutionResult
+import pl.estatemanager.models.domain.domains.VoteCountingMethod
 
 data class ResolutionsResponse(val resolutions: List<ResolutionResponse>)
 
 fun List<Resolution>.toResponse() = ResolutionsResponse(
-    map { it.toResponse().copy(sharesAgainst = null, sharesPro = null) }
+    map { it.toResponse() }
 )
 
 fun Resolution.toResponse() = ResolutionResponse(
@@ -47,3 +48,13 @@ data class ResolutionResponse(
     val result: ResolutionResultResponse,
     val votedByOwner: Boolean?
 )
+
+
+fun VoteCountingMethod.toResponse() = when (this) {
+    VoteCountingMethod.ONE_OWNER_ONE_VOTE -> VoteCountingMethodResponse.ONE_OWNER_ONE_VOTE
+    VoteCountingMethod.SHARES_BASED -> VoteCountingMethodResponse.SHARES_BASED
+}
+
+enum class VoteCountingMethodResponse {
+    ONE_OWNER_ONE_VOTE, SHARES_BASED;
+}

@@ -1,6 +1,7 @@
 package pl.estatemanager.models.domain.domains
 
 import pl.estatemanager.models.domain.AdminId
+import pl.estatemanager.models.domain.ManagerId
 import pl.estatemanager.models.domain.OwnerId
 import pl.estatemanager.models.domain.UserId
 
@@ -15,7 +16,7 @@ sealed class User {
 }
 
 data class Manager(
-    override val id: AdminId,
+    override val id: ManagerId,
     override val username: String,
     override val email: String,
     override val fullName: String,
@@ -44,7 +45,7 @@ data class Owner(
     override val profileImageUrl: String?,
 ): User()
 
-data class OwnerProfile(
-    val owner: Owner,
+data class UserProfile(
+    val user: User,
     val communities: List<Community>
 )

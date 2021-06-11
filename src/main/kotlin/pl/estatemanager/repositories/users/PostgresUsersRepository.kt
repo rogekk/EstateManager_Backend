@@ -12,8 +12,8 @@ import org.jetbrains.exposed.sql.update
 import pl.estatemanager.common.IdGenerator
 import pl.estatemanager.db.extensions.Literal
 import pl.estatemanager.db.extensions.similarity
-import pl.estatemanager.db.schema.AdminCommunitiesTable
 import pl.estatemanager.db.schema.CommunitiesTable
+import pl.estatemanager.db.schema.ManagerCommunitiesTable
 import pl.estatemanager.db.schema.OwnerMembershipTable
 import pl.estatemanager.db.schema.PGUserType
 import pl.estatemanager.db.schema.UserPermissionsTable
@@ -28,9 +28,10 @@ import pl.estatemanager.models.domain.UserId
 import pl.estatemanager.models.domain.domains.Authorization
 import pl.estatemanager.models.domain.domains.Community
 import pl.estatemanager.models.domain.domains.Owner
-import pl.estatemanager.models.domain.domains.OwnerProfile
 import pl.estatemanager.models.domain.domains.Shares
+import pl.estatemanager.models.domain.domains.UserProfile
 import pl.estatemanager.models.domain.domains.UserTypes
+import pl.estatemanager.repositories.readManager
 import pl.estatemanager.repositories.readOwner
 import pl.estatemanager.tools.hash
 import pl.estatemanager.tools.verify
@@ -39,22 +40,40 @@ import pl.estatemanager.tools.verify
 class PostgresUsersRepository(private val database: Database, private val idGenerator: IdGenerator) :
     UsersRepository {
 
-    override fun getProfile(id: UserId): OwnerProfile? = transaction(database) {
-        UsersTable
-            .leftJoin(OwnerMembershipTable)
-            .leftJoin(CommunitiesTable)
-            .slice(CommunitiesTable.columns + UsersTable.columns + OwnerMembershipTable.shares)
-            .select { UsersTable.id eq id.id }
-            .map {
-                it.readOwner() to Community(
-                    CommunityId(it[CommunitiesTable.id]),
-                    it[CommunitiesTable.name],
-                    it[CommunitiesTable.totalShares]
-                )
-            }
-            .groupBy { it.first }
-            .map { OwnerProfile(it.key, it.value.map { it.second }) }
-            .firstOrNull()
+    override fun getProfile(id: UserId): UserProfile? = transaction(database) {
+        when (id) {
+            is OwnerId -> UsersTable
+                .leftJoin(OwnerMembershipTable)
+                .leftJoin(CommunitiesTable)
+                .slice(CommunitiesTable.columns + UsersTable.columns + OwnerMembershipTable.shares)
+                .select { UsersTable.id eq id.id }
+                .map {
+                    it.readOwner() to Community(
+                        CommunityId(it[CommunitiesTable.id]),
+                        it[CommunitiesTable.name],
+                        it[CommunitiesTable.totalShares]
+                    )
+                }
+                .groupBy { it.first }
+                .map { UserProfile(it.key, it.value.map { it.second }) }
+                .firstOrNull()
+            is ManagerId ->UsersTable
+                .leftJoin(ManagerCommunitiesTable)
+                .leftJoin(CommunitiesTable)
+                .slice(CommunitiesTable.columns + UsersTable.columns)
+                .select { UsersTable.id eq id.id }
+                .map {
+                    it.readManager() to Community(
+                        CommunityId(it[CommunitiesTable.id]),
+                        it[CommunitiesTable.name],
+                        it[CommunitiesTable.totalShares]
+                    )
+                }
+                .groupBy { it.first }
+                .map { UserProfile(it.key, it.value.map { it.second }) }
+                .firstOrNull()
+            is AdminId -> TODO()
+        }
     }
 
     override fun addPermission(userId: UserId, permission: Permission) {
@@ -192,9 +211,9 @@ class PostgresUsersRepository(private val database: Database, private val idGene
         }
 
         communities.forEach { community ->
-            AdminCommunitiesTable.insert {
+            ManagerCommunitiesTable.insert {
                 it[id] = idGenerator.newId()
-                it[adminId] = userId
+                it[managerId] = userId
                 it[communityId] = community.id
             }
         }

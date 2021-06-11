@@ -9,8 +9,9 @@ import pl.estatemanager.models.domain.Permission
 import pl.estatemanager.models.domain.domains.Admin
 import pl.estatemanager.models.domain.domains.Authorization
 import pl.estatemanager.models.domain.domains.Community
+import pl.estatemanager.models.domain.domains.Manager
 import pl.estatemanager.models.domain.domains.Owner
-import pl.estatemanager.models.domain.domains.OwnerProfile
+import pl.estatemanager.models.domain.domains.UserProfile
 import pl.estatemanager.models.domain.domains.UserTypes
 import pl.estatemanager.repositories.di.RepositoriesModule.communityRepository
 import pl.estatemanager.repositories.di.RepositoriesModule.usersRepository
@@ -22,6 +23,7 @@ class PostgresUsersRepositoryTest : DatabaseTest() {
     val community by aRandom<Community> { copy(communityRepository().createCommunity(this)) }
     val owner by aRandom<Owner>()
     val admin by aRandom<Admin>()
+    val manager by aRandom<Manager>()
     val communities by aRandomListOf<Community>(10) { mapIndexed { i, it -> it.copy(id = CommunityId("id$i")) } }
 
 
@@ -112,15 +114,40 @@ class PostgresUsersRepositoryTest : DatabaseTest() {
     }
 
     @Test
-    fun `gets the users profile`() {
+    fun `gets the owner profile`() {
         val expectedCommunities = communities.evenlyIndexed.map {
             it.copy(id = communityRepository().createCommunity(it))
         }
 
         val ownerId = owner with 200.shares inThese expectedCommunities.map { it.id } putIn usersRepository()
 
-        expect that usersRepository().getProfile(ownerId) isEqualTo OwnerProfile(
+        expect that usersRepository().getProfile(ownerId) isEqualTo UserProfile(
             owner.copy(id = ownerId),
+            expectedCommunities
+        )
+    }
+
+    @Test
+    fun `gets the managers profile`() {
+        val expectedCommunities = communities.evenlyIndexed.map {
+            it.copy(id = communityRepository().createCommunity(it))
+        }
+
+
+        val managerId = usersRepository().createManager(
+            communities = expectedCommunities.map { it.id },
+            username = manager.username,
+            password = manager.address,
+            email = manager.email,
+            fullName = manager.fullName,
+            phoneNumber = manager.phoneNumber,
+            address = manager.address,
+            profileImageUrl = manager.profileImageUrl
+        )
+
+
+        expect that usersRepository().getProfile(managerId!!) isEqualTo UserProfile(
+            manager.copy(id = managerId),
             expectedCommunities
         )
     }
@@ -199,35 +226,35 @@ class PostgresUsersRepositoryTest : DatabaseTest() {
 
     @Test
     fun `searches the user by username`() {
-        val foundOwners = usersRepository().searchOwners(community.id,username = "Marco Drago")
+        val foundOwners = usersRepository().searchOwners(community.id, username = "Marco Drago")
 
         expect that foundOwners containsOnly listOf(marcoDrogi, marioDragi, markDrugo)
     }
 
     @Test
     fun `searches the user by email`() {
-        val foundOwners = usersRepository().searchOwners(community.id,email = "albert")
+        val foundOwners = usersRepository().searchOwners(community.id, email = "albert")
 
         expect that foundOwners containsOnly listOf(albertKnut)
     }
 
     @Test
     fun `searches the user by address`() {
-        val foundOwners = usersRepository().searchOwners(community.id,address = "Boulder")
+        val foundOwners = usersRepository().searchOwners(community.id, address = "Boulder")
 
         expect that foundOwners containsOnly listOf(mollyPatton)
     }
 
     @Test
     fun `searches the user by phone number`() {
-        val foundOwners = usersRepository().searchOwners(community.id,phoneNumber = "111")
+        val foundOwners = usersRepository().searchOwners(community.id, phoneNumber = "111")
 
         expect that foundOwners containsOnly listOf(marioDragi)
     }
 
     @Test
     fun `searches by multiple parameters`() {
-        val foundOwners = usersRepository().searchOwners(community.id,fullname = "Mario Drago", email = "Siringa")
+        val foundOwners = usersRepository().searchOwners(community.id, fullname = "Mario Drago", email = "Siringa")
 
         expect that foundOwners containsOnly listOf(marcoDrogi, markDrugo)
     }

@@ -1,6 +1,6 @@
 package pl.estatemanager.db
 
-import pl.estatemanager.db.schema.AdminCommunitiesTable
+import pl.estatemanager.db.schema.ManagerCommunitiesTable
 import pl.estatemanager.db.schema.AnswerTable
 import pl.estatemanager.db.schema.ApartmentsTable
 import pl.estatemanager.db.schema.BuildingsTable
@@ -28,7 +28,7 @@ val schema = arrayOf(
     BulletinTable,
     IssuesTable,
     AnswerTable,
-    AdminCommunitiesTable,
+    ManagerCommunitiesTable,
     UserPermissionsTable,
     BuildingsTable,
     ApartmentsTable,

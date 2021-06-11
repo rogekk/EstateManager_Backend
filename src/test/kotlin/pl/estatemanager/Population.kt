@@ -6,6 +6,7 @@ import pl.estatemanager.models.domain.domains.Community
 import pl.estatemanager.models.domain.domains.ResolutionCreation
 import pl.estatemanager.models.domain.domains.Shares
 import pl.estatemanager.models.domain.domains.TopicCreation
+import pl.estatemanager.models.domain.domains.VoteCountingMethod
 import pl.estatemanager.repositories.di.RepositoriesModule.communityRepository
 import pl.estatemanager.repositories.di.RepositoriesModule.resolutionsRepository
 import pl.estatemanager.repositories.di.RepositoriesModule.topicsRepository
@@ -60,7 +61,7 @@ fun main() {
         "Fabio Panda",
         "2304819734",
         "Bankowa"
-    )
+   )
 
     usersRepository().createOwner( c, "fabiopanda", "pass", "fabiopanda@gmail.com", "Fabio Panda", "2304819734", "Bankowa" )
     usersRepository().createOwner( c, "Olacrazy", "pass", "olasofool@gmail.com", "Ola Sztandtke ", "09745987721", "Bankowa" )
@@ -90,7 +91,6 @@ fun main() {
         "Kolejowa"
     )
 
-
     topicsRepository().crateTopic(
         TopicCreation(
             "I want to fire our shity Manager",
@@ -107,7 +107,7 @@ fun main() {
             user1,
             DateTime.now(),
             communityId2,
-            "I would like to fire my manager but this system is soo goood"
+            "I would like to fire my manager but this system is soo goood",
         )
     )
 
@@ -116,7 +116,8 @@ fun main() {
             communityId1,
             "1/2021",
             "That what she said",
-            "I don't know"
+            "I don't know",
+            VoteCountingMethod.ONE_OWNER_ONE_VOTE,
         )
     )
 }

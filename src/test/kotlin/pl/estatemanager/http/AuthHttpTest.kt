@@ -18,7 +18,7 @@ import pl.estatemanager.models.domain.OwnerId
 import pl.estatemanager.models.domain.Permission.CanCreateOwner
 import pl.estatemanager.models.domain.domains.Admin
 import pl.estatemanager.models.domain.domains.Authorization
-import pl.estatemanager.models.domain.domains.OwnerProfile
+import pl.estatemanager.models.domain.domains.UserProfile
 import pl.estatemanager.models.domain.domains.Shares
 import pl.estatemanager.models.domain.domains.UserTypes
 import pl.estatemanager.repositories.users.OwnerCreated
@@ -87,7 +87,7 @@ class AuthHttpTest : SparkTest({ Mocks(clock.strict, usersRepository.relaxed) })
 
     @Test
     fun `after successful login sets a valid JWT for owner`() {
-        every { usersRepository().getProfile(owner.id) } returns OwnerProfile(owner, emptyList())
+        every { usersRepository().getProfile(owner.id) } returns UserProfile(owner, emptyList())
         every { usersRepository().checkCredentials(owner.username, "b") } returns Authorization(owner.id.id, UserTypes.OWNER, emptyList())
         every { clock().getDateTime() } returns now
 

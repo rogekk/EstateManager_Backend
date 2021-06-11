@@ -16,6 +16,7 @@ import pl.estatemanager.models.domain.BulletinId
 import pl.estatemanager.models.domain.CommentId
 import pl.estatemanager.models.domain.CommunityId
 import pl.estatemanager.models.domain.IssueId
+import pl.estatemanager.models.domain.ManagerId
 import pl.estatemanager.models.domain.OwnerId
 import pl.estatemanager.models.domain.ResolutionId
 import pl.estatemanager.models.domain.SurveyId
@@ -25,6 +26,7 @@ import pl.estatemanager.models.domain.domains.Answer
 import pl.estatemanager.models.domain.domains.Bulletin
 import pl.estatemanager.models.domain.domains.Comment
 import pl.estatemanager.models.domain.domains.Issue
+import pl.estatemanager.models.domain.domains.Manager
 import pl.estatemanager.models.domain.domains.Owner
 import pl.estatemanager.models.domain.domains.Resolution
 import pl.estatemanager.models.domain.domains.Survey
@@ -33,6 +35,16 @@ import pl.estatemanager.models.domain.domains.Topic
 
 fun ResultRow.readOwner() = Owner(
     id = OwnerId(this[UsersTable.id]),
+    username = this[UsersTable.username],
+    email = this[UsersTable.email],
+    fullName = this[UsersTable.fullName],
+    phoneNumber = this[UsersTable.phoneNumber],
+    address = this[UsersTable.address],
+    profileImageUrl = this[UsersTable.profileImageUrl],
+)
+
+fun ResultRow.readManager() = Manager(
+    id = ManagerId(this[UsersTable.id]),
     username = this[UsersTable.username],
     email = this[UsersTable.email],
     fullName = this[UsersTable.fullName],
@@ -70,7 +82,8 @@ fun ResultRow.readResolution() = Resolution(
     0,
     0,
     this[ResolutionsTable.description],
-    this[ResolutionsTable.result].toResult(),
+    this[ResolutionsTable.result].toDomain(),
+    this[ResolutionsTable.voteCountingMethod].toDomain()
 )
 
 fun ResultRow.readBulletin() = Bulletin(

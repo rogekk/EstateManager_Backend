@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import pl.estatemanager.common.Clock
 import pl.estatemanager.common.IdGenerator
-import pl.estatemanager.db.schema.AdminCommunitiesTable
+import pl.estatemanager.db.schema.ManagerCommunitiesTable
 import pl.estatemanager.db.schema.AnswerTable
 import pl.estatemanager.db.schema.IssuesTable
 import pl.estatemanager.db.schema.PGIssueStatus
@@ -45,9 +45,9 @@ class PostgresIssuesRepository(
                 .orderBy(IssuesTable.createdAt, SortOrder.DESC)
                 .map { IssueWithOwner(it.readOwner(), it.readIssue()) }
             is ManagerId -> {
-                val communities = AdminCommunitiesTable
-                    .select { AdminCommunitiesTable.adminId eq userId.id }
-                    .map { it[AdminCommunitiesTable.communityId] }
+                val communities = ManagerCommunitiesTable
+                    .select { ManagerCommunitiesTable.managerId eq userId.id }
+                    .map { it[ManagerCommunitiesTable.communityId] }
                 IssuesTable
                     .leftJoin(UsersTable)
                     .leftJoin(AnswerTable)

@@ -14,8 +14,10 @@ import pl.estatemanager.db.UpdateResult
 import pl.estatemanager.db.schema.OwnerMembershipTable
 import pl.estatemanager.db.schema.PGResolutionResult
 import pl.estatemanager.db.schema.PGVote
+import pl.estatemanager.db.schema.PgVotingMethod
 import pl.estatemanager.db.schema.ResolutionVotesTable
 import pl.estatemanager.db.schema.ResolutionsTable
+import pl.estatemanager.db.schema.toDb
 import pl.estatemanager.models.domain.CommunityId
 import pl.estatemanager.models.domain.OwnerId
 import pl.estatemanager.models.domain.ResolutionId
@@ -23,6 +25,7 @@ import pl.estatemanager.models.domain.domains.Resolution
 import pl.estatemanager.models.domain.domains.ResolutionCreation
 import pl.estatemanager.models.domain.domains.ResolutionResult
 import pl.estatemanager.models.domain.domains.Vote
+import pl.estatemanager.models.domain.domains.VotingMethod
 import pl.estatemanager.repositories.readResolution
 
 class PostgresResolutionsRepository(
@@ -74,6 +77,7 @@ class PostgresResolutionsRepository(
                     it[createdAt] = clock.getDateTime()
                     it[description] = resolutionCreation.description
                     it[result] = PGResolutionResult.OPEN_FOR_VOTING
+                    it[voteCountingMethod] = resolutionCreation.voteCountingMethod.toDb()
                 }
         }
         return ResolutionId(resolutionId)
@@ -83,7 +87,8 @@ class PostgresResolutionsRepository(
         communityId: CommunityId,
         resolutionId: ResolutionId,
         ownerId: OwnerId,
-        vote: Vote
+        vote: Vote,
+        votingMethod: VotingMethod,
     ): UpdateResult<Boolean> = transaction(database) {
         // TODO check logic makes sense make it configurable
         val sharesInCommunity = OwnerMembershipTable
@@ -103,6 +108,7 @@ class PostgresResolutionsRepository(
                         Vote.ABSTAIN -> PGVote.ABSTAIN
                     }
                     it[this.shares] = sharesInCommunity
+                    it[this.votingMethod] = votingMethod.toDb()
                 }
         }
             .onFailure { println(it) }
@@ -114,7 +120,7 @@ class PostgresResolutionsRepository(
         transaction(database) {
             ResolutionsTable
                 .update({ ResolutionsTable.id eq id.id }) {
-                    it[this.result] = PGResolutionResult.fromResult(result)
+                    it[this.result] = PGResolutionResult.fromDomain(result)
                 }
         }
     }

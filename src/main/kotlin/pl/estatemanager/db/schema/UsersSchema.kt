@@ -3,9 +3,9 @@ package pl.estatemanager.db.schema
 import org.jetbrains.exposed.sql.Table
 import pl.estatemanager.models.domain.Permission
 
-object AdminCommunitiesTable: Table("admin_communities") {
+object ManagerCommunitiesTable: Table("manager_communities") {
     val id = text("id")
-    val adminId = text("admin_id").references(UsersTable.id)
+    val managerId = text("manager_id").references(UsersTable.id)
     val communityId = text("community_id").references(CommunitiesTable.id)
 
     override val primaryKey = PrimaryKey(id)

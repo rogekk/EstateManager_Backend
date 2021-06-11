@@ -6,14 +6,16 @@ import org.junit.Test
 import pl.estatemanager.dsl.Mocks
 import pl.estatemanager.dsl.SparkTest
 import pl.estatemanager.dsl.relaxed
-import pl.estatemanager.models.domain.CommunityId
-import pl.estatemanager.models.domain.ResolutionId
 import pl.estatemanager.models.ResolutionResultRequest
+import pl.estatemanager.models.domain.CommunityId
 import pl.estatemanager.models.domain.Permission.CanCreateResolution
 import pl.estatemanager.models.domain.Permission.CanUpdateResolutionStatus
+import pl.estatemanager.models.domain.ResolutionId
 import pl.estatemanager.models.domain.domains.Resolution
 import pl.estatemanager.models.domain.domains.ResolutionCreation
 import pl.estatemanager.models.domain.domains.Vote
+import pl.estatemanager.models.domain.domains.VoteCountingMethod
+import pl.estatemanager.models.domain.domains.VotingMethod
 import pl.estatemanager.models.responses.ResolutionsResponse
 import pl.estatemanager.models.responses.toResponse
 import pl.estatemanager.models.toDomain
@@ -39,6 +41,7 @@ class ResolutionsHttpTest : SparkTest({
                 "number" _ "one"
                 "subject" _ "burn down building every tuesday?"
                 "description" _ "expensive but fun"
+                "voteCountingMethod" _ "one_owner_one_vote"
             })
             .verifyPermissions(CanCreateResolution)
             .expectCode(201)
@@ -49,7 +52,8 @@ class ResolutionsHttpTest : SparkTest({
                     communityId,
                     "one",
                     "burn down building every tuesday?",
-                    "expensive but fun"
+                    "expensive but fun",
+                    VoteCountingMethod.ONE_OWNER_ONE_VOTE,
                 )
             )
         }
@@ -64,7 +68,7 @@ class ResolutionsHttpTest : SparkTest({
             .expectCode(200)
             .expectBodyJson(ResolutionsResponse(
                 resolutions.map {
-                    it.toResponse().copy(sharesAgainst = null, sharesPro = null)
+                    it.toResponse()
                 }
             ))
     }
@@ -86,11 +90,12 @@ class ResolutionsHttpTest : SparkTest({
         POST("/v1/communities/${communityId.id}/resolutions/${resolutionId.id}/votes")
             .withBody(json {
                 "vote" _ "pro"
+                "votingMethod" _ "individual"
             })
             .authenticated(owner.id)
             .expectCode(201)
 
-        verify { resolutionsRepository().vote(communityId, resolutionId, owner.id, Vote.PRO) }
+        verify { resolutionsRepository().vote(communityId, resolutionId, owner.id, Vote.PRO, VotingMethod.INDIVIDUAL) }
     }
 
     @Test
@@ -98,11 +103,12 @@ class ResolutionsHttpTest : SparkTest({
         POST("/v1/communities/${communityId.id}/resolutions/${resolutionId.id}/votes")
             .withBody(json {
                 "vote" _ "against"
+                "votingMethod" _ "portal"
             })
             .authenticated(owner.id)
             .expectCode(201)
 
-        verify { resolutionsRepository().vote(communityId, resolutionId, owner.id, Vote.AGAINST) }
+        verify { resolutionsRepository().vote(communityId, resolutionId, owner.id, Vote.AGAINST, VotingMethod.PORTAL) }
     }
 
     @Test
@@ -110,11 +116,12 @@ class ResolutionsHttpTest : SparkTest({
         POST("/v1/communities/${communityId.id}/resolutions/${resolutionId.id}/votes")
             .withBody(json {
                 "vote" _ "abstain"
+                "votingMethod" _ "meeting"
             })
             .authenticated(owner.id)
             .expectCode(201)
 
-        verify { resolutionsRepository().vote(communityId, resolutionId, owner.id, Vote.ABSTAIN) }
+        verify { resolutionsRepository().vote(communityId, resolutionId, owner.id, Vote.ABSTAIN, VotingMethod.MEETING) }
     }
 
     @Test
@@ -122,6 +129,7 @@ class ResolutionsHttpTest : SparkTest({
         POST("/v1/communities/${communityId.id}/resolutions/${resolutionId.id}/votes")
             .withBody(json {
                 "vote" _ "blah"
+                "votingMethod" _ "meeting"
             })
             .authenticated(owner.id)
             .expectCode(400)
