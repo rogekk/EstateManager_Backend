@@ -4,6 +4,7 @@ import com.snitch.RequestHandler
 import com.snitch.Router
 import com.snitch.spark.SparkResponseWrapper
 import pl.estatemanager.http.endpoints.bulletins.bulletinsRoutes
+import pl.estatemanager.http.endpoints.upload.uploadHandler
 import spark.Service
 
 
@@ -27,6 +28,10 @@ fun routes(http: Service): Router.() -> Unit = {
         buildingRoutes()
 
         surveyRoutes()
+
+        POST("/upload")
+            .isHandledBy(uploadHandler)
+
     }
 
     setAccessControlHeaders(http)

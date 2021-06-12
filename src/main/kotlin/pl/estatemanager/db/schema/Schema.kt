@@ -1,6 +1,5 @@
 package pl.estatemanager.db
 
-import pl.estatemanager.db.schema.ManagerCommunitiesTable
 import pl.estatemanager.db.schema.AnswerTable
 import pl.estatemanager.db.schema.ApartmentsTable
 import pl.estatemanager.db.schema.BuildingsTable
@@ -8,6 +7,7 @@ import pl.estatemanager.db.schema.BulletinTable
 import pl.estatemanager.db.schema.CommentsTable
 import pl.estatemanager.db.schema.CommunitiesTable
 import pl.estatemanager.db.schema.IssuesTable
+import pl.estatemanager.db.schema.ManagerCommunitiesTable
 import pl.estatemanager.db.schema.OwnerMembershipTable
 import pl.estatemanager.db.schema.ParkingSpotsTable
 import pl.estatemanager.db.schema.ResolutionVotesTable
@@ -38,4 +38,6 @@ val schema = arrayOf(
     SurveyOptionsTable,
     QuestionVotesTable,
 )
+
+
 
