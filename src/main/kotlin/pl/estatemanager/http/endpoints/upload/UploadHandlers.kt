@@ -4,10 +4,9 @@ import com.snitch.Handler
 import com.snitch.ok
 import com.snitch.spark.SparkRequestWrapper
 import javax.servlet.MultipartConfigElement
-import pl.estatemanager.services.UploadModule
+import pl.estatemanager.services.UploadModule.uploadService
 
 val uploadHandler: Handler<Nothing, String> = {
-
     val request1 = (request as SparkRequestWrapper).request
     request1.raw()
         .setAttribute("org.eclipse.jetty.multipartConfig", MultipartConfigElement(System.getProperty("java.io.tmpdir")))
@@ -16,5 +15,5 @@ val uploadHandler: Handler<Nothing, String> = {
         .inputStream
         .readAllBytes()
 
-    UploadModule.uploadService().upload(bytes).ok
+    uploadService().upload(bytes).ok
 }
