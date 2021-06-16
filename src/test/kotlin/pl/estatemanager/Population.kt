@@ -168,4 +168,105 @@ fun main() {
             communityId2
         )
     )
+
+    issueRepository().createIssue(
+        IssueCreation(
+            "this portal is great",
+            "yeep",
+            "photo",
+            user1,
+            communityId1
+        )
+    )
+
+    issueRepository().createIssue(
+        IssueCreation(
+            "wtf",
+            "ftw",
+            "photo",
+            user1,
+            communityId1
+        )
+    )
+
+    issueRepository().createIssue(
+        IssueCreation(
+            "fcuk",
+            "coco jambo",
+            "photo",
+            user1,
+            communityId1
+        )
+    )
+
+    issueRepository().createIssue(
+        IssueCreation(
+            "someone",
+            "pls help",
+            "photo of the poop",
+            user1,
+            communityId1
+        )
+    )
+
+    issueRepository().createIssue(
+        IssueCreation(
+            "something nice",
+            "or not",
+            "photo",
+            user1,
+            communityId1
+        )
+    )
+
+    issueRepository().createIssue(
+        IssueCreation(
+            "its a bug",
+            "no it's a feature",
+            "photo",
+            user1,
+            communityId1
+        )
+    )
+
+    issueRepository().createIssue(
+        IssueCreation(
+            "yo yo yo",
+            "pls help",
+            "photo",
+            user1,
+            communityId1
+        )
+    )
+
+    issueRepository().createIssue(
+        IssueCreation(
+            "hahaha",
+            "fuuuuu",
+            "photo",
+            user1,
+            communityId1
+        )
+    )
+
+    issueRepository().createIssue(
+        IssueCreation(
+            "poop on my doormat",
+            "pls help",
+            "photo",
+            user1,
+            communityId1
+        )
+    )
+
+    issueRepository().createIssue(
+        IssueCreation(
+            "my doormat is broken",
+            "pls fix",
+            "photo",
+            user1,
+            communityId1
+        )
+    )
+
 }
