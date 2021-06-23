@@ -1,8 +1,14 @@
-package pl.estatemanager.db
+package pl.estatemanager
+
 
 import org.joda.time.DateTime
 import pl.estatemanager.models.domain.CommunityId
-import pl.estatemanager.models.domain.domains.*
+import pl.estatemanager.models.domain.domains.Community
+import pl.estatemanager.models.domain.domains.IssueCreation
+import pl.estatemanager.models.domain.domains.ResolutionCreation
+import pl.estatemanager.models.domain.domains.Shares
+import pl.estatemanager.models.domain.domains.TopicCreation
+import pl.estatemanager.models.domain.domains.VoteCountingMethod
 import pl.estatemanager.repositories.di.RepositoriesModule.communityRepository
 import pl.estatemanager.repositories.di.RepositoriesModule.issueRepository
 import pl.estatemanager.repositories.di.RepositoriesModule.resolutionsRepository

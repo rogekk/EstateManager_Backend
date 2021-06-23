@@ -1,6 +1,9 @@
+import java.lang.Thread.sleep
+
 plugins {
     java
     kotlin("jvm") version "1.4.32"
+    application
 }
 
 group = "org.example"
@@ -55,6 +58,20 @@ dependencies {
     testImplementation("junit:junit:4.13")
 }
 
+tasks.withType<org.gradle.jvm.tasks.Jar> {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+tasks.named<Tar>("distTar") {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+
+tasks.named<Zip>("distZip") {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+
 tasks.create<Exec>("startPostgres") {
     dependsOn("stopPostgres")
     commandLine("docker",
@@ -65,9 +82,22 @@ tasks.create<Exec>("startPostgres") {
         "-e", "POSTGRES_DB=test",
         "-e", "POSTGRES_PASSWORD=test",
         "-d", "postgres:10.5")
+    doLast {
+        sleep(5000)
+    }
 }
 
 tasks.create<Exec>("stopPostgres") {
     commandLine("docker", "kill", "db")
     commandLine("docker", "rm", "-f", "db")
+}
+tasks.create<JavaExec>("populate") {
+    group = "Execution"
+    description = "Run the main class with JavaExecTask"
+    classpath = sourceSets["test"].runtimeClasspath
+    main = "pl.estatemanager.PopulationKt"
+}
+
+application {
+    mainClass.set("pl.estatemanager.ServerKt")
 }
