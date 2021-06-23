@@ -27,6 +27,10 @@ fun Router.issuesRoutes() {
             .authenticated()
             .isHandledBy(getIssuesHandler)
 
+        GET("/communities" / "issues" / issueId)
+            .authenticated()
+            .isHandledBy(getIssueHandler)
+
         GET("/communities" / communityId / "issues" / issueId)
             .authenticated()
             .isHandledBy(getIssueHandler)

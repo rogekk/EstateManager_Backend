@@ -62,7 +62,7 @@ object RepositoriesModule : ShankModule {
     }
 
     val uploadRepository = single<UploadRepository> { ->
-        PostgresUploadRepository(readWriteDatabase())
+        PostgresUploadRepository(readWriteDatabase(), idGenerator())
     }
 }
 

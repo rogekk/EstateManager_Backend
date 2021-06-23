@@ -2,7 +2,12 @@ package pl.estatemanager.db
 
 import org.joda.time.DateTime
 import pl.estatemanager.models.domain.CommunityId
-import pl.estatemanager.models.domain.domains.*
+import pl.estatemanager.models.domain.domains.Community
+import pl.estatemanager.models.domain.domains.IssueCreation
+import pl.estatemanager.models.domain.domains.ResolutionCreation
+import pl.estatemanager.models.domain.domains.Shares
+import pl.estatemanager.models.domain.domains.TopicCreation
+import pl.estatemanager.models.domain.domains.VoteCountingMethod
 import pl.estatemanager.repositories.di.RepositoriesModule.communityRepository
 import pl.estatemanager.repositories.di.RepositoriesModule.issueRepository
 import pl.estatemanager.repositories.di.RepositoriesModule.resolutionsRepository
@@ -77,7 +82,7 @@ fun main() {
     usersRepository().createOwner(c1,"denzel","denzel","denzel@gmail.com", "Denzel Jackson", "456567678", "Kolejowa")
 
     val manager1 = usersRepository().createManager(
-        listOf(communityId1),
+        listOf(communityId1, communityId2),
         "manager",
         "manager",
         "jsmith@gmail.com",
@@ -119,6 +124,7 @@ fun main() {
         "444444444",
         "Kolejowa"
     )
+
     topicsRepository().crateTopic(
         TopicCreation(
             "I want to fire our shity Manager",

@@ -14,6 +14,7 @@ import pl.estatemanager.db.schema.ResolutionVotesTable
 import pl.estatemanager.db.schema.ResolutionsTable
 import pl.estatemanager.db.schema.StorageRoomsTable
 import pl.estatemanager.db.schema.TopicsTable
+import pl.estatemanager.db.schema.UploadTable
 import pl.estatemanager.db.schema.UserPermissionsTable
 import pl.estatemanager.db.schema.UsersTable
 
@@ -37,6 +38,7 @@ val schema = arrayOf(
     SurveyTable,
     SurveyOptionsTable,
     QuestionVotesTable,
+    UploadTable,
 )
 
 
